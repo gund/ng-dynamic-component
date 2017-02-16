@@ -1,0 +1,66 @@
+{
+  "name": "ng-dynamic-component",
+  "version": "0.0.1",
+  "description": "Dynamic components with full life-cycle support for inputs and outputs",
+  "main": "dist/bundles/ng-dynamic-component.umd.js",
+  "module": "dist/index.js",
+  "scripts": {
+    "prebuild": "rimraf dist compiled",
+    "build": "npm-run-all -s build:*",
+    "build:main": "ngc",
+    "build:umd": "rollup -c rollup.config.js",
+    "postbuild:umd": "uglifyjs -c --screw-ie8 --comments -o dist/bundles/ng-dynamic-component.umd.min.js dist/bundles/ng-dynamic-component.umd.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "angular",
+    "angular2",
+    "ng",
+    "dynamic",
+    "component",
+    "input",
+    "output",
+    "life-cycle"
+  ],
+  "author": "Alex Malkevich <malkevich.alex@gmail.com>",
+  "license": "MIT",
+  "peerDependencies": {
+    "@angular/common": "^2.4.7"
+  },
+  "devDependencies": {
+    "@angular/common": "^2.4.7",
+    "@angular/compiler": "^2.4.7",
+    "@angular/compiler-cli": "^2.4.7",
+    "@angular/core": "^2.4.7",
+    "@angular/platform-browser": "^2.4.7",
+    "@angular/platform-browser-dynamic": "^2.4.7",
+    "@angular/platform-server": "^2.4.7",
+    "@types/jasmine": "^2.5.43",
+    "angular2-template-loader": "^0.6.2",
+    "awesome-typescript-loader": "^3.0.4",
+    "codelyzer": "^2.0.0",
+    "commitizen": "^2.9.5",
+    "cz-conventional-changelog": "^1.2.0",
+    "npm-run-all": "^4.0.0",
+    "rimraf": "^2.5.4",
+    "rollup": "^0.41.4",
+    "rollup-globals-regex": "^0.0.1",
+    "rollup-plugin-node-resolve": "^2.0.0",
+    "rxjs": "^5.1.0",
+    "tslib": "^1.5.0",
+    "tslint": "^4.4.2",
+    "typescript": "^2.2.0",
+    "uglifyjs": "^2.4.10",
+    "webpack": "^2.2.1",
+    "webpack-dev-server": "^2.3.0",
+    "zone.js": "^0.7.7"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}
