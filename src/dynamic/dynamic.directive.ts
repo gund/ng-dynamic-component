@@ -15,17 +15,17 @@ import {
 import { Subject } from 'rxjs/Subject';
 
 @Directive({
-  selector: '[appDynamic], app-dynamic'
+  selector: '[ndcDynamic], ndc-dynamic'
 })
 export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
 
-  @Input() appDynamicInputs: { [k: string]: any } = {};
-  @Input() appDynamicOutputs: { [k: string]: Function } = {};
+  @Input() ndcDynamicInputs: { [k: string]: any } = {};
+  @Input() ndcDynamicOutputs: { [k: string]: Function } = {};
 
   private _componentInjector: ComponentInjector = this._injector.get(this._componentInjectorType);
   private _lastComponentInst: any = this._componentInjector;
   private _lastInputChanges: SimpleChanges;
-  private _inputsDiffer = this._differs.find(this.appDynamicInputs).create(null);
+  private _inputsDiffer = this._differs.find(this.ndcDynamicInputs).create(null);
   private _destroyed$ = new Subject<void>();
 
   private get _componentInst(): any {
@@ -61,7 +61,7 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
       return;
     }
 
-    const inputsChanges = this._inputsDiffer.diff(this.appDynamicInputs);
+    const inputsChanges = this._inputsDiffer.diff(this.ndcDynamicInputs);
 
     if (inputsChanges) {
       const isNotFirstChange = !!this._lastInputChanges;
@@ -78,8 +78,8 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
   }
 
   updateInputs(isFirstChange = false) {
-    Object.keys(this.appDynamicInputs).forEach(p =>
-      this._componentInst[p] = this.appDynamicInputs[p]);
+    Object.keys(this.ndcDynamicInputs).forEach(p =>
+      this._componentInst[p] = this.ndcDynamicInputs[p]);
 
     this.notifyOnInputChanges(this._lastInputChanges, isFirstChange);
   }
@@ -87,11 +87,11 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
   bindOutputs() {
     this._destroyed$.next();
 
-    Object.keys(this.appDynamicOutputs)
+    Object.keys(this.ndcDynamicOutputs)
       .filter(p => this._componentInst[p])
       .forEach(p => this._componentInst[p]
         .takeUntil(this._destroyed$)
-        .subscribe(this.appDynamicOutputs[p]));
+        .subscribe(this.ndcDynamicOutputs[p]));
   }
 
   notifyOnInputChanges(changes: SimpleChanges, forceFirstChanges: boolean) {
@@ -107,8 +107,8 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
   private _collectFirstChanges(): SimpleChanges {
     const changes = {} as SimpleChanges;
 
-    Object.keys(this.appDynamicInputs).forEach(prop =>
-      changes[prop] = new CustomSimpleChange(UNINITIALIZED, this.appDynamicInputs[prop]));
+    Object.keys(this.ndcDynamicInputs).forEach(prop =>
+      changes[prop] = new CustomSimpleChange(UNINITIALIZED, this.ndcDynamicInputs[prop]));
 
     return changes;
   }

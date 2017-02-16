@@ -14,15 +14,15 @@ import {
 } from '@angular/core';
 
 @Component({
-  selector: 'app-dynamic',
+  selector: 'ndc-dynamic',
   template: ''
 })
 export class DynamicComponent implements OnChanges, ComponentInjector {
 
-  @Input() appDynamicComponent: Type<any>;
-  @Input() appDynamicInjector: Injector;
-  @Input() appDynamicProviders: Provider[];
-  @Input() appDynamicContent: any[][];
+  @Input() ndcDynamicComponent: Type<any>;
+  @Input() ndcDynamicInjector: Injector;
+  @Input() ndcDynamicProviders: Provider[];
+  @Input() ndcDynamicContent: any[][];
 
   componentRef: ComponentRef<any>;
 
@@ -41,16 +41,16 @@ export class DynamicComponent implements OnChanges, ComponentInjector {
     this._vcr.clear();
 
     this.componentRef = this._vcr.createComponent(
-      this._cfr.resolveComponentFactory(this.appDynamicComponent),
-      0, this._resolveInjector(), this.appDynamicContent
+      this._cfr.resolveComponentFactory(this.ndcDynamicComponent),
+      0, this._resolveInjector(), this.ndcDynamicContent
     );
   }
 
   private _resolveInjector(): Injector {
-    let injector = this.appDynamicInjector || this._vcr.parentInjector;
+    let injector = this.ndcDynamicInjector || this._vcr.parentInjector;
 
-    if (this.appDynamicProviders) {
-      injector = ReflectiveInjector.resolveAndCreate(this.appDynamicProviders, injector);
+    if (this.ndcDynamicProviders) {
+      injector = ReflectiveInjector.resolveAndCreate(this.ndcDynamicProviders, injector);
     }
 
     return injector;
