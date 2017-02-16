@@ -61,6 +61,24 @@ class MyComponent {
 Here you can update your inputs (ex. `inputs.hello = 'WORLD'`) and they will trigger standard Angular's life-cycle hooks
 (of course you should consider which change detection strategy you are using).
 
+
+You can also use [`NgComponentOutlet`](https://angular.io/docs/ts/latest/api/common/index/NgComponentOutlet-directive.html)
+directive from `@angular/common` instead of `<ndc-dynamic>` and apply `inputs` and `outputs` to your dynamic components:
+```ts
+@Component({
+  selector: 'my-component',
+  template: `<div *ngComponentOutlet="component"
+                   [ndcDynamicInputs]="inputs"
+                   [ndcDynamicOutputs]="outputs"
+                   ></div>`
+})
+class MyComponent {
+  component = MyDynamicComponent1;
+  inputs = {...};
+  outputs = {...}
+}
+```
+
 You can have more advanced stuff over your dynamically rendered components like setting custom injector (`[ndcDynamicInjector]`)
 or providing additional/overriding providers (`[ndcDynamicProviders]`) or both simultaneously
 or projecting nodes (`[ndcDynamicContent]`).
