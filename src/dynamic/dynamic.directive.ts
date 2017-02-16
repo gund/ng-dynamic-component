@@ -14,6 +14,8 @@ import {
 } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 
+export type KeyValueChangeRecordAny = KeyValueChangeRecord<any, any>;
+
 @Directive({
   selector: '[ndcDynamic], ndc-dynamic'
 })
@@ -108,7 +110,7 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
     const changes = {} as SimpleChanges;
 
     Object.keys(this.ndcDynamicInputs).forEach(prop =>
-      changes[prop] = new CustomSimpleChange(UNINITIALIZED, this.ndcDynamicInputs[prop]));
+      changes[prop] = new CustomSimpleChange(UNINITIALIZED, this.ndcDynamicInputs[prop], true));
 
     return changes;
   }
@@ -116,10 +118,10 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
   private _collectChangesFromDiffer(differ: any): SimpleChanges {
     const changes = {} as SimpleChanges;
 
-    differ.forEachItem((record: KeyValueChangeRecord) =>
-      changes[record.key] = new CustomSimpleChange(record.previousValue, record.currentValue));
+    differ.forEachItem((record: KeyValueChangeRecordAny) =>
+      changes[record.key] = new CustomSimpleChange(record.previousValue, record.currentValue, false));
 
-    differ.forEachAddedItem((record: KeyValueChangeRecord) =>
+    differ.forEachAddedItem((record: KeyValueChangeRecordAny) =>
       changes[record.key].previousValue = UNINITIALIZED);
 
     return changes;
