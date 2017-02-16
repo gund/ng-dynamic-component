@@ -19,7 +19,7 @@ import { Subject } from 'rxjs/Subject';
 export type KeyValueChangeRecordAny = KeyValueChangeRecord<any, any>;
 
 @Directive({
-  selector: 'ndc-dynamic, [ndcDynamicInputs], [ndcDynamicOutputs]'
+  selector: '[ndcDynamicInputs], [ndcDynamicOutputs]'
 })
 export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
 
