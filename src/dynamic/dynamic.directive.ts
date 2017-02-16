@@ -15,7 +15,7 @@ import {
 import { Subject } from 'rxjs/Subject';
 
 @Directive({
-  selector: '[ndcDynamic], ndc-dynamic'
+  selector: '[ndcDynamicInputs], [ndcDynamicOutputs]'
 })
 export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
 
