@@ -1,5 +1,6 @@
 import { COMPONENT_INJECTOR, ComponentInjector } from './component-injector';
 import { CustomSimpleChange, UNINITIALIZED } from './custom-simple-change';
+import { NgComponentOutlet } from '@angular/common';
 import {
   Directive,
   DoCheck,
@@ -10,6 +11,7 @@ import {
   KeyValueDiffers,
   OnChanges,
   OnDestroy,
+  Optional,
   SimpleChanges
 } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
@@ -24,14 +26,19 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
   @Input() ndcDynamicInputs: { [k: string]: any } = {};
   @Input() ndcDynamicOutputs: { [k: string]: Function } = {};
 
-  private _componentInjector: ComponentInjector = this._injector.get(this._componentInjectorType);
+  private _componentInjector: ComponentInjector = this._injector.get(this._componentInjectorType, {});
   private _lastComponentInst: any = this._componentInjector;
   private _lastInputChanges: SimpleChanges;
   private _inputsDiffer = this._differs.find(this.ndcDynamicInputs).create(null);
   private _destroyed$ = new Subject<void>();
 
+  private get _compOutletInst(): any {
+    return (<any>this._componentOutlet)._componentRef;
+  }
+
   private get _componentInst(): any {
-    return this._componentInjector.componentRef && this._componentInjector.componentRef.instance;
+    return this._compOutletInst ||
+      this._componentInjector.componentRef && this._componentInjector.componentRef.instance;
   }
 
   private get _componentInstChanged(): boolean {
@@ -46,7 +53,8 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
   constructor(
     private _differs: KeyValueDiffers,
     private _injector: Injector,
-    @Inject(COMPONENT_INJECTOR) private _componentInjectorType: ComponentInjector
+    @Inject(COMPONENT_INJECTOR) private _componentInjectorType: ComponentInjector,
+    @Optional() private _componentOutlet: NgComponentOutlet
   ) { }
 
   ngOnChanges(changes: SimpleChanges) {
