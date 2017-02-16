@@ -1,10 +1,11 @@
 {
   "name": "ng-dynamic-component",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Dynamic components with full life-cycle support for inputs and outputs",
   "main": "dist/bundles/ng-dynamic-component.umd.js",
   "module": "dist/index.js",
   "scripts": {
+    "prepublish": "npm run build",
     "prebuild": "rimraf dist compiled",
     "build": "npm-run-all -s build:*",
     "build:main": "ngc",
