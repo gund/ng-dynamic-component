@@ -33,7 +33,7 @@ module.exports = function (config) {
         json: './coverage/coverage.json'
       },
       remapOptions: {
-        exclude: /(test|polyfills).ts$/
+        exclude: /(test|polyfills|test(\\|\/).*|rxjs\.imports).ts$/
       }
     },
     webpackServer: { noInfo: true },

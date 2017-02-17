@@ -31,7 +31,8 @@
   "author": "Alex Malkevich <malkevich.alex@gmail.com>",
   "license": "MIT",
   "peerDependencies": {
-    "@angular/common": "^2.4.7"
+    "@angular/common": "^2.4.7",
+    "rxjs": "^5.1.0"
   },
   "devDependencies": {
     "@angular/common": "^2.4.7",

@@ -13,6 +13,7 @@ export default {
     'tslib': 'tslib',
     [GLOBAL.NG2]: GLOBAL.NG2.TPL,
     [GLOBAL.RX]: GLOBAL.RX.TPL,
+    [GLOBAL.RX_OPERATOR]: GLOBAL.RX_OPERATOR.TPL,
   }),
   external: (moduleId) => {
     if (/^(\@angular|rxjs)\//.test(moduleId)) {

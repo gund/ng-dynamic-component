@@ -1,5 +1,5 @@
 import { ComponentInjector } from '../dynamic';
-import { Component, ComponentRef } from '@angular/core';
+import { Component, ComponentRef, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'component-injector',
@@ -19,4 +19,5 @@ export class ComponentInjectorComponent implements ComponentInjector {
 
 export class MokedInjectedComponent {
   ngOnChanges = jasmine.createSpy('ngOnChanges');
+  onEvent = new EventEmitter<any>();
 }
