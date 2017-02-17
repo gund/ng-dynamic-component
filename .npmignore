@@ -2,6 +2,7 @@ node_modules
 .vscode
 src
 compiled
+coverage
 tslint.json
 tsconfig*.json
 rollup.config.js
