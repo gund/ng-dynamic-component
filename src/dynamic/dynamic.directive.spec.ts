@@ -4,6 +4,7 @@ import { DynamicDirective } from './dynamic.directive';
 import { SimpleChanges } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { Observable } from 'rxjs/Observable';
 
 const getComponentInjectorFrom = getByPredicate<ComponentInjectorComponent>(By.directive(ComponentInjectorComponent));
 
@@ -26,10 +27,11 @@ describe('Directive: Dynamic', () => {
       fixture = TestBed.createComponent(TestComponent);
       injectorComp = getComponentInjectorFrom(fixture).component;
       injectedComp = injectorComp.component;
+
+      fixture.componentInstance['inputs'] = { prop1: 'prop1', prop2: 2 };
     }));
 
     it('should be passed to component', () => {
-      fixture.componentInstance['inputs'] = { prop1: 'prop1', prop2: 2 };
       fixture.detectChanges();
 
       expect(injectedComp['prop1']).toBe('prop1');
@@ -46,14 +48,12 @@ describe('Directive: Dynamic', () => {
         expect(changes.prop2.isFirstChange()).toBeTruthy();
       });
 
-      fixture.componentInstance['inputs'] = { prop1: 'prop1', prop2: 2 };
       fixture.detectChanges();
 
       expect(injectedComp.ngOnChanges).toHaveBeenCalledTimes(1);
     });
 
     it('should trigger `OnChanges` life-cycle hook on updates', () => {
-      fixture.componentInstance['inputs'] = { prop1: 'prop1', prop2: 2 };
       fixture.detectChanges();
 
       expect(injectedComp.ngOnChanges).toHaveBeenCalledTimes(1);
@@ -83,7 +83,6 @@ describe('Directive: Dynamic', () => {
         expect(changes.prop2.isFirstChange()).toBeTruthy();
       });
 
-      fixture.componentInstance['inputs'] = { prop1: 'prop1', prop2: 2 };
       fixture.detectChanges();
 
       expect(injectedComp.ngOnChanges).toHaveBeenCalledTimes(1);
@@ -92,6 +91,46 @@ describe('Directive: Dynamic', () => {
       fixture.detectChanges();
 
       expect(newInjectedComp.ngOnChanges).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('outputs', () => {
+    let fixture: ComponentFixture<TestComponent>
+      , injectorComp: ComponentInjectorComponent
+      , injectedComp: MokedInjectedComponent
+      , outputSpy: jasmine.Spy;
+
+    beforeEach(async(() => {
+      const template = `<component-injector [ndcDynamicOutputs]="outputs"></component-injector>`;
+      TestBed.overrideComponent(TestComponent, { set: { template } });
+      fixture = TestBed.createComponent(TestComponent);
+      injectorComp = getComponentInjectorFrom(fixture).component;
+      injectedComp = injectorComp.component;
+      outputSpy = jasmine.createSpy('outputSpy');
+
+      fixture.componentInstance['outputs'] = { onEvent: outputSpy };
+    }));
+
+    it('should bind outputs to component and receive events', async(() => {
+      fixture.detectChanges();
+
+      injectedComp.onEvent.next('data');
+
+      expect(outputSpy).toHaveBeenCalledTimes(1);
+      expect(outputSpy).toHaveBeenCalledWith('data');
+    }));
+
+    it('should unbind outputs when component destroys', () => {
+      const tearDownFn = jasmine.createSpy('tearDownFn');
+
+      injectedComp.onEvent = new Observable(_ => tearDownFn) as any;
+
+      fixture.detectChanges();
+
+      injectorComp.component = null;
+      fixture.detectChanges();
+
+      expect(tearDownFn).toHaveBeenCalledTimes(1);
     });
   });
 });

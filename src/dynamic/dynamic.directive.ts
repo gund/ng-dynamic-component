@@ -88,6 +88,10 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
   }
 
   updateInputs(isFirstChange = false) {
+    if (!this._componentInst) {
+      return;
+    }
+
     Object.keys(this.ndcDynamicInputs).forEach(p =>
       this._componentInst[p] = this.ndcDynamicInputs[p]);
 
@@ -96,6 +100,10 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
 
   bindOutputs() {
     this._destroyed$.next();
+
+    if (!this._componentInst) {
+      return;
+    }
 
     Object.keys(this.ndcDynamicOutputs)
       .filter(p => this._componentInst[p])
@@ -109,7 +117,7 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
       changes = this._collectFirstChanges();
     }
 
-    if (changes) {
+    if (changes && this._componentInst) {
       this._componentInst.ngOnChanges(changes);
     }
   }
