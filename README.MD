@@ -92,8 +92,6 @@ Thanks to this separation you are able to connect inputs/outputs and life-cycle 
 dynamic components by implementing `ComponentInjector` and providing it via `DynamicModule.withComponents(null, [here])` in second argument.
 
 It was done to be able to reuse [`NgComponentOutlet`](https://github.com/angular/angular/commit/8578682) added in Angular 4-beta.3.
-> Due to update of implementation angular team hide `componentRef` by making it private so extending of that directive and
-exposing `componentRef` to be public will be necessary but this will be done in this library.
 
 ## License
 
