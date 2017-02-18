@@ -1,6 +1,6 @@
 {
   "name": "ng-dynamic-component",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Dynamic components with full life-cycle support for inputs and outputs",
   "main": "dist/bundles/ng-dynamic-component.umd.js",
   "module": "dist/index.js",
