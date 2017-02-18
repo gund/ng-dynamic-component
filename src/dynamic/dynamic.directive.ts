@@ -102,14 +102,12 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
         .subscribe(this.ndcDynamicOutputs[p]));
   }
 
-  notifyOnInputChanges(changes: SimpleChanges, forceFirstChanges: boolean) {
+  notifyOnInputChanges(changes: SimpleChanges = {}, forceFirstChanges: boolean) {
     if (forceFirstChanges) {
       changes = this._collectFirstChanges();
     }
 
-    if (changes && this._componentInst) {
-      this._componentInst.ngOnChanges(changes);
-    }
+    this._componentInst.ngOnChanges(changes);
   }
 
   private _collectFirstChanges(): SimpleChanges {

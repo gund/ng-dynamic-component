@@ -1,5 +1,5 @@
 import { ComponentInjector } from '../dynamic';
-import { Component, ComponentRef, EventEmitter } from '@angular/core';
+import { Component, ComponentRef, EventEmitter, Input } from '@angular/core';
 
 @Component({
   selector: 'component-injector',
