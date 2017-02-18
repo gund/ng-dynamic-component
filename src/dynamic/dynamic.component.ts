@@ -32,18 +32,21 @@ export class DynamicComponent implements OnChanges, ComponentInjector {
   ) { }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['appDynamicComponent']) {
+    if (changes['ndcDynamicComponent']) {
       this.createDynamicComponent();
     }
   }
 
   createDynamicComponent() {
     this._vcr.clear();
+    this.componentRef = null;
 
-    this.componentRef = this._vcr.createComponent(
-      this._cfr.resolveComponentFactory(this.ndcDynamicComponent),
-      0, this._resolveInjector(), this.ndcDynamicContent
-    );
+    if (this.ndcDynamicComponent) {
+      this.componentRef = this._vcr.createComponent(
+        this._cfr.resolveComponentFactory(this.ndcDynamicComponent),
+        0, this._resolveInjector(), this.ndcDynamicContent
+      );
+    }
   }
 
   private _resolveInjector(): Injector {
