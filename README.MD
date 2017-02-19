@@ -2,6 +2,8 @@
 
 > Dynamic components with full life-cycle support for inputs and outputs
 
+[![Travis CI](https://img.shields.io/travis/gund/ng-dynamic-component/master.svg?maxAge=2592000)](https://travis-ci.org/gund/ng-dynamic-component)
+[![Coverage](https://img.shields.io/codecov/c/github/gund/ng-dynamic-component.svg?maxAge=2592000)](https://codecov.io/gh/gund/ng-dynamic-component)
 [![Npm](https://img.shields.io/npm/v/ng-dynamic-component.svg?maxAge=2592000)](https://badge.fury.io/js/ng-dynamic-component)
 [![Npm Downloads](https://img.shields.io/npm/dt/ng-dynamic-component.svg?maxAge=2592000)](https://www.npmjs.com/package/ng-dynamic-component)
 [![Licence](https://img.shields.io/npm/l/ng-dynamic-component.svg?maxAge=2592000)](https://github.com/gund/ng-dynamic-component/blob/master/LICENSE)
