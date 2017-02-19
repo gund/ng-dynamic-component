@@ -1,0 +1,14 @@
+engines:
+  duplication:
+    enabled: true
+    config:
+      languages:
+      - javascript
+  tslint:
+    enabled: true
+  fixme:
+    enabled: true
+ratings:
+  paths:
+  - "src/**/*.ts"
+exclude_paths: []
