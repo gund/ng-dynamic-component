@@ -1,6 +1,6 @@
 {
   "name": "ng-dynamic-component",
-  "version": "0.0.4",
+  "version": "0.0.0-semantically-released",
   "description": "Dynamic components with full life-cycle support for inputs and outputs",
   "main": "dist/bundles/ng-dynamic-component.umd.js",
   "module": "dist/index.js",
@@ -93,5 +93,9 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gund/ng-dynamic-component.git"
   }
 }
