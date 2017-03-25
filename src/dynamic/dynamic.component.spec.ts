@@ -147,7 +147,7 @@ describe('DynamicComponent', () => {
 
     it('should be rendered if [ndcDynamicContent] provided', () => {
       TestBed
-        .overrideComponent(TestComponent, { set: { template: `<template>projected text</template>${testTemplate}` } })
+        .overrideComponent(TestComponent, { set: { template: `<ng-template>projected text</ng-template>${testTemplate}` } })
         .overrideComponent(InjectedComponent, { set: { template: `<ng-content></ng-content>` } })
         .configureTestingModule({ schemas: [NO_ERRORS_SCHEMA] });
 
