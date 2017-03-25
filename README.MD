@@ -10,6 +10,9 @@
 [![Licence](https://img.shields.io/npm/l/ng-dynamic-component.svg?maxAge=2592000)](https://github.com/gund/ng-dynamic-component/blob/master/LICENSE)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
+Version 1+ supports Angular 4+
+For Angular 2 please use `ng-dynamic-component@^0.0.1`
+
 ## Installation
 
 ```bash
@@ -65,6 +68,24 @@ class MyComponent {
 Here you can update your inputs (ex. `inputs.hello = 'WORLD'`) and they will trigger standard Angular's life-cycle hooks
 (of course you should consider which change detection strategy you are using).
 
+
+You can also use [`NgComponentOutlet`](https://angular.io/docs/ts/latest/api/common/index/NgComponentOutlet-directive.html)
+directive from `@angular/common` instead of `<ndc-dynamic>` and apply `inputs` and `outputs` to your dynamic components:
+```ts
+@Component({
+  selector: 'my-component',
+  template: `<div *ngComponentOutlet="component"
+                   [ndcDynamicInputs]="inputs"
+                   [ndcDynamicOutputs]="outputs"
+                   ></div>`
+})
+class MyComponent {
+  component = MyDynamicComponent1;
+  inputs = {...};
+  outputs = {...}
+}
+```
+
 You can have more advanced stuff over your dynamically rendered components like setting custom injector (`[ndcDynamicInjector]`)
 or providing additional/overriding providers (`[ndcDynamicProviders]`) or both simultaneously
 or projecting nodes (`[ndcDynamicContent]`).
@@ -78,8 +99,6 @@ Thanks to this separation you are able to connect inputs/outputs and life-cycle 
 dynamic components by implementing `ComponentInjector` and providing it via `DynamicModule.withComponents(null, [here])` in second argument.
 
 It was done to be able to reuse [`NgComponentOutlet`](https://github.com/angular/angular/commit/8578682) added in Angular 4-beta.3.
-> Due to update of implementation angular team hide `componentRef` by making it private so extending of that directive and
-exposing `componentRef` to be public will be necessary but this will be done in this library.
 
 ## License
 
