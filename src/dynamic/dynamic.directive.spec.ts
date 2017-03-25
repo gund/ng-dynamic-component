@@ -1,6 +1,7 @@
 import { ComponentInjectorComponent, getByPredicate, MokedInjectedComponent, TestComponent } from '../test/index';
 import { COMPONENT_INJECTOR } from './component-injector';
 import { DynamicDirective } from './dynamic.directive';
+import { NgComponentOutlet } from '@angular/common';
 import { SimpleChanges } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
@@ -91,6 +92,40 @@ describe('Directive: Dynamic', () => {
       fixture.detectChanges();
 
       expect(newInjectedComp.ngOnChanges).toHaveBeenCalledTimes(2);
+    });
+
+    it('should NOT trigger `OnChanges` hook if not available on dynamic component', () => {
+      delete injectedComp.ngOnChanges;
+      expect(() => fixture.detectChanges()).not.toThrow();
+    });
+  });
+
+  describe('inputs with `NgComponentOutlet`', () => {
+    let fixture: ComponentFixture<ComponentInjectorComponent>
+      , injectedComp: MokedInjectedComponent;
+
+    beforeEach(async(() => {
+      injectedComp = new MokedInjectedComponent();
+
+      TestBed.configureTestingModule({
+        declarations: [TestComponent, DynamicDirective],
+        providers: [
+          { provide: NgComponentOutlet, useValue: { _componentRef: injectedComp } }
+        ]
+      });
+
+      const template = `<ng-template [ndcDynamicInputs]="inputs"></ng-template>`;
+      TestBed.overrideComponent(ComponentInjectorComponent, { set: { template } });
+      fixture = TestBed.createComponent(ComponentInjectorComponent);
+
+      fixture.componentInstance['inputs'] = { prop1: '123', prop2: 1 };
+    }));
+
+    it('should be passed to dynamic component instance', () => {
+      fixture.detectChanges();
+
+      expect(injectedComp['prop1']).toBe('123');
+      expect(injectedComp['prop2']).toBe(1);
     });
   });
 
