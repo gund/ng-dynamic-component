@@ -24,7 +24,7 @@ export class DynamicComponent implements OnChanges, ComponentInjector {
   @Input() ndcDynamicProviders: Provider[];
   @Input() ndcDynamicContent: any[][];
 
-  componentRef: ComponentRef<any>;
+  componentRef: ComponentRef<any> | null;
 
   constructor(
     private _vcr: ViewContainerRef,
