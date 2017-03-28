@@ -4,6 +4,7 @@
   "description": "Dynamic components with full life-cycle support for inputs and outputs for Angular",
   "main": "dist/bundles/ng-dynamic-component.umd.js",
   "module": "dist/index.js",
+  "typings": "dist/index.d.ts",
   "scripts": {
     "commit": "git-cz",
     "prepublish": "npm run build",
