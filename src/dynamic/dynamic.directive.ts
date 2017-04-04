@@ -33,7 +33,7 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
   private _destroyed$ = new Subject<void>();
 
   private get _compOutletInst(): any {
-    return this._componentOutlet && (<any>this._componentOutlet)._componentRef.instance;
+    return this._componentOutlet && (<any>this._componentOutlet)._componentRef && (<any>this._componentOutlet)._componentRef.instance;
   }
 
   private get _componentInst(): any {
