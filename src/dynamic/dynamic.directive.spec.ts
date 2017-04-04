@@ -110,7 +110,8 @@ describe('Directive: Dynamic', () => {
       TestBed.configureTestingModule({
         declarations: [TestComponent, DynamicDirective],
         providers: [
-          { provide: NgComponentOutlet, useValue: { _componentRef: injectedComp } }
+          // _componentRef is ConmonentRef - so instance should be in `instance` prop
+          { provide: NgComponentOutlet, useValue: { _componentRef: { instance: injectedComp } } }
         ]
       });
 
