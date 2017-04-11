@@ -21,9 +21,9 @@ $ npm install ng-dynamic-component --save
 
 ## Usage
 
-Import `DynamicModue` with dynamic components you want to insert later:
+Import `DynamicModule` with dynamic components you want to insert later:
 ```ts
-import { DynamicModue } from 'ng-dynamic-component';
+import { DynamicModule } from 'ng-dynamic-component';
 import { MyDynamicComponent1, MyDynamicComponent2 } from './my-components';
 
 @NgModule({
