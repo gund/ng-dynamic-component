@@ -1,5 +1,7 @@
 # ng-dynamic-component
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/gund/ng-dynamic-component.svg)](https://greenkeeper.io/)
+
 > Dynamic components with full life-cycle support for inputs and outputs
 
 [![Travis CI](https://img.shields.io/travis/gund/ng-dynamic-component/master.svg?maxAge=2592000)](https://travis-ci.org/gund/ng-dynamic-component)
