@@ -70,6 +70,13 @@ class MyComponent {
     onSomething: (type) => alert(type)
   }
 }
+
+@Component({selector: 'my-dynamic-component1', template: 'Dynamic Component 1'})
+class MyDynamicComponent1 {
+  @Input() hello: string;
+  @Input() something: Function;
+  @Output() onSomething = new EventEmitter<string>();
+}
 ```
 Here you can update your inputs (ex. `inputs.hello = 'WORLD'`) and they will trigger standard Angular's life-cycle hooks
 (of course you should consider which change detection strategy you are using).
