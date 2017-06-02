@@ -1,4 +1,4 @@
-import { ComponentInjectorComponent, getByPredicate, MokedInjectedComponent, TestComponent } from '../test/index';
+import { ComponentInjectorComponent, getByPredicate, MockedInjectedComponent, TestComponent } from '../test/index';
 import { COMPONENT_INJECTOR } from './component-injector';
 import { DynamicDirective } from './dynamic.directive';
 import { NgComponentOutlet } from '@angular/common';
@@ -20,7 +20,7 @@ describe('Directive: Dynamic', () => {
   describe('inputs', () => {
     let fixture: ComponentFixture<TestComponent>
       , injectorComp: ComponentInjectorComponent
-      , injectedComp: MokedInjectedComponent;
+      , injectedComp: MockedInjectedComponent;
 
     beforeEach(async(() => {
       const template = `<component-injector [ndcDynamicInputs]="inputs"></component-injector>`;
@@ -98,14 +98,24 @@ describe('Directive: Dynamic', () => {
       delete injectedComp.ngOnChanges;
       expect(() => fixture.detectChanges()).not.toThrow();
     });
+
+    it('should NOT throw exception if inputs undefined', () => {
+      fixture.componentInstance['inputs'] = undefined;
+      expect(() => fixture.detectChanges()).not.toThrow();
+    });
+
+    it('should NOT throw exception if inputs null', () => {
+      fixture.componentInstance['inputs'] = null;
+      expect(() => fixture.detectChanges()).not.toThrow();
+    });
   });
 
   describe('inputs with `NgComponentOutlet`', () => {
     let fixture: ComponentFixture<ComponentInjectorComponent>
-      , injectedComp: MokedInjectedComponent;
+      , injectedComp: MockedInjectedComponent;
 
     beforeEach(async(() => {
-      injectedComp = new MokedInjectedComponent();
+      injectedComp = new MockedInjectedComponent();
 
       TestBed.configureTestingModule({
         declarations: [TestComponent, DynamicDirective],
@@ -133,7 +143,7 @@ describe('Directive: Dynamic', () => {
   describe('outputs', () => {
     let fixture: ComponentFixture<TestComponent>
       , injectorComp: ComponentInjectorComponent
-      , injectedComp: MokedInjectedComponent
+      , injectedComp: MockedInjectedComponent
       , outputSpy: jasmine.Spy;
 
     beforeEach(async(() => {
@@ -154,6 +164,26 @@ describe('Directive: Dynamic', () => {
 
       expect(outputSpy).toHaveBeenCalledTimes(1);
       expect(outputSpy).toHaveBeenCalledWith('data');
+    }));
+
+    it('should NOT bind outputs to component when outputs undefined', async(() => {
+      fixture.componentInstance['outputs'] = undefined;
+
+      expect(() => fixture.detectChanges()).not.toThrow();
+
+      injectedComp.onEvent.next('data');
+
+      expect(outputSpy).not.toHaveBeenCalled();
+    }));
+
+    it('should NOT bind outputs to component when outputs null', async(() => {
+      fixture.componentInstance['outputs'] = null;
+
+      expect(() => fixture.detectChanges()).not.toThrow();
+
+      injectedComp.onEvent.next('data');
+
+      expect(outputSpy).not.toHaveBeenCalled();
     }));
 
     it('should unbind outputs when component destroys', () => {
