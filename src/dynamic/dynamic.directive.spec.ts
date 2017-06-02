@@ -98,6 +98,16 @@ describe('Directive: Dynamic', () => {
       delete injectedComp.ngOnChanges;
       expect(() => fixture.detectChanges()).not.toThrow();
     });
+
+    it('should NOT throw exception if inputs undefined', () => {
+      fixture.componentInstance['inputs'] = undefined;
+      expect(() => fixture.detectChanges()).not.toThrow();
+    });
+
+    it('should NOT throw exception if inputs null', () => {
+      fixture.componentInstance['inputs'] = null;
+      expect(() => fixture.detectChanges()).not.toThrow();
+    });
   });
 
   describe('inputs with `NgComponentOutlet`', () => {
@@ -154,6 +164,26 @@ describe('Directive: Dynamic', () => {
 
       expect(outputSpy).toHaveBeenCalledTimes(1);
       expect(outputSpy).toHaveBeenCalledWith('data');
+    }));
+
+    it('should NOT bind outputs to component when outputs undefined', async(() => {
+      fixture.componentInstance['outputs'] = undefined;
+
+      expect(() => fixture.detectChanges()).not.toThrow();
+
+      injectedComp.onEvent.next('data');
+
+      expect(outputSpy).not.toHaveBeenCalled();
+    }));
+
+    it('should NOT bind outputs to component when outputs null', async(() => {
+      fixture.componentInstance['outputs'] = null;
+
+      expect(() => fixture.detectChanges()).not.toThrow();
+
+      injectedComp.onEvent.next('data');
+
+      expect(outputSpy).not.toHaveBeenCalled();
     }));
 
     it('should unbind outputs when component destroys', () => {

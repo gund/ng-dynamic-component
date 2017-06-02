@@ -88,7 +88,7 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
   }
 
   updateInputs(isFirstChange = false) {
-    if (!this._componentInst) {
+    if (!this.ndcDynamicInputs || !this._componentInst) {
       return;
     }
 
@@ -101,7 +101,7 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
   bindOutputs() {
     this._destroyed$.next();
 
-    if (!this._componentInst) {
+    if (!this.ndcDynamicOutputs || !this._componentInst) {
       return;
     }
 
