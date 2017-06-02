@@ -7,7 +7,7 @@ import { Component, ComponentRef, EventEmitter, Input } from '@angular/core';
 })
 export class ComponentInjectorComponent implements ComponentInjector {
 
-  component = new MokedInjectedComponent();
+  component = new MockedInjectedComponent();
 
   get componentRef(): ComponentRef<ComponentInjectorComponent> {
     return {
@@ -17,7 +17,7 @@ export class ComponentInjectorComponent implements ComponentInjector {
 
 }
 
-export class MokedInjectedComponent {
+export class MockedInjectedComponent {
   ngOnChanges = jasmine.createSpy('ngOnChanges');
   onEvent = new EventEmitter<any>();
 }

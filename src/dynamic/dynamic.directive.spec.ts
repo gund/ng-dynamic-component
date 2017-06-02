@@ -1,4 +1,4 @@
-import { ComponentInjectorComponent, getByPredicate, MokedInjectedComponent, TestComponent } from '../test/index';
+import { ComponentInjectorComponent, getByPredicate, MockedInjectedComponent, TestComponent } from '../test/index';
 import { COMPONENT_INJECTOR } from './component-injector';
 import { DynamicDirective } from './dynamic.directive';
 import { NgComponentOutlet } from '@angular/common';
@@ -20,7 +20,7 @@ describe('Directive: Dynamic', () => {
   describe('inputs', () => {
     let fixture: ComponentFixture<TestComponent>
       , injectorComp: ComponentInjectorComponent
-      , injectedComp: MokedInjectedComponent;
+      , injectedComp: MockedInjectedComponent;
 
     beforeEach(async(() => {
       const template = `<component-injector [ndcDynamicInputs]="inputs"></component-injector>`;
@@ -102,10 +102,10 @@ describe('Directive: Dynamic', () => {
 
   describe('inputs with `NgComponentOutlet`', () => {
     let fixture: ComponentFixture<ComponentInjectorComponent>
-      , injectedComp: MokedInjectedComponent;
+      , injectedComp: MockedInjectedComponent;
 
     beforeEach(async(() => {
-      injectedComp = new MokedInjectedComponent();
+      injectedComp = new MockedInjectedComponent();
 
       TestBed.configureTestingModule({
         declarations: [TestComponent, DynamicDirective],
@@ -133,7 +133,7 @@ describe('Directive: Dynamic', () => {
   describe('outputs', () => {
     let fixture: ComponentFixture<TestComponent>
       , injectorComp: ComponentInjectorComponent
-      , injectedComp: MokedInjectedComponent
+      , injectedComp: MockedInjectedComponent
       , outputSpy: jasmine.Spy;
 
     beforeEach(async(() => {
