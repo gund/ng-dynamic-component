@@ -87,10 +87,26 @@ directive from `@angular/common` instead of `<ndc-dynamic>` and apply `inputs` a
 ```ts
 @Component({
   selector: 'my-component',
-  template: `<div *ngComponentOutlet="component"
-                   [ndcDynamicInputs]="inputs"
-                   [ndcDynamicOutputs]="outputs"
-                   ></div>`
+  template: `<ng-container [ngComponentOutlet]="component"
+                           [ndcDynamicInputs]="inputs"
+                           [ndcDynamicOutputs]="outputs"
+                           ></ng-container>`
+})
+class MyComponent {
+  component = MyDynamicComponent1;
+  inputs = {...};
+  outputs = {...}
+}
+```
+
+Also you can use `ngComponentOutlet` with `*` syntax:
+```ts
+@Component({
+  selector: 'my-component',
+  template: `<ng-container *ngComponentOutlet="component;
+                            ndcDynamicInputs: inputs;
+                            ndcDynamicOutputs: outputs"
+                            ></ng-container>`
 })
 class MyComponent {
   component = MyDynamicComponent1;
