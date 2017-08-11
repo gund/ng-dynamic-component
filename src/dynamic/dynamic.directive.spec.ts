@@ -1,13 +1,22 @@
-import { ComponentInjectorComponent, getByPredicate, MockedInjectedComponent, TestComponent } from '../test/index';
-import { COMPONENT_INJECTOR } from './component-injector';
-import { DynamicDirective } from './dynamic.directive';
-import { NgComponentOutlet } from '@angular/common';
 import { SimpleChanges } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
+
+import {
+  ComponentInjectorComponent,
+  getByPredicate,
+  InjectedComponent,
+  MockedInjectedComponent,
+  TestComponent,
+  TestModule,
+} from '../test/index';
+import { COMPONENT_INJECTOR } from './component-injector';
+import { DynamicDirective } from './dynamic.directive';
 
 const getComponentInjectorFrom = getByPredicate<ComponentInjectorComponent>(By.directive(ComponentInjectorComponent));
+const getInjectedComponentFrom = getByPredicate<InjectedComponent>(By.directive(InjectedComponent));
 
 describe('Directive: Dynamic', () => {
   beforeEach(() => {
@@ -111,29 +120,53 @@ describe('Directive: Dynamic', () => {
   });
 
   describe('inputs with `NgComponentOutlet`', () => {
-    let fixture: ComponentFixture<ComponentInjectorComponent>
-      , injectedComp: MockedInjectedComponent;
+    let fixture: ComponentFixture<TestComponent>;
 
     beforeEach(async(() => {
-      injectedComp = new MockedInjectedComponent();
-
       TestBed.configureTestingModule({
-        declarations: [TestComponent, DynamicDirective],
-        providers: [
-          // _componentRef is ConmonentRef - so instance should be in `instance` prop
-          { provide: NgComponentOutlet, useValue: { _componentRef: { instance: injectedComp } } }
-        ]
+        imports: [TestModule],
+        declarations: [DynamicDirective, TestComponent],
       });
 
-      const template = `<ng-template [ndcDynamicInputs]="inputs"></ng-template>`;
-      TestBed.overrideComponent(ComponentInjectorComponent, { set: { template } });
-      fixture = TestBed.createComponent(ComponentInjectorComponent);
+      const template = `<ng-container [ngComponentOutlet]="comp" [ndcDynamicInputs]="inputs"></ng-container>`;
+      TestBed.overrideComponent(TestComponent, { set: { template } });
+      fixture = TestBed.createComponent(TestComponent);
 
       fixture.componentInstance['inputs'] = { prop1: '123', prop2: 1 };
+      fixture.componentInstance['comp'] = InjectedComponent;
     }));
 
     it('should be passed to dynamic component instance', () => {
       fixture.detectChanges();
+
+      const injectedComp = getInjectedComponentFrom(fixture).component;
+
+      expect(injectedComp['prop1']).toBe('123');
+      expect(injectedComp['prop2']).toBe(1);
+    });
+  });
+
+  describe('inputs with `NgComponentOutlet` * syntax', () => {
+    let fixture: ComponentFixture<TestComponent>;
+
+    beforeEach(async(() => {
+      TestBed.configureTestingModule({
+        imports: [TestModule],
+        declarations: [DynamicDirective, TestComponent],
+      });
+
+      const template = `<ng-container *ngComponentOutlet="comp; ndcDynamicInputs: inputs"></ng-container>`;
+      TestBed.overrideComponent(TestComponent, { set: { template } });
+      fixture = TestBed.createComponent(TestComponent);
+
+      fixture.componentInstance['inputs'] = { prop1: '123', prop2: 1 };
+      fixture.componentInstance['comp'] = InjectedComponent;
+    }));
+
+    it('should be passed to dynamic component instance', () => {
+      fixture.detectChanges();
+
+      const injectedComp = getInjectedComponentFrom(fixture).component;
 
       expect(injectedComp['prop1']).toBe('123');
       expect(injectedComp['prop2']).toBe(1);
@@ -197,6 +230,78 @@ describe('Directive: Dynamic', () => {
       fixture.detectChanges();
 
       expect(tearDownFn).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('outputs with `NgComponentOutlet`', () => {
+    let fixture: ComponentFixture<TestComponent>
+      , outputSpy: jasmine.Spy;
+
+    beforeEach(async(() => {
+      TestBed.configureTestingModule({
+        imports: [TestModule],
+        declarations: [DynamicDirective, TestComponent],
+      });
+
+      const template = `<ng-container [ngComponentOutlet]="comp" [ndcDynamicOutputs]="outputs"></ng-container>`;
+      TestBed.overrideComponent(TestComponent, { set: { template } });
+      fixture = TestBed.createComponent(TestComponent);
+
+      outputSpy = jasmine.createSpy('outputSpy');
+
+      InjectedComponent.prototype['onEvent'] = new Subject<any>();
+
+      fixture.componentInstance['outputs'] = { onEvent: outputSpy };
+      fixture.componentInstance['comp'] = InjectedComponent;
+    }));
+
+    afterEach(() => delete InjectedComponent.prototype['onEvent']);
+
+    it('should be passed to dynamic component instance', () => {
+      fixture.detectChanges();
+
+      const injectedComp = getInjectedComponentFrom(fixture).component;
+
+      injectedComp['onEvent'].next('data');
+
+      expect(outputSpy).toHaveBeenCalledTimes(1);
+      expect(outputSpy).toHaveBeenCalledWith('data');
+    });
+  });
+
+  describe('outputs with `NgComponentOutlet` * syntax', () => {
+    let fixture: ComponentFixture<TestComponent>
+      , outputSpy: jasmine.Spy;
+
+    beforeEach(async(() => {
+      TestBed.configureTestingModule({
+        imports: [TestModule],
+        declarations: [DynamicDirective, TestComponent],
+      });
+
+      const template = `<ng-container *ngComponentOutlet="comp; ndcDynamicOutputs: outputs"></ng-container>`;
+      TestBed.overrideComponent(TestComponent, { set: { template } });
+      fixture = TestBed.createComponent(TestComponent);
+
+      outputSpy = jasmine.createSpy('outputSpy');
+
+      InjectedComponent.prototype['onEvent'] = new Subject<any>();
+
+      fixture.componentInstance['outputs'] = { onEvent: outputSpy };
+      fixture.componentInstance['comp'] = InjectedComponent;
+    }));
+
+    afterEach(() => delete InjectedComponent.prototype['onEvent']);
+
+    it('should be passed to dynamic component instance', () => {
+      fixture.detectChanges();
+
+      const injectedComp = getInjectedComponentFrom(fixture).component;
+
+      injectedComp['onEvent'].next('data');
+
+      expect(outputSpy).toHaveBeenCalledTimes(1);
+      expect(outputSpy).toHaveBeenCalledWith('data');
     });
   });
 });

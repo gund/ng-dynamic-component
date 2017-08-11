@@ -1,9 +1,8 @@
-import { COMPONENT_INJECTOR, ComponentInjector } from './component-injector';
-import { CustomSimpleChange, UNINITIALIZED } from './custom-simple-change';
 import { NgComponentOutlet } from '@angular/common';
 import {
   Directive,
   DoCheck,
+  Host,
   Inject,
   Injector,
   Input,
@@ -12,28 +11,43 @@ import {
   OnChanges,
   OnDestroy,
   Optional,
-  SimpleChanges
+  SimpleChanges,
+  SkipSelf,
+  TemplateRef,
 } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
+
+import { COMPONENT_INJECTOR, ComponentInjector } from './component-injector';
+import { CustomSimpleChange, UNINITIALIZED } from './custom-simple-change';
 
 export type KeyValueChangeRecordAny = KeyValueChangeRecord<any, any>;
 
 @Directive({
-  selector: '[ndcDynamicInputs], [ndcDynamicOutputs]'
+  selector: '[ndcDynamicInputs],[ndcDynamicOutputs],[ngComponentOutletNdcDynamicInputs],[ngComponentOutletNdcDynamicOutputs]'
 })
 export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
 
-  @Input() ndcDynamicInputs: { [k: string]: any } = {};
-  @Input() ndcDynamicOutputs: { [k: string]: Function } = {};
+  @Input() ndcDynamicInputs: { [k: string]: any };
+  @Input() ngComponentOutletNdcDynamicInputs: { [k: string]: any };
+  @Input() ndcDynamicOutputs: { [k: string]: Function };
+  @Input() ngComponentOutletNdcDynamicOutputs: { [k: string]: Function };
 
   private _componentInjector: ComponentInjector = this._injector.get(this._componentInjectorType, {});
   private _lastComponentInst: any = this._componentInjector;
   private _lastInputChanges: SimpleChanges;
-  private _inputsDiffer = this._differs.find(this.ndcDynamicInputs).create(null as any);
+  private _inputsDiffer = this._differs.find({}).create(null as any);
   private _destroyed$ = new Subject<void>();
 
+  private get _inputs() {
+    return this.ndcDynamicInputs || this.ngComponentOutletNdcDynamicInputs;
+  }
+
+  private get _outputs() {
+    return this.ndcDynamicOutputs || this.ngComponentOutletNdcDynamicOutputs;
+  }
+
   private get _compOutletInst(): any {
-    return this._componentOutlet && (<any>this._componentOutlet)._componentRef && (<any>this._componentOutlet)._componentRef.instance;
+    return this._extractCompFrom(this._componentOutlet);
   }
 
   private get _componentInst(): any {
@@ -54,7 +68,7 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
     private _differs: KeyValueDiffers,
     private _injector: Injector,
     @Inject(COMPONENT_INJECTOR) private _componentInjectorType: ComponentInjector,
-    @Optional() private _componentOutlet: NgComponentOutlet
+    @Host() @Optional() private _componentOutlet: NgComponentOutlet,
   ) { }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -71,7 +85,13 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
       return;
     }
 
-    const inputsChanges = this._inputsDiffer.diff(this.ndcDynamicInputs);
+    const inputs = this._inputs;
+
+    if (!inputs) {
+      return;
+    }
+
+    const inputsChanges = this._inputsDiffer.diff(inputs);
 
     if (inputsChanges) {
       const isNotFirstChange = !!this._lastInputChanges;
@@ -88,28 +108,31 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
   }
 
   updateInputs(isFirstChange = false) {
-    if (!this.ndcDynamicInputs || !this._componentInst) {
+    const inputs = this._inputs;
+
+    if (!inputs || !this._componentInst) {
       return;
     }
 
-    Object.keys(this.ndcDynamicInputs).forEach(p =>
-      this._componentInst[p] = this.ndcDynamicInputs[p]);
+    Object.keys(inputs).forEach(p =>
+      this._componentInst[p] = inputs[p]);
 
     this.notifyOnInputChanges(this._lastInputChanges, isFirstChange);
   }
 
   bindOutputs() {
     this._destroyed$.next();
+    const outputs = this._outputs;
 
-    if (!this.ndcDynamicOutputs || !this._componentInst) {
+    if (!outputs || !this._componentInst) {
       return;
     }
 
-    Object.keys(this.ndcDynamicOutputs)
+    Object.keys(outputs)
       .filter(p => this._componentInst[p])
       .forEach(p => this._componentInst[p]
         .takeUntil(this._destroyed$)
-        .subscribe(this.ndcDynamicOutputs[p]));
+        .subscribe(outputs[p]));
   }
 
   notifyOnInputChanges(changes: SimpleChanges = {}, forceFirstChanges: boolean) {
@@ -127,9 +150,10 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
 
   private _collectFirstChanges(): SimpleChanges {
     const changes = {} as SimpleChanges;
+    const inputs = this._inputs;
 
-    Object.keys(this.ndcDynamicInputs).forEach(prop =>
-      changes[prop] = new CustomSimpleChange(UNINITIALIZED, this.ndcDynamicInputs[prop], true));
+    Object.keys(inputs).forEach(prop =>
+      changes[prop] = new CustomSimpleChange(UNINITIALIZED, inputs[prop], true));
 
     return changes;
   }
@@ -144,6 +168,10 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
       changes[record.key].previousValue = UNINITIALIZED);
 
     return changes;
+  }
+
+  private _extractCompFrom(outlet: NgComponentOutlet | null): any {
+    return outlet && (<any>outlet)._componentRef && (<any>outlet)._componentRef.instance;
   }
 
 }
