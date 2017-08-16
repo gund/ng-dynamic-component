@@ -73,7 +73,7 @@
     "rollup-globals-regex": "^0.0.3",
     "rollup-plugin-node-resolve": "^3.0.0",
     "rxjs": "^5.2.0",
-    "semantic-release": "^6.3.2",
+    "semantic-release": "^7.0.1",
     "source-map": "^0.5.6",
     "source-map-loader": "^0.2.0",
     "sourcemap-istanbul-instrumenter-loader": "^0.2.0",
