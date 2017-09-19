@@ -23,7 +23,7 @@ before_install:
   - sh -e /etc/init.d/xvfb start
   - npm i -g yarn
 install:
-  - yarn
+  - yarn install --pure-lockfile --ignore-engines
 script:
   - yarn ci
 after_success:
