@@ -39,7 +39,7 @@
     "tslib": "^1.6.0"
   },
   "devDependencies": {
-    "@angular/common": "^4.0.2",
+    "@angular/common": "^5.0.0",
     "@angular/compiler": "^4.0.2",
     "@angular/compiler-cli": "^4.0.2",
     "@angular/core": "^4.0.2",
