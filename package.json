@@ -43,7 +43,7 @@
     "@angular/compiler": "^4.0.2",
     "@angular/compiler-cli": "^4.0.2",
     "@angular/core": "^4.0.2",
-    "@angular/platform-browser": "^4.0.2",
+    "@angular/platform-browser": "^5.0.0",
     "@angular/platform-browser-dynamic": "^4.0.2",
     "@angular/platform-server": "^4.0.2",
     "@types/jasmine": "^2.5.43",
