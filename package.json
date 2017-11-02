@@ -45,7 +45,7 @@
     "@angular/core": "^4.0.2",
     "@angular/platform-browser": "^4.0.2",
     "@angular/platform-browser-dynamic": "^4.0.2",
-    "@angular/platform-server": "^4.0.2",
+    "@angular/platform-server": "^5.0.0",
     "@types/jasmine": "^2.5.43",
     "angular2-template-loader": "^0.6.2",
     "awesome-typescript-loader": "^3.1.2",
