@@ -12,7 +12,9 @@
 [![Greenkeeper badge](https://badges.greenkeeper.io/gund/ng-dynamic-component.svg)](https://greenkeeper.io/)
 
 Version 2.x.x supports Angular 5 (`ng-dynamic-component@^2.0.0`)
+
 Version 1.x.x supports Angular 4 (`ng-dynamic-component@^1.0.0`)
+
 Version 0.x.x supports Angular 2 (`ng-dynamic-component@^0.0.0`)
 
 ## Installation
