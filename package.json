@@ -20,7 +20,7 @@
     "check-coverage": "istanbul check-coverage --functions 75 --lines 75 --branches 75 --statements 75",
     "ci": "npm run test:once && npm run check-coverage",
     "presemantic-release": "npm run build:release",
-    "semantic-release": "semantic-release pre && npm publish dist && semantic-release post"
+    "semantic-release": "cd dist && semantic-release pre && npm publish dist && semantic-release post"
   },
   "keywords": [
     "angular",
@@ -54,6 +54,7 @@
     "codecov": "^2.1.0",
     "codelyzer": "^3.2.1",
     "commitizen": "^2.9.6",
+    "copy-dir": "^0.3.0",
     "copyfiles": "^1.2.0",
     "cz-conventional-changelog": "^2.0.0",
     "istanbul": "^0.4.5",

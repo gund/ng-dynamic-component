@@ -1,5 +1,6 @@
 const { writeFileSync } = require('fs')
 const copyfiles = require('copyfiles')
+const copyDir = require('copy-dir')
 
 writeNewPackage('dist/package.json')
 copyFiles({
@@ -11,6 +12,7 @@ copyFiles({
   ],
   to: 'dist',
 })
+copyGit('dist')
 
 function writeNewPackage(to) {
   const package = require('../package.json')
@@ -32,6 +34,12 @@ function writeNewPackage(to) {
 function copyFiles({ files, to }) {
   console.log(`Copying files to ${to} [${files.join(', ')}]`)
   copyfiles([...files, to], {}, () => null)
+  console.log('OK')
+}
+
+function copyGit(to) {
+  console.log(`Copying .git folder to ${to}`)
+  copyDir.sync('.git', to + '/.git')
   console.log('OK')
 }
 
