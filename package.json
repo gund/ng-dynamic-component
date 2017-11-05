@@ -20,7 +20,7 @@
     "check-coverage": "istanbul check-coverage --functions 75 --lines 75 --branches 75 --statements 75",
     "ci": "npm run test:once && npm run check-coverage",
     "presemantic-release": "npm run build:release",
-    "semantic-release": "cd dist && semantic-release pre && npm publish dist && semantic-release post"
+    "semantic-release": "cd dist && semantic-release pre && npm publish && semantic-release post"
   },
   "keywords": [
     "angular",
