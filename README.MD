@@ -23,11 +23,6 @@ Version 0.x.x supports Angular 2 (`ng-dynamic-component@^0.0.0`)
 $ npm install ng-dynamic-component --save
 ```
 
-Also please make sure you have latest version of `tslib` library and you have in your tsconfig:
-```json
-importHelpers: true
-```
-
 ## Usage
 
 Import `DynamicModule` with dynamic components you want to insert later:
