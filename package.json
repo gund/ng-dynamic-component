@@ -5,7 +5,7 @@
   "main": "dist/bundles/ng-dynamic-component.umd.js",
   "module": "dist/bundles/ng-dynamic-component.es5.js",
   "es2015": "dist/bundles/ng-dynamic-component.es2015.js",
-  "typings": "dist/src/ng-dynamic-component.d.ts",
+  "typings": "dist/ng-dynamic-component.d.ts",
   "scripts": {
     "commit": "git-cz",
     "prepublish": "npm run build",
