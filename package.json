@@ -51,7 +51,7 @@
     "@types/jasmine": "^2.5.43",
     "angular2-template-loader": "^0.6.2",
     "awesome-typescript-loader": "^3.2.3",
-    "codecov": "^2.1.0",
+    "codecov": "^3.0.0",
     "codelyzer": "^4.0.1",
     "commitizen": "^2.9.6",
     "copy-dir": "^0.3.0",
