@@ -35,7 +35,7 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
   private _componentInjector: ComponentInjector = this._injector.get(this._componentInjectorType, {});
   private _lastComponentInst: any = this._componentInjector;
   private _lastInputChanges: SimpleChanges;
-  private _inputsDiffer = this._differs.find({}).create(null as any);
+  private _inputsDiffer = this._differs.find({}).create();
   private _destroyed$ = new Subject<void>();
 
   private get _inputs() {

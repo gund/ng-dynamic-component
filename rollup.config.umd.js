@@ -2,10 +2,12 @@ import nodeResolve from 'rollup-plugin-node-resolve';
 import { globalsRegex, GLOBAL } from 'rollup-globals-regex';
 
 export default {
-  entry: 'dist/bundles/ng-dynamic-component.es5.js',
-  dest: 'dist/bundles/ng-dynamic-component.umd.js',
-  format: 'umd',
-  moduleName: 'dynamicComponent',
+  input: 'dist/bundles/ng-dynamic-component.es5.js',
+  output: {
+    file: 'dist/bundles/ng-dynamic-component.umd.js',
+    format: 'umd',
+  },
+  name: 'dynamicComponent',
   plugins: [
     nodeResolve({ jsnext: true, browser: true })
   ],
