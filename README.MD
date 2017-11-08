@@ -11,18 +11,16 @@
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 [![Greenkeeper badge](https://badges.greenkeeper.io/gund/ng-dynamic-component.svg)](https://greenkeeper.io/)
 
-Version 1+ supports Angular 4+
-For Angular 2 please use `ng-dynamic-component@^0.0.1`
+Version 2.x.x supports Angular 5 (`ng-dynamic-component@^2.0.0`)
+
+Version 1.x.x supports Angular 4 (`ng-dynamic-component@^1.0.0`)
+
+Version 0.x.x supports Angular 2 (`ng-dynamic-component@^0.0.0`)
 
 ## Installation
 
 ```bash
 $ npm install ng-dynamic-component --save
-```
-
-Also please make sure you have latest version of `tslib` library and you have in your tsconfig:
-```json
-importHelpers: true
 ```
 
 ## Usage
