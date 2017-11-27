@@ -84,7 +84,7 @@
     "tslib": "^1.8.0",
     "tslint": "^5.8.0",
     "tslint-loader": "^3.4.3",
-    "typescript": "~2.4.0",
+    "typescript": "~2.6.2",
     "uglify-js": "^3.0.15",
     "webpack": "^3.8.1",
     "webpack-dev-server": "^2.9.3",
