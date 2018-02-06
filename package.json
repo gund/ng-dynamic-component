@@ -58,7 +58,7 @@
     "copyfiles": "^1.2.0",
     "cz-conventional-changelog": "^2.0.0",
     "istanbul": "^0.4.5",
-    "jasmine-core": "^2.5.2",
+    "jasmine-core": "^3.0.0",
     "jasmine-spec-reporter": "^4.0.0",
     "json-loader": "^0.5.4",
     "karma": "^1.4.1",
