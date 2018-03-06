@@ -55,7 +55,7 @@
     "codelyzer": "^4.0.1",
     "commitizen": "^2.9.6",
     "copy-dir": "^0.3.0",
-    "copyfiles": "^1.2.0",
+    "copyfiles": "^2.0.0",
     "cz-conventional-changelog": "^2.0.0",
     "istanbul": "^0.4.5",
     "jasmine-core": "^2.5.2",
