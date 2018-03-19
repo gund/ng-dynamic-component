@@ -106,6 +106,7 @@
   },
   "jest": {
     "preset": "jest-preset-angular",
+    "roots": ["<rootDir>/src"],
     "setupTestFrameworkScriptFile": "<rootDir>/src/setupJest.ts",
     "collectCoverageFrom": [
       "src/dynamic/**/*.ts"
