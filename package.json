@@ -109,7 +109,9 @@
     "roots": ["<rootDir>/src"],
     "setupTestFrameworkScriptFile": "<rootDir>/src/setupJest.ts",
     "collectCoverageFrom": [
-      "src/dynamic/**/*.ts"
+      "src/dynamic/**/*.ts",
+      "!src/dynamic/index.ts",
+      "!src/dynamic/dynamic.module.ts"
     ],
     "coverageDirectory": "<rootDir>/coverage",
     "coverageThreshold": {
