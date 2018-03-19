@@ -12,13 +12,13 @@
     "build": "node scripts/build.js",
     "build:release": "node scripts/release.js",
     "pretest": "npm run cleancoverage",
-    "test": "karma start",
-    "pretest:once": "npm run cleancoverage",
-    "test:once": "karma start",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:ci": "jest --runInBand --coverage",
     "test:report": "cd coverage && codecov",
     "cleancoverage": "rimraf coverage",
     "check-coverage": "istanbul check-coverage --functions 75 --lines 75 --branches 75 --statements 75",
-    "ci": "npm run test:once && npm run check-coverage",
+    "ci": "npm run test:ci && npm run check-coverage",
     "presemantic-release": "npm run build:release",
     "semantic-release": "cd dist && semantic-release pre && npm publish && semantic-release post"
   },
@@ -48,7 +48,7 @@
     "@angular/platform-browser": "^5.0.0",
     "@angular/platform-browser-dynamic": "^5.0.0",
     "@angular/platform-server": "^5.0.0",
-    "@types/jasmine": "^2.5.43",
+    "@types/jest": "^22.0.0",
     "angular2-template-loader": "^0.6.2",
     "awesome-typescript-loader": "^3.2.3",
     "codecov": "^3.0.0",
@@ -60,6 +60,8 @@
     "istanbul": "^0.4.5",
     "jasmine-core": "^2.5.2",
     "jasmine-spec-reporter": "^4.0.0",
+    "jest": "^22.0.4",
+    "jest-preset-angular": "^5.0.0",
     "json-loader": "^0.5.4",
     "karma": "^1.4.1",
     "karma-chrome-launcher": "^2.0.0",
@@ -101,5 +103,21 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/gund/ng-dynamic-component.git"
+  },
+  "jest": {
+    "preset": "jest-preset-angular",
+    "setupTestFrameworkScriptFile": "<rootDir>/src/setupJest.ts",
+    "collectCoverageFrom": [
+      "src/dynamic/**/*.ts"
+    ],
+    "coverageDirectory": "<rootDir>/coverage",
+    "coverageThreshold": {
+      "global": {
+        "branches": 80,
+        "functions": 80,
+        "lines": 80,
+        "statements": 80
+      }
+    }
   }
 }
