@@ -166,7 +166,7 @@ describe('DynamicComponent', () => {
 
             const injectedElem = fixture.debugElement.query(By.directive(InjectedComponent));
 
-            expect(injectedElem.nativeElement.innerText).toBe('projected text');
+            expect(injectedElem.nativeElement.textContent).toBe('projected text');
         });
     });
 });

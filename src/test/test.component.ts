@@ -1,28 +1,37 @@
 import { CommonModule } from '@angular/common';
-import { Component, NgModule } from '@angular/core';
+import { Component, Input, Output, EventEmitter, NgModule } from '@angular/core';
 
 @Component({
   selector: 'test',
-  template: ''
+  template: '',
 })
-export class TestComponent { }
+export class TestComponent {}
 
 @Component({
   selector: 'injected',
-  template: 'foo'
+  template: 'foo',
 })
-export class InjectedComponent { }
+export class InjectedComponent {}
 
 @Component({
   selector: 'another-injected',
-  template: 'bar'
+  template: 'bar',
 })
-export class AnotherInjectedComponent { }
+export class AnotherInjectedComponent {}
+
+@Component({
+  selector: 'test-bindings',
+  template: 'baz',
+})
+export class InjectedBoundComponent {
+  @Input('outerProp') innerProp: any;
+  @Output('outerEvt') innerEvt = new EventEmitter<any>();
+}
 
 @NgModule({
   imports: [CommonModule],
-  declarations: [InjectedComponent, AnotherInjectedComponent],
-  exports: [InjectedComponent, AnotherInjectedComponent],
-  entryComponents: [InjectedComponent, AnotherInjectedComponent]
+  declarations: [InjectedComponent, AnotherInjectedComponent, InjectedBoundComponent],
+  exports: [InjectedComponent, AnotherInjectedComponent, InjectedBoundComponent],
+  entryComponents: [InjectedComponent, AnotherInjectedComponent, InjectedBoundComponent],
 })
-export class TestModule { }
+export class TestModule {}
