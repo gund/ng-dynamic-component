@@ -71,7 +71,7 @@
     "karma-mocha-reporter": "^2.2.2",
     "karma-remap-istanbul": "^0.6.0",
     "karma-sourcemap-loader": "^0.3.7",
-    "karma-webpack": "^2.0.2",
+    "karma-webpack": "^3.0.0",
     "npm-run-all": "^4.0.2",
     "raw-loader": "^1.0.0-beta.0",
     "rimraf": "^2.6.1",
