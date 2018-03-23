@@ -50,7 +50,7 @@
     "@angular/platform-server": "^5.0.0",
     "@types/jest": "^22.0.0",
     "angular2-template-loader": "^0.6.2",
-    "awesome-typescript-loader": "^3.2.3",
+    "awesome-typescript-loader": "^4.0.0",
     "codecov": "^3.0.0",
     "codelyzer": "^4.0.1",
     "commitizen": "^2.9.6",
