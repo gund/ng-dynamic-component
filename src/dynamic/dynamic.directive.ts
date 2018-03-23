@@ -74,10 +74,6 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
     return this._extractCompRefFrom(this._componentOutlet) || this._componentInjector.componentRef;
   }
 
-  private get _canResolveCompRef(): boolean {
-    return !!this._compRef;
-  }
-
   constructor(
     private _differs: KeyValueDiffers,
     private _injector: Injector,
@@ -229,10 +225,6 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
   }
 
   private _resolveCompFactory(): ComponentFactory<any> | null {
-    if (!this._canResolveCompRef) {
-      return null;
-    }
-
     try {
       try {
         return this._cfr.resolveComponentFactory(this._compRef.componentType);
