@@ -12,6 +12,7 @@ import {
   InjectedComponent,
   MockedInjectedComponent,
   TestComponent,
+  InjectedBoundComponent,
   TestModule,
 } from '../test/index';
 import { COMPONENT_INJECTOR } from './component-injector';
@@ -19,6 +20,7 @@ import { DynamicDirective } from './dynamic.directive';
 
 const getComponentInjectorFrom = getByPredicate<ComponentInjectorComponent>(By.directive(ComponentInjectorComponent));
 const getInjectedComponentFrom = getByPredicate<InjectedComponent>(By.directive(InjectedComponent));
+const getInjectedBoundComponentFrom = getByPredicate<InjectedBoundComponent>(By.directive(InjectedBoundComponent));
 
 describe('Directive: Dynamic', () => {
   beforeEach(() => {
@@ -48,6 +50,23 @@ describe('Directive: Dynamic', () => {
 
       expect(injectedComp['prop1']).toBe('prop1');
       expect(injectedComp['prop2']).toBe(2);
+    });
+
+    it('should be reassigned when replaced', () => {
+      fixture.detectChanges();
+      fixture.componentInstance['inputs'] = { otherProp: 'set' };
+      fixture.detectChanges();
+
+      expect(injectedComp['otherProp']).toBe('set');
+    });
+
+    it('should be reassigned from `null|undefined` when replaced', () => {
+      fixture.componentInstance['inputs'] = null;
+      fixture.detectChanges();
+      fixture.componentInstance['inputs'] = { otherProp: 'set' };
+      fixture.detectChanges();
+
+      expect(injectedComp['otherProp']).toBe('set');
     });
 
     it('should trigger initially `OnChanges` life-cycle hook', () => {
@@ -175,6 +194,66 @@ describe('Directive: Dynamic', () => {
     });
   });
 
+  describe('bound inputs', () => {
+    let fixture: ComponentFixture<TestComponent>;
+    let testComp: any;
+    let injectedComp: InjectedBoundComponent;
+    let onChangesMock: jest.Mock;
+
+    beforeEach(async(() => {
+      TestBed.configureTestingModule({
+        imports: [TestModule],
+        declarations: [DynamicDirective, TestComponent],
+      });
+
+      const template = `<ng-container [ngComponentOutlet]="comp" [ndcDynamicInputs]="inputs"></ng-container>`;
+      TestBed
+        .overrideComponent(TestComponent, { set: { template } })
+        .compileComponents();
+      fixture = TestBed.createComponent(TestComponent);
+
+      testComp = fixture.componentInstance;
+      testComp.comp = InjectedBoundComponent;
+      testComp.inputs = null;
+
+      fixture.detectChanges();
+      injectedComp = getInjectedBoundComponentFrom(fixture).component;
+      injectedComp['ngOnChanges'] = onChangesMock = jest.fn();
+    }));
+
+    it('should correctly be passed to dynamic component', () => {
+      testComp.inputs = { outerProp: '123' };
+      fixture.detectChanges();
+
+      expect(injectedComp.innerProp).toBe('123');
+    });
+
+    it('should trigger `OnChanges` life-cycle hook with correct names', () => {
+      onChangesMock.mockImplementation((changes: SimpleChanges) => {
+        expect(changes.innerProp).toBeDefined();
+        expect(changes.innerProp.currentValue).toBe('123');
+        expect(changes.innerProp.isFirstChange()).toBeTruthy();
+      });
+
+      testComp.inputs = { outerProp: '123' };
+      fixture.detectChanges();
+
+      expect(onChangesMock).toHaveBeenCalledTimes(1);
+
+      onChangesMock.mockImplementation((changes: SimpleChanges) => {
+        expect(changes.innerProp).toBeDefined();
+        expect(changes.innerProp.currentValue).toBe('456');
+        expect(changes.innerProp.previousValue).toBe('123');
+        expect(changes.innerProp.isFirstChange()).toBeFalsy();
+      });
+
+      testComp.inputs = { outerProp: '456' };
+      fixture.detectChanges();
+
+      expect(onChangesMock).toHaveBeenCalledTimes(2);
+    });
+  });
+
   describe('outputs', () => {
     let fixture: ComponentFixture<TestComponent>
       , injectorComp: ComponentInjectorComponent
@@ -193,6 +272,18 @@ describe('Directive: Dynamic', () => {
     }));
 
     it('should bind outputs to component and receive events', async(() => {
+      fixture.detectChanges();
+
+      injectedComp.onEvent.next('data');
+
+      expect(outputSpy).toHaveBeenCalledTimes(1);
+      expect(outputSpy).toHaveBeenCalledWith('data');
+    }));
+
+    it('should re-bind outputs after `null|undefiined` to component and receive events', async(() => {
+      fixture.componentInstance['outputs'] = null;
+      fixture.detectChanges();
+      fixture.componentInstance['outputs'] = { onEvent: outputSpy };
       fixture.detectChanges();
 
       injectedComp.onEvent.next('data');
@@ -305,5 +396,45 @@ describe('Directive: Dynamic', () => {
       expect(outputSpy).toHaveBeenCalledTimes(1);
       expect(outputSpy).toHaveBeenCalledWith('data');
     });
+  });
+
+  describe('bound outputs', () => {
+    let fixture: ComponentFixture<TestComponent>;
+    let testComp: any;
+    let injectedComp: InjectedBoundComponent;
+    let outputHandler: jest.Mock;
+
+    beforeEach(async(() => {
+      TestBed.configureTestingModule({
+        imports: [TestModule],
+        declarations: [DynamicDirective, TestComponent],
+      });
+
+      const template = `<ng-container [ngComponentOutlet]="comp" [ndcDynamicOutputs]="outputs"></ng-container>`;
+      TestBed
+        .overrideComponent(TestComponent, { set: { template } })
+        .compileComponents();
+      fixture = TestBed.createComponent(TestComponent);
+
+      testComp = fixture.componentInstance;
+      testComp.comp = InjectedBoundComponent;
+      testComp.outputs = null;
+
+      fixture.detectChanges();
+      injectedComp = getInjectedBoundComponentFrom(fixture).component;
+
+      outputHandler = jest.fn();
+    }));
+
+    it('should correctly be passed to dynamic component', () => {
+      testComp.outputs = { outerEvt: outputHandler };
+      fixture.detectChanges();
+
+      injectedComp.innerEvt.emit('data');
+
+      expect(outputHandler).toHaveBeenCalledTimes(1);
+      expect(outputHandler).toHaveBeenCalledWith('data');
+    });
+
   });
 });

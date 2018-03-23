@@ -1,5 +1,8 @@
 import { NgComponentOutlet } from '@angular/common';
 import {
+  ComponentFactory,
+  ComponentFactoryResolver,
+  ComponentRef,
   Directive,
   DoCheck,
   Host,
@@ -21,6 +24,8 @@ import { COMPONENT_INJECTOR, ComponentInjector } from './component-injector';
 import { CustomSimpleChange, UNINITIALIZED } from './custom-simple-change';
 
 export type KeyValueChangeRecordAny = KeyValueChangeRecord<any, any>;
+export type IOMapInfo = { propName: string, templateName: string };
+export type IOMappingList = IOMapInfo[];
 
 @Directive({
   selector: '[ndcDynamicInputs],[ndcDynamicOutputs],[ngComponentOutletNdcDynamicInputs],[ngComponentOutletNdcDynamicOutputs]'
@@ -37,6 +42,7 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
   private _lastInputChanges: SimpleChanges;
   private _inputsDiffer = this._differs.find({}).create();
   private _destroyed$ = new Subject<void>();
+  private _compFactory: ComponentFactory<any> | null = null;
 
   private get _inputs() {
     return this.ndcDynamicInputs || this.ngComponentOutletNdcDynamicInputs;
@@ -64,9 +70,18 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
     }
   }
 
+  private get _compRef(): ComponentRef<any> | null {
+    return this._extractCompRefFrom(this._componentOutlet) || this._componentInjector.componentRef;
+  }
+
+  private get _canResolveCompRef(): boolean {
+    return !!this._compRef;
+  }
+
   constructor(
     private _differs: KeyValueDiffers,
     private _injector: Injector,
+    private _cfr: ComponentFactoryResolver,
     @Inject(COMPONENT_INJECTOR) private _componentInjectorType: ComponentInjector,
     @Host() @Optional() private _componentOutlet: NgComponentOutlet,
   ) { }
@@ -75,6 +90,15 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
     if (this._componentInstChanged) {
       this.updateInputs(true);
       this.bindOutputs();
+    } else {
+      if (this._inputsChanged(changes)) {
+        this._updateInputChanges(this._getInputsChanges(this._inputs));
+        this.updateInputs(!this._lastInputChanges);
+      }
+
+      if (this._outputsChanged(changes)) {
+        this.bindOutputs();
+      }
     }
   }
 
@@ -91,11 +115,11 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
       return;
     }
 
-    const inputsChanges = this._inputsDiffer.diff(inputs);
+    const inputsChanges = this._getInputsChanges(this._inputs);
 
     if (inputsChanges) {
       const isNotFirstChange = !!this._lastInputChanges;
-      this._lastInputChanges = this._collectChangesFromDiffer(inputsChanges);
+      this._updateInputChanges(inputsChanges);
 
       if (isNotFirstChange) {
         this.updateInputs();
@@ -108,25 +132,34 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
   }
 
   updateInputs(isFirstChange = false) {
-    const inputs = this._inputs;
+    if (isFirstChange) {
+      this._updateCompFactory();
+    }
+
+    let inputs = this._inputs;
 
     if (!inputs || !this._componentInst) {
       return;
     }
 
-    Object.keys(inputs).forEach(p =>
-      this._componentInst[p] = inputs[p]);
+    inputs = this._resolveInputs(inputs);
+
+    Object
+      .keys(inputs)
+      .forEach(p => this._componentInst[p] = inputs[p]);
 
     this.notifyOnInputChanges(this._lastInputChanges, isFirstChange);
   }
 
   bindOutputs() {
     this._destroyed$.next();
-    const outputs = this._outputs;
+    let outputs = this._outputs;
 
     if (!outputs || !this._componentInst) {
       return;
     }
+
+    outputs = this._resolveOutputs(outputs);
 
     Object.keys(outputs)
       .filter(p => this._componentInst[p])
@@ -148,6 +181,14 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
     this._componentInst.ngOnChanges(changes);
   }
 
+  private _getInputsChanges(inputs: any) {
+    return this._inputsDiffer.diff(this._inputs);
+  }
+
+  private _updateInputChanges(differ: any) {
+    this._lastInputChanges = this._collectChangesFromDiffer(differ);
+  }
+
   private _collectFirstChanges(): SimpleChanges {
     const changes = {} as SimpleChanges;
     const inputs = this._inputs;
@@ -155,7 +196,7 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
     Object.keys(inputs).forEach(prop =>
       changes[prop] = new CustomSimpleChange(UNINITIALIZED, inputs[prop], true));
 
-    return changes;
+    return this._resolveChanges(changes);
   }
 
   private _collectChangesFromDiffer(differ: any): SimpleChanges {
@@ -167,11 +208,91 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
     differ.forEachAddedItem((record: KeyValueChangeRecordAny) =>
       changes[record.key].previousValue = UNINITIALIZED);
 
-    return changes;
+    return this._resolveChanges(changes);
+  }
+
+  private _inputsChanged(changes: SimpleChanges): boolean {
+    return 'ngComponentOutletNdcDynamicInputs' in changes || 'ndcDynamicInputs' in changes;
+  }
+
+  private _outputsChanged(changes: SimpleChanges): boolean {
+    return 'ngComponentOutletNdcDynamicOutputs' in changes || 'ndcDynamicOutputs' in changes;
+  }
+
+  private _extractCompRefFrom(outlet: NgComponentOutlet | null): ComponentRef<any> | null {
+    return outlet && (<any>outlet)._componentRef;
   }
 
   private _extractCompFrom(outlet: NgComponentOutlet | null): any {
-    return outlet && (<any>outlet)._componentRef && (<any>outlet)._componentRef.instance;
+    const compRef = this._extractCompRefFrom(outlet);
+    return compRef && compRef.instance;
+  }
+
+  private _resolveCompFactory(): ComponentFactory<any> | null {
+    if (!this._canResolveCompRef) {
+      return null;
+    }
+
+    try {
+      try {
+        return this._cfr.resolveComponentFactory(this._compRef.componentType);
+      } catch (e) {
+        // Fallback if componentType does not exist (happens on NgComponentOutlet)
+        return this._cfr.resolveComponentFactory(this._compRef.instance.constructor);
+      }
+    } catch (e) {
+      // Factory not available - bailout
+      return null;
+    }
+  }
+
+  private _updateCompFactory() {
+    this._compFactory = this._resolveCompFactory();
+  }
+
+  private _resolveInputs(inputs: any): any {
+    if (!this._compFactory) {
+      return inputs;
+    }
+
+    return this._remapIO(inputs, this._compFactory.inputs);
+  }
+
+  private _resolveOutputs(outputs: any): any {
+    if (!this._compFactory) {
+      return outputs;
+    }
+
+    return this._remapIO(outputs, this._compFactory.outputs);
+  }
+
+  private _resolveChanges(changes: SimpleChanges): SimpleChanges {
+    if (!this._compFactory) {
+      return changes;
+    }
+
+    return this._remapIO(changes, this._compFactory.inputs);
+  }
+
+  private _remapIO(io: any, mapping: IOMappingList): any {
+    const newIO = {};
+
+    Object.keys(io)
+      .forEach(key => {
+        const newKey = this._findPropByTplInMapping(key, mapping) || key;
+        newIO[newKey] = io[key];
+      });
+
+    return newIO;
+  }
+
+  private _findPropByTplInMapping(tplName: string, mapping: IOMappingList): string | null {
+    for (const map of mapping) {
+      if (map.templateName === tplName) {
+        return map.propName;
+      }
+    }
+    return null;
   }
 
 }
