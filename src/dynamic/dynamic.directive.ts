@@ -14,16 +14,19 @@ import {
   OnChanges,
   OnDestroy,
   Optional,
-  SimpleChange,
   SimpleChanges,
 } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 
 import { COMPONENT_INJECTOR, ComponentInjector } from './component-injector';
+import { changesFromRecord, createNewChange } from './util';
 
 export type IOMapInfo = { propName: string, templateName: string };
 export type IOMappingList = IOMapInfo[];
 export type KeyValueChangesAny = KeyValueChanges<any, any>;
+
+const recordToChanges = changesFromRecord({ isFirstChanges: true });
+const recordToNewChanges = changesFromRecord({ onlyNewChanges: true });
 
 @Directive({
   selector: '[ndcDynamicInputs],[ndcDynamicOutputs],[ngComponentOutletNdcDynamicInputs],[ngComponentOutletNdcDynamicOutputs]'
@@ -188,7 +191,7 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
     const inputs = this._inputs;
 
     Object.keys(inputs).forEach(prop =>
-      changes[prop] = new SimpleChange(undefined, inputs[prop], true));
+      changes[prop] = createNewChange(inputs[prop]));
 
     return this._resolveChanges(changes);
   }
@@ -198,16 +201,8 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
   ): SimpleChanges {
     const changes = {} as SimpleChanges;
 
-    differ.forEachAddedItem(record =>
-      changes[record.key] =
-      new SimpleChange(undefined, record.currentValue, true));
-
-    differ.forEachItem(record => {
-      if (!changes[record.key]) {
-        changes[record.key] =
-          new SimpleChange(record.previousValue, record.currentValue, false);
-      }
-    });
+    differ.forEachAddedItem(recordToChanges(changes));
+    differ.forEachItem(recordToNewChanges(changes));
 
     return this._resolveChanges(changes);
   }
