@@ -9,23 +9,24 @@ import {
   Inject,
   Injector,
   Input,
-  KeyValueChangeRecord,
+  KeyValueChanges,
   KeyValueDiffers,
   OnChanges,
   OnDestroy,
   Optional,
   SimpleChanges,
-  SkipSelf,
-  TemplateRef,
 } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 
 import { COMPONENT_INJECTOR, ComponentInjector } from './component-injector';
-import { CustomSimpleChange, UNINITIALIZED } from './custom-simple-change';
+import { changesFromRecord, createNewChange } from './util';
 
-export type KeyValueChangeRecordAny = KeyValueChangeRecord<any, any>;
 export type IOMapInfo = { propName: string, templateName: string };
 export type IOMappingList = IOMapInfo[];
+export type KeyValueChangesAny = KeyValueChanges<any, any>;
+
+const recordToChanges = changesFromRecord({ isFirstChanges: true });
+const recordToNewChanges = changesFromRecord({ onlyNewChanges: true });
 
 @Directive({
   selector: '[ndcDynamicInputs],[ndcDynamicOutputs],[ngComponentOutletNdcDynamicInputs],[ngComponentOutletNdcDynamicOutputs]'
@@ -41,8 +42,8 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
   private _lastComponentInst: any = this._componentInjector;
   private _lastInputChanges: SimpleChanges;
   private _inputsDiffer = this._differs.find({}).create();
-  private _destroyed$ = new Subject<void>();
   private _compFactory: ComponentFactory<any> | null = null;
+  private _outputsShouldDisconnect$ = new Subject<void>();
 
   private get _inputs() {
     return this.ndcDynamicInputs || this.ngComponentOutletNdcDynamicInputs;
@@ -124,7 +125,7 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
   }
 
   ngOnDestroy() {
-    this._destroyed$.next();
+    this._disconnectOutputs();
   }
 
   updateInputs(isFirstChange = false) {
@@ -132,9 +133,10 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
       this._updateCompFactory();
     }
 
+    const compInst = this._componentInst;
     let inputs = this._inputs;
 
-    if (!inputs || !this._componentInst) {
+    if (!inputs || !compInst) {
       return;
     }
 
@@ -142,25 +144,27 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
 
     Object
       .keys(inputs)
-      .forEach(p => this._componentInst[p] = inputs[p]);
+      .forEach(p => compInst[p] = inputs[p]);
 
     this.notifyOnInputChanges(this._lastInputChanges, isFirstChange);
   }
 
   bindOutputs() {
-    this._destroyed$.next();
+    this._disconnectOutputs();
+
+    const compInst = this._componentInst;
     let outputs = this._outputs;
 
-    if (!outputs || !this._componentInst) {
+    if (!outputs || !compInst) {
       return;
     }
 
     outputs = this._resolveOutputs(outputs);
 
     Object.keys(outputs)
-      .filter(p => this._componentInst[p])
-      .forEach(p => this._componentInst[p]
-        .takeUntil(this._destroyed$)
+      .filter(p => compInst[p])
+      .forEach(p => compInst[p]
+        .takeUntil(this._outputsShouldDisconnect$)
         .subscribe(outputs[p]));
   }
 
@@ -177,11 +181,15 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
     this._componentInst.ngOnChanges(changes);
   }
 
-  private _getInputsChanges(inputs: any) {
+  private _disconnectOutputs() {
+    this._outputsShouldDisconnect$.next();
+  }
+
+  private _getInputsChanges(inputs: any): KeyValueChangesAny {
     return this._inputsDiffer.diff(this._inputs);
   }
 
-  private _updateInputChanges(differ: any) {
+  private _updateInputChanges(differ: KeyValueChangesAny) {
     this._lastInputChanges = this._collectChangesFromDiffer(differ);
   }
 
@@ -190,19 +198,18 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
     const inputs = this._inputs;
 
     Object.keys(inputs).forEach(prop =>
-      changes[prop] = new CustomSimpleChange(UNINITIALIZED, inputs[prop], true));
+      changes[prop] = createNewChange(inputs[prop]));
 
     return this._resolveChanges(changes);
   }
 
-  private _collectChangesFromDiffer(differ: any): SimpleChanges {
+  private _collectChangesFromDiffer(
+    differ: KeyValueChangesAny
+  ): SimpleChanges {
     const changes = {} as SimpleChanges;
 
-    differ.forEachItem((record: KeyValueChangeRecordAny) =>
-      changes[record.key] = new CustomSimpleChange(record.previousValue, record.currentValue, false));
-
-    differ.forEachAddedItem((record: KeyValueChangeRecordAny) =>
-      changes[record.key].previousValue = UNINITIALIZED);
+    differ.forEachAddedItem(recordToChanges(changes));
+    differ.forEachItem(recordToNewChanges(changes));
 
     return this._resolveChanges(changes);
   }
