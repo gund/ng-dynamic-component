@@ -42,8 +42,8 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
   private _lastComponentInst: any = this._componentInjector;
   private _lastInputChanges: SimpleChanges;
   private _inputsDiffer = this._differs.find({}).create();
-  private _destroyed$ = new Subject<void>();
   private _compFactory: ComponentFactory<any> | null = null;
+  private _outputsShouldDisconnect$ = new Subject<void>();
 
   private get _inputs() {
     return this.ndcDynamicInputs || this.ngComponentOutletNdcDynamicInputs;
@@ -125,7 +125,7 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
   }
 
   ngOnDestroy() {
-    this._destroyed$.next();
+    this._disconnectOutputs();
   }
 
   updateInputs(isFirstChange = false) {
@@ -133,9 +133,10 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
       this._updateCompFactory();
     }
 
+    const compInst = this._componentInst;
     let inputs = this._inputs;
 
-    if (!inputs || !this._componentInst) {
+    if (!inputs || !compInst) {
       return;
     }
 
@@ -143,25 +144,27 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
 
     Object
       .keys(inputs)
-      .forEach(p => this._componentInst[p] = inputs[p]);
+      .forEach(p => compInst[p] = inputs[p]);
 
     this.notifyOnInputChanges(this._lastInputChanges, isFirstChange);
   }
 
   bindOutputs() {
-    this._destroyed$.next();
+    this._disconnectOutputs();
+
+    const compInst = this._componentInst;
     let outputs = this._outputs;
 
-    if (!outputs || !this._componentInst) {
+    if (!outputs || !compInst) {
       return;
     }
 
     outputs = this._resolveOutputs(outputs);
 
     Object.keys(outputs)
-      .filter(p => this._componentInst[p])
-      .forEach(p => this._componentInst[p]
-        .takeUntil(this._destroyed$)
+      .filter(p => compInst[p])
+      .forEach(p => compInst[p]
+        .takeUntil(this._outputsShouldDisconnect$)
         .subscribe(outputs[p]));
   }
 
@@ -176,6 +179,10 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
     }
 
     this._componentInst.ngOnChanges(changes);
+  }
+
+  private _disconnectOutputs() {
+    this._outputsShouldDisconnect$.next();
   }
 
   private _getInputsChanges(inputs: any): KeyValueChangesAny {
