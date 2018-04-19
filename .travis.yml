@@ -7,22 +7,25 @@ cache:
 notifications:
   email: false
 node_js:
+  - "9"
   - "8"
-  - "7"
-  - "6"
 branches:
   only:
     - master
     - /^greenkeeper/.*$/
-before_install:
-  - npm i -g yarn
-install:
-  - yarn install --pure-lockfile --ignore-engines
-script:
-  - yarn ci
-after_success:
-  - 'curl -Lo travis_after_all.py https://git.io/travis_after_all'
-  - python travis_after_all.py
-  - export $(cat .to_export_back) &> /dev/null
-  - yarn semantic-release
-  - yarn test:report
+jobs:
+  include:
+    - script: yarn install --pure-lockfile --ignore-engines
+    - stage: test
+      script: yarn ci
+    # Define the release stage that runs semantic-release
+    - stage: release
+      node_js: lts/*
+      # Advanced: optionally overwrite your default `script` step to skip the tests
+      # script: skip
+      deploy:
+        provider: script
+        skip_cleanup: true
+        script:
+          - yarn semantic-release
+          - yarn test:report
