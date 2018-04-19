@@ -12,14 +12,12 @@ branches:
     - master
     - /^greenkeeper/.*$/
 stages:
-  - install
   - test
   - name: deploy
     if: branch = master
 jobs:
   include:
-    - stage: install
-      script: yarn install --pure-lockfile --ignore-engines
+    - script: yarn install --pure-lockfile --ignore-engines
     - stage: test
       script: yarn ci
     # Define the release stage that runs semantic-release
