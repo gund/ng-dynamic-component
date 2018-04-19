@@ -8,7 +8,6 @@
   "typings": "dist/ng-dynamic-component.d.ts",
   "scripts": {
     "commit": "git-cz",
-    "prepublishOnly": "npm run build",
     "build": "node scripts/build.js",
     "build:release": "node scripts/release.js",
     "pretest": "npm run cleancoverage",
@@ -19,7 +18,7 @@
     "cleancoverage": "rimraf coverage",
     "check-coverage": "istanbul check-coverage --functions 75 --lines 75 --branches 75 --statements 75",
     "ci": "npm run test:ci && npm run check-coverage",
-    "presemantic-release": "npm run build:release",
+    "presemantic-release": "npm run build && npm run build:release",
     "semantic-release": "cd dist && semantic-release"
   },
   "keywords": [
