@@ -6,16 +6,20 @@ cache:
     - node_modules
 notifications:
   email: false
-node_js:
-  - "9"
-  - "8"
+node_js: lts/*
 branches:
   only:
     - master
     - /^greenkeeper/.*$/
+stages:
+  - install
+  - test
+  - name: deploy
+    if: branch = master
 jobs:
   include:
-    - script: yarn install --pure-lockfile --ignore-engines
+    - stage: install
+      script: yarn install --pure-lockfile --ignore-engines
     - stage: test
       script: yarn ci
     # Define the release stage that runs semantic-release
