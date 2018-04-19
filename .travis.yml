@@ -17,7 +17,9 @@ stages:
 jobs:
   include:
     - stage: test
-      script: yarn ci
+      script:
+        - yarn ci
+        - yarn test:report
     - stage: release
       node_js: lts/*
       script: skip
