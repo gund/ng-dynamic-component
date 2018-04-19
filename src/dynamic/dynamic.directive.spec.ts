@@ -138,6 +138,12 @@ describe('Directive: Dynamic', () => {
       fixture.componentInstance['inputs'] = null;
       expect(() => fixture.detectChanges()).not.toThrow();
     });
+
+    it('should NOT throw exception when same inputs are reassigned with new object', () => {
+      fixture.detectChanges();
+      fixture.componentInstance['inputs'] = { ...fixture.componentInstance['inputs'] };
+      expect(() => fixture.detectChanges()).not.toThrow();
+    });
   });
 
   describe('inputs with `NgComponentOutlet`', () => {
