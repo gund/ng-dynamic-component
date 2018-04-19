@@ -2,27 +2,30 @@ sudo: required
 dist: trusty
 language: node_js
 cache:
-  directories:
-    - node_modules
+  yarn: true
 notifications:
   email: false
-node_js:
-  - "8"
-  - "7"
-  - "6"
+node_js: lts/*
 branches:
   only:
     - master
     - /^greenkeeper/.*$/
-before_install:
-  - npm i -g yarn
-install:
-  - yarn install --pure-lockfile --ignore-engines
-script:
-  - yarn ci
-after_success:
-  - 'curl -Lo travis_after_all.py https://git.io/travis_after_all'
-  - python travis_after_all.py
-  - export $(cat .to_export_back) &> /dev/null
-  - yarn semantic-release
-  - yarn test:report
+stages:
+  - test
+  - name: deploy
+    if: branch = master
+jobs:
+  include:
+    - stage: test
+      script:
+        - yarn ci
+        - yarn test:report
+    - stage: release
+      node_js: lts/*
+      script: skip
+      deploy:
+        provider: script
+        skip_cleanup: true
+        script:
+          - yarn semantic-release
+          - yarn test:report
