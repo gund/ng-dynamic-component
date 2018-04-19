@@ -27,5 +27,4 @@ jobs:
         provider: script
         skip_cleanup: true
         script:
-          - yarn test:report
           - yarn semantic-release
