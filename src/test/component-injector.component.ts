@@ -18,6 +18,6 @@ export class ComponentInjectorComponent implements ComponentInjector {
 }
 
 export class MockedInjectedComponent {
-  ngOnChanges = jasmine.createSpy('ngOnChanges');
+  ngOnChanges = jest.fn();
   onEvent = new EventEmitter<any>();
 }
