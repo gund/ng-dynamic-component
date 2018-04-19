@@ -13,7 +13,7 @@ branches:
 stages:
   - test
   - name: deploy
-    if: branch = master
+    if: branch = master and type != pull_request
 jobs:
   include:
     - stage: test
