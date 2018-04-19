@@ -8,7 +8,7 @@
   "typings": "dist/ng-dynamic-component.d.ts",
   "scripts": {
     "commit": "git-cz",
-    "prepublish": "npm run build",
+    "prepublishOnly": "npm run build",
     "build": "node scripts/build.js",
     "build:release": "node scripts/release.js",
     "pretest": "npm run cleancoverage",
@@ -106,7 +106,9 @@
   },
   "jest": {
     "preset": "jest-preset-angular",
-    "roots": ["<rootDir>/src"],
+    "roots": [
+      "<rootDir>/src"
+    ],
     "setupTestFrameworkScriptFile": "<rootDir>/src/setupJest.ts",
     "collectCoverageFrom": [
       "src/dynamic/**/*.ts",

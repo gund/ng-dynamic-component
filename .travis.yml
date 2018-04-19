@@ -18,6 +18,7 @@ jobs:
   include:
     - stage: test
       script:
+        - yarn build
         - yarn ci
         - yarn test:report
     - stage: release
