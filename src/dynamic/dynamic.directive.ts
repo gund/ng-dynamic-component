@@ -16,6 +16,7 @@ import {
   Optional,
   SimpleChanges,
 } from '@angular/core';
+import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs/Subject';
 
 import { COMPONENT_INJECTOR, ComponentInjector } from './component-injector';
@@ -168,7 +169,7 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
     Object.keys(outputs)
       .filter(p => compInst[p])
       .forEach(p => compInst[p]
-        .takeUntil(this._outputsShouldDisconnect$)
+        .pipe(takeUntil(this._outputsShouldDisconnect$))
         .subscribe(outputs[p]));
   }
 
