@@ -89,8 +89,12 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
       this.bindOutputs();
     } else {
       if (this._inputsChanged(changes)) {
-        this._updateInputChanges(this._getInputsChanges(this._inputs));
-        this.updateInputs(!this._lastInputChanges);
+        const inputsChanges = this._getInputsChanges(this._inputs);
+
+        if (inputsChanges) {
+          this._updateInputChanges(inputsChanges);
+          this.updateInputs(!this._lastInputChanges);
+        }
       }
 
       if (this._outputsChanged(changes)) {
