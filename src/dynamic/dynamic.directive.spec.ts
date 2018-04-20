@@ -15,6 +15,7 @@ import {
 } from '../test/index';
 import { COMPONENT_INJECTOR } from './component-injector';
 import { DynamicDirective } from './dynamic.directive';
+import { ComponentOutletInjectorDirective } from './component-outlet-injector.directive';
 
 const getComponentInjectorFrom = getByPredicate<ComponentInjectorComponent>(By.directive(ComponentInjectorComponent));
 const getInjectedComponentFrom = getByPredicate<InjectedComponent>(By.directive(InjectedComponent));
@@ -23,7 +24,7 @@ const getInjectedBoundComponentFrom = getByPredicate<InjectedBoundComponent>(By.
 describe('Directive: Dynamic', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [TestComponent, ComponentInjectorComponent, DynamicDirective],
+      declarations: [TestComponent, ComponentInjectorComponent, DynamicDirective, ComponentOutletInjectorDirective],
       providers: [{ provide: COMPONENT_INJECTOR, useValue: ComponentInjectorComponent }]
     });
   });
