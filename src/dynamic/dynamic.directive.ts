@@ -1,8 +1,6 @@
-import { NgComponentOutlet } from '@angular/common';
 import {
   ComponentFactory,
   ComponentFactoryResolver,
-  ComponentRef,
   Directive,
   DoCheck,
   Host,
@@ -20,6 +18,7 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs/Subject';
 
 import { COMPONENT_INJECTOR, ComponentInjector } from './component-injector';
+import { ComponentOutletInjectorDirective } from './component-outlet-injector.directive';
 import { changesFromRecord, createNewChange } from './util';
 
 export type IOMapInfo = { propName: string, templateName: string };
@@ -54,13 +53,16 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
     return this.ndcDynamicOutputs || this.ngComponentOutletNdcDynamicOutputs;
   }
 
-  private get _compOutletInst(): any {
-    return this._extractCompFrom(this._componentOutlet);
+  private get _compInjector() {
+    return this._componentOutletInjector || this._componentInjector;
   }
 
-  private get _componentInst(): any {
-    return this._compOutletInst ||
-      this._componentInjector.componentRef && this._componentInjector.componentRef.instance;
+  private get _compRef() {
+    return this._compInjector.componentRef;
+  }
+
+  private get _componentInst() {
+    return this._compRef.instance;
   }
 
   private get _componentInstChanged(): boolean {
@@ -72,16 +74,12 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
     }
   }
 
-  private get _compRef(): ComponentRef<any> | null {
-    return this._extractCompRefFrom(this._componentOutlet) || this._componentInjector.componentRef;
-  }
-
   constructor(
     private _differs: KeyValueDiffers,
     private _injector: Injector,
     private _cfr: ComponentFactoryResolver,
     @Inject(COMPONENT_INJECTOR) private _componentInjectorType: ComponentInjector,
-    @Host() @Optional() private _componentOutlet: NgComponentOutlet,
+    @Host() @Optional() private _componentOutletInjector: ComponentOutletInjectorDirective,
   ) { }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -172,7 +170,7 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
   }
 
   notifyOnInputChanges(changes: SimpleChanges = {}, forceFirstChanges: boolean) {
-    // Exit early if component not interrested to receive changes
+    // Exit early if component not interested to receive changes
     if (!this._componentInst.ngOnChanges) {
       return;
     }
@@ -223,15 +221,6 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
 
   private _outputsChanged(changes: SimpleChanges): boolean {
     return 'ngComponentOutletNdcDynamicOutputs' in changes || 'ndcDynamicOutputs' in changes;
-  }
-
-  private _extractCompRefFrom(outlet: NgComponentOutlet | null): ComponentRef<any> | null {
-    return outlet && (<any>outlet)._componentRef;
-  }
-
-  private _extractCompFrom(outlet: NgComponentOutlet | null): any {
-    const compRef = this._extractCompRefFrom(outlet);
-    return compRef && compRef.instance;
   }
 
   private _resolveCompFactory(): ComponentFactory<any> | null {
