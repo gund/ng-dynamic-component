@@ -38,7 +38,7 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
   @Input() ndcDynamicOutputs: { [k: string]: Function };
   @Input() ngComponentOutletNdcDynamicOutputs: { [k: string]: Function };
 
-  private _componentInjector: ComponentInjector = this._injector.get(this._componentInjectorType, {});
+  private _componentInjector: ComponentInjector = this._injector.get(this._componentInjectorType, null);
   private _lastComponentInst: any = this._componentInjector;
   private _lastInputChanges: SimpleChanges;
   private _inputsDiffer = this._differs.find({}).create();
