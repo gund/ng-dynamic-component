@@ -85,7 +85,7 @@ Here you can update your inputs (ex. `inputs.hello = 'WORLD'`) and they will tri
 
 ### Attributes
 
-Since v2.3.0 you can now declaratively set attributes as you would inputs via `ndcDynamicAttributes`:
+**Since v2.2.0** you can now declaratively set attributes, as you would inputs, via `ndcDynamicAttributes`:
 
 ```ts
 import { AttributesMap } from 'ng-dynamic-component';
