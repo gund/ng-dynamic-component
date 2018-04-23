@@ -37,6 +37,8 @@ import { MyDynamicComponent1, MyDynamicComponent2 } from './my-components';
 })
 ```
 
+### DynamicComponent
+
 Then in your component's template include `<ndc-dynamic>` where you want to render component
 and bind from your component class type of component to render:
 ```ts
@@ -48,6 +50,8 @@ class MyComponent {
   component = Math.random() > 0.5 ? MyDynamicComponent1 : MyDynamicComponent2;
 }
 ```
+
+### Inputs and Outputs
 
 You can also pass `inputs` and `outputs` to your dynamic components:
 ```ts
@@ -79,6 +83,51 @@ class MyDynamicComponent1 {
 Here you can update your inputs (ex. `inputs.hello = 'WORLD'`) and they will trigger standard Angular's life-cycle hooks
 (of course you should consider which change detection strategy you are using).
 
+### Attributes
+
+Since v2.3.0 you can now declaratively set attributes as you would inputs via `ndcDynamicAttributes`:
+
+```ts
+import { AttributesMap } from 'ng-dynamic-component';
+
+@Component({
+  selector: 'my-component',
+  template: `<ndc-dynamic [ndcDynamicComponent]="component"
+                          [ndcDynamicAttributes]="attrs"
+                          ></ndc-dynamic>`
+})
+class MyComponent {
+  component = MyDynamicComponent1;
+  attrs: AttributesMap = {
+    'my-attribute': 'attribute-value',
+    'class': 'some classes'
+  };
+}
+```
+Remember that attributes values are always strings (while inputs can be any value).
+So to have better type safety you can use `AttributesMap` interface for your attributes maps.
+
+
+Also you can use `ngComponentOutlet` and `ndcDynamicAttributes` with `*` syntax:
+```ts
+import { AttributesMap } from 'ng-dynamic-component';
+
+@Component({
+  selector: 'my-component',
+  template: `<ng-container *ngComponentOutlet="component;
+                            ndcDynamicAttributes: attrs"
+                            ></ng-container>`
+})
+class MyComponent {
+  component = MyDynamicComponent1;
+  attrs: AttributesMap = {
+    'my-attribute': 'attribute-value',
+    'class': 'some classes'
+  };
+}
+```
+
+### NgComponentOutlet support
 
 You can also use [`NgComponentOutlet`](https://angular.io/docs/ts/latest/api/common/index/NgComponentOutlet-directive.html)
 directive from `@angular/common` instead of `<ndc-dynamic>` and apply `inputs` and `outputs` to your dynamic components:
@@ -112,6 +161,8 @@ class MyComponent {
   outputs = {...}
 }
 ```
+
+### Extra
 
 You can have more advanced stuff over your dynamically rendered components like setting custom injector (`[ndcDynamicInjector]`)
 or providing additional/overriding providers (`[ndcDynamicProviders]`) or both simultaneously
