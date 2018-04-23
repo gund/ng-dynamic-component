@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
@@ -18,36 +18,31 @@ const getInjectedComponentFrom = getByPredicate<InjectedComponent>(
   By.directive(InjectedComponent),
 );
 
-@Component({})
-class TestComponent extends TestComponentBase {
-  comp = InjectedComponent;
-  attrs: { [k: string]: string };
-}
-
 describe('DynamicAttributesDirective', () => {
-  let hostTemplate = '';
-  let fixture: ComponentFixture<TestComponent>;
-
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      imports: [CommonModule, TestModule],
-      declarations: [
-        DynamicAttributesDirective,
-        TestComponent,
-        ComponentOutletInjectorDirective,
-        DynamicComponent,
-      ],
-      providers: [{ provide: COMPONENT_INJECTOR, useValue: DynamicComponent }],
-    })
-      .overrideTemplate(TestComponent, hostTemplate)
-      .compileComponents();
-
-    fixture = TestBed.createComponent(TestComponent);
-  }));
-
   describe('with `ngComponentOutlet`', () => {
-    beforeAll(() =>
-      (hostTemplate = `<ng-container [ngComponentOutlet]="comp" [ndcDynamicAttributes]="attrs"></ng-container>`));
+    let fixture: ComponentFixture<TestComponent>;
+
+    @Component({
+      template: `<ng-container [ngComponentOutlet]="comp" [ndcDynamicAttributes]="attrs"></ng-container>`,
+    })
+    class TestComponent extends TestComponentBase {
+      comp = InjectedComponent;
+      attrs: { [k: string]: string };
+    }
+
+    beforeEach(async(() => {
+      TestBed.configureTestingModule({
+        imports: [CommonModule, TestModule],
+        declarations: [
+          DynamicAttributesDirective,
+          TestComponent,
+          ComponentOutletInjectorDirective,
+        ],
+        providers: [{ provide: COMPONENT_INJECTOR, useValue: null }],
+      }).compileComponents();
+
+      fixture = TestBed.createComponent(TestComponent);
+    }));
 
     it('should set attrs on injected component', () => {
       const attrs = {
@@ -190,8 +185,33 @@ describe('DynamicAttributesDirective', () => {
   });
 
   describe('with `ndc-dynamic`', () => {
-    beforeAll(() =>
-      (hostTemplate = `<ndc-dynamic [ndcDynamicComponent]="comp" [ndcDynamicAttributes]="attrs"></ndc-dynamic>`));
+    let fixture: ComponentFixture<TestComponent>;
+
+    @Component({
+      selector: 'host-comp',
+      template: `<ndc-dynamic [ndcDynamicComponent]="comp" [ndcDynamicAttributes]="attrs"></ndc-dynamic>`,
+    })
+    class TestComponent {
+      @ViewChild(DynamicComponent) dynamicComp: DynamicComponent;
+      comp = InjectedComponent;
+      attrs: { [k: string]: string };
+    }
+
+    beforeEach(async(() => {
+      TestBed.configureTestingModule({
+        imports: [CommonModule, TestModule],
+        declarations: [
+          DynamicComponent,
+          DynamicAttributesDirective,
+          TestComponent,
+        ],
+        providers: [
+          { provide: COMPONENT_INJECTOR, useValue: DynamicComponent },
+        ],
+      }).compileComponents();
+
+      fixture = TestBed.createComponent(TestComponent);
+    }));
 
     it('should set attributes on injected component', () => {
       const attrs = {

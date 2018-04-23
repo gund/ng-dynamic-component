@@ -26,14 +26,23 @@ export class DynamicAttributesDirective implements DoCheck {
   @Input() ndcDynamicAttributes: AttributesMap;
 
   private _attrsDiffer = this.differs.find({}).create<string, string>();
-  private _componentInjector: ComponentInjector = this.injector.get(this.componentInjectorType, {});
+  private _componentInjector: ComponentInjector = this.injector.get(
+    this.componentInjectorType,
+    null,
+  );
 
   private get _compInjector() {
     return this.componentOutletInjector || this._componentInjector;
   }
 
   private get _nativeElement() {
-    return this._compInjector.componentRef.location.nativeElement;
+    const compInjector = this._compInjector;
+
+    if (!compInjector) {
+      throw Error('ERROR: ndcDynamicAttributes: No Component Injector available!');
+    }
+
+    return compInjector.componentRef.location.nativeElement;
   }
 
   constructor(
