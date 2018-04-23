@@ -4,6 +4,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
 import {
+  AnotherInjectedComponent,
   InjectedComponent,
   TestComponent as TestComponentBase,
   TestModule,
@@ -16,6 +17,9 @@ import { DynamicComponent } from './dynamic.component';
 
 const getInjectedComponentFrom = getByPredicate<InjectedComponent>(
   By.directive(InjectedComponent),
+);
+const getAnotherInjectedComponentFrom = getByPredicate<AnotherInjectedComponent>(
+  By.directive(AnotherInjectedComponent),
 );
 
 describe('DynamicAttributesDirective', () => {
@@ -181,6 +185,24 @@ describe('DynamicAttributesDirective', () => {
       fixture.detectChanges();
 
       expect(injectedElem.attributes).toEqual(attrs);
+    });
+
+    it('should reassign attrs when new component injected', () => {
+      const attrs = {
+        'attr-one': 'val-1',
+        attrTwo: 'val-two',
+      };
+      fixture.componentInstance.attrs = attrs;
+
+      fixture.detectChanges();
+
+      fixture.componentInstance.comp = AnotherInjectedComponent;
+
+      fixture.detectChanges();
+
+      const injectedElem = getAnotherInjectedComponentFrom(fixture).componentElem;
+
+      expect(injectedElem.attributes).toMatchObject(attrs);
     });
   });
 

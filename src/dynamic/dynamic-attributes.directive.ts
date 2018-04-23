@@ -9,6 +9,7 @@ import {
   KeyValueDiffers,
   Optional,
   Renderer2,
+  Type,
 } from '@angular/core';
 
 import { COMPONENT_INJECTOR, ComponentInjector } from './component-injector';
@@ -16,6 +17,11 @@ import { ComponentOutletInjectorDirective } from './component-outlet-injector.di
 
 export interface AttributesMap {
   [key: string]: string;
+}
+
+interface AttributeActions {
+  set: AttributesMap;
+  remove: string[];
 }
 
 @Directive({
@@ -31,9 +37,13 @@ export class DynamicAttributesDirective implements DoCheck {
     this.componentInjectorType,
     null,
   );
+  private _lastCompType: Type<any>;
+  private _lastAttrActions: AttributeActions;
 
   private get _attributes() {
-    return this.ndcDynamicAttributes || this.ngComponentOutletNdcDynamicAttributes;
+    return (
+      this.ndcDynamicAttributes || this.ngComponentOutletNdcDynamicAttributes
+    );
   }
 
   private get _compInjector() {
@@ -42,6 +52,18 @@ export class DynamicAttributesDirective implements DoCheck {
 
   private get _nativeElement() {
     return this._compInjector.componentRef.location.nativeElement;
+  }
+
+  private get _compType() {
+    return this._compInjector.componentRef.componentType;
+  }
+
+  private get _isCompChanged() {
+    if (this._lastCompType !== this._compType) {
+      this._lastCompType = this._compType;
+      return true;
+    }
+    return false;
   }
 
   constructor(
@@ -56,10 +78,14 @@ export class DynamicAttributesDirective implements DoCheck {
   ) {}
 
   ngDoCheck(): void {
+    const isCompChanged = this._isCompChanged;
     const changes = this._attrsDiffer.diff(this._attributes);
 
     if (changes) {
-      this._updateAttributes(changes);
+      this._lastAttrActions = this._changesToAttrActions(changes);
+      this._updateAttributes(this._lastAttrActions);
+    } else if (isCompChanged && this._lastAttrActions) {
+      this._updateAttributes(this._lastAttrActions);
     }
   }
 
@@ -71,9 +97,26 @@ export class DynamicAttributesDirective implements DoCheck {
     this.renderer.removeAttribute(this._nativeElement, name, namespace);
   }
 
-  private _updateAttributes(changes: KeyValueChanges<string, string>) {
-    changes.forEachAddedItem(r => this.setAttribute(r.key, r.currentValue));
-    changes.forEachChangedItem(r => this.setAttribute(r.key, r.currentValue));
-    changes.forEachRemovedItem(r => this.removeAttribute(r.key));
+  private _updateAttributes(actions: AttributeActions) {
+    Object.keys(actions.set).forEach(key =>
+      this.setAttribute(key, actions.set[key]),
+    );
+
+    actions.remove.forEach(key => this.removeAttribute(key));
+  }
+
+  private _changesToAttrActions(
+    changes: KeyValueChanges<string, string>,
+  ): AttributeActions {
+    const attrActions: AttributeActions = {
+      set: {},
+      remove: [],
+    };
+
+    changes.forEachAddedItem(r => (attrActions.set[r.key] = r.currentValue));
+    changes.forEachChangedItem(r => (attrActions.set[r.key] = r.currentValue));
+    changes.forEachRemovedItem(r => attrActions.remove.push(r.key));
+
+    return attrActions;
   }
 }
