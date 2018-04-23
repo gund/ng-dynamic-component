@@ -184,6 +184,46 @@ describe('DynamicAttributesDirective', () => {
     });
   });
 
+  describe('with `ngComponentOutlet` * syntax', () => {
+    let fixture: ComponentFixture<TestComponent>;
+
+    @Component({
+      template: `<ng-container *ngComponentOutlet="comp; ndcDynamicAttributes: attrs"></ng-container>`,
+    })
+    class TestComponent extends TestComponentBase {
+      comp = InjectedComponent;
+      attrs: { [k: string]: string };
+    }
+
+    beforeEach(async(() => {
+      TestBed.configureTestingModule({
+        imports: [CommonModule, TestModule],
+        declarations: [
+          DynamicAttributesDirective,
+          TestComponent,
+          ComponentOutletInjectorDirective,
+        ],
+        providers: [{ provide: COMPONENT_INJECTOR, useValue: null }],
+      }).compileComponents();
+
+      fixture = TestBed.createComponent(TestComponent);
+    }));
+
+    it('should set attributes on injected component', () => {
+      const attrs = {
+        'attr-one': 'val-1',
+        attrTwo: 'val-two',
+      };
+      fixture.componentInstance.attrs = attrs;
+
+      fixture.detectChanges();
+
+      const injectedElem = getInjectedComponentFrom(fixture).componentElem;
+
+      expect(injectedElem.attributes).toMatchObject(attrs);
+    });
+  });
+
   describe('with `ndc-dynamic`', () => {
     let fixture: ComponentFixture<TestComponent>;
 
