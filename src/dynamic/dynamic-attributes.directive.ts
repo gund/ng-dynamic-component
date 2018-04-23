@@ -83,8 +83,9 @@ export class DynamicAttributesDirective implements DoCheck {
 
     if (changes) {
       this._lastAttrActions = this._changesToAttrActions(changes);
-      this._updateAttributes(this._lastAttrActions);
-    } else if (isCompChanged && this._lastAttrActions) {
+    }
+
+    if (changes || (isCompChanged && this._lastAttrActions)) {
       this._updateAttributes(this._lastAttrActions);
     }
   }
