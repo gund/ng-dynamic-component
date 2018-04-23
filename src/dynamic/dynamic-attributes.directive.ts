@@ -36,13 +36,7 @@ export class DynamicAttributesDirective implements DoCheck {
   }
 
   private get _nativeElement() {
-    const compInjector = this._compInjector;
-
-    if (!compInjector) {
-      throw Error('ERROR: ndcDynamicAttributes: No Component Injector available!');
-    }
-
-    return compInjector.componentRef.location.nativeElement;
+    return this._compInjector.componentRef.location.nativeElement;
   }
 
   constructor(
