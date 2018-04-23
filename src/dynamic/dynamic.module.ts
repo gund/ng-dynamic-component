@@ -8,6 +8,7 @@ import {
 
 import { COMPONENT_INJECTOR, ComponentInjector } from './component-injector';
 import { ComponentOutletInjectorDirective } from './component-outlet-injector.directive';
+import { DynamicAttributesDirective } from './dynamic-attributes.directive';
 import { DynamicComponent } from './dynamic.component';
 import { DynamicDirective } from './dynamic.directive';
 
@@ -17,11 +18,13 @@ import { DynamicDirective } from './dynamic.directive';
     DynamicComponent,
     DynamicDirective,
     ComponentOutletInjectorDirective,
+    DynamicAttributesDirective,
   ],
   exports: [
     DynamicComponent,
     DynamicDirective,
     ComponentOutletInjectorDirective,
+    DynamicAttributesDirective,
   ],
 })
 export class DynamicModule {
