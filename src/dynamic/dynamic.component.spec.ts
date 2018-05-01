@@ -1,5 +1,6 @@
 import {
   Component,
+  ComponentRef,
   InjectionToken,
   Injector,
   NO_ERRORS_SCHEMA,
@@ -26,6 +27,7 @@ describe('DynamicComponent', () => {
     let testTemplate = `<ndc-dynamic [ndcDynamicComponent]="component"
                                    [ndcDynamicInjector]="injector"
                                    [ndcDynamicProviders]="providers"
+                                   (ndcDynamicCreated)="createdComponent($event)"
                                    [ndcDynamicContent]="content"></ndc-dynamic>`;
     let fixture: ComponentFixture<TestComponent>, createComp = true;
 
@@ -58,6 +60,13 @@ describe('DynamicComponent', () => {
         expect(fixture.debugElement.children.length).toBe(2);
         expect(injectedElem).not.toBeNull();
         expect(injectedElem.componentInstance).toEqual(jasmine.any(InjectedComponent));
+    });
+
+    it('should emit event when component created', () => {
+        fixture.componentInstance.component = InjectedComponent;
+        fixture.detectChanges();
+
+        expect(fixture.componentInstance.comp.instance).toBeInstanceOf(InjectedComponent);
     });
 
     it('should clear view if [ndcDynamicComponent] becomes null', () => {
@@ -181,7 +190,13 @@ class TestComponent {
     providers: Provider[];
     content: any[][];
 
+    comp: ComponentRef<any>;
+
     @ViewChildren(TemplateRef) tplRefs: QueryList<TemplateRef<any>>;
 
     constructor(public vcRef: ViewContainerRef) { }
+
+    createdComponent(comp: ComponentRef<any>) {
+        this.comp = comp;
+    }
 }

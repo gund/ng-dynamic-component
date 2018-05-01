@@ -3,9 +3,11 @@ import {
   Component,
   ComponentFactoryResolver,
   ComponentRef,
+  EventEmitter,
   Injector,
   Input,
   OnChanges,
+  Output,
   Provider,
   ReflectiveInjector,
   SimpleChanges,
@@ -23,6 +25,8 @@ export class DynamicComponent implements OnChanges, ComponentInjector {
   @Input() ndcDynamicInjector: Injector;
   @Input() ndcDynamicProviders: Provider[];
   @Input() ndcDynamicContent: any[][];
+
+  @Output() ndcDynamicCreated: EventEmitter<ComponentRef<any>> = new EventEmitter();
 
   componentRef: ComponentRef<any> | null;
 
@@ -46,6 +50,7 @@ export class DynamicComponent implements OnChanges, ComponentInjector {
         this._cfr.resolveComponentFactory(this.ndcDynamicComponent),
         0, this._resolveInjector(), this.ndcDynamicContent
       );
+      this.ndcDynamicCreated.emit(this.componentRef);
     }
   }
 

@@ -83,6 +83,25 @@ class MyDynamicComponent1 {
 Here you can update your inputs (ex. `inputs.hello = 'WORLD'`) and they will trigger standard Angular's life-cycle hooks
 (of course you should consider which change detection strategy you are using).
 
+### Component Creation Events
+
+You can subscribe to component creation events, being passed a reference to the `ComponentRef`:
+
+```ts
+@Component({
+  selector: 'my-component',
+  template: `<ndc-dynamic [ndcDynamicComponent]="component"
+                          [ndcDynamicCreated]="componentCreated($event)"
+                          ></ndc-dynamic>`
+})
+class MyComponent {
+  component = MyDynamicComponent1;
+  componentCreated(compRef: ComponentRef<any>) {
+    // utilize compRef in some way ...
+  }
+}
+```
+
 ### Attributes
 
 **Since v2.2.0** you can now declaratively set attributes, as you would inputs, via `ndcDynamicAttributes`:
