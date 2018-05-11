@@ -6,7 +6,7 @@ import {
   NO_ERRORS_SCHEMA,
   Provider,
   QueryList,
-  ReflectiveInjector,
+  StaticInjector,
   TemplateRef,
   Type,
   ViewChildren,
@@ -115,7 +115,7 @@ describe('DynamicComponent', () => {
 
     it('should use [ndcDynamicInjector] if provided', () => {
         fixture.componentInstance.component = InjectedComponent;
-        fixture.componentInstance.injector = ReflectiveInjector.resolveAndCreate([
+        fixture.componentInstance.injector = StaticInjector.resolveAndCreate([
             { provide: token, useValue: tokenValue }
         ], fixture.componentRef.injector);
         fixture.detectChanges();
@@ -140,7 +140,7 @@ describe('DynamicComponent', () => {
         const anotherTokenValue = {};
 
         fixture.componentInstance.component = InjectedComponent;
-        fixture.componentInstance.injector = ReflectiveInjector.resolveAndCreate([
+        fixture.componentInstance.injector = StaticInjector.resolveAndCreate([
             { provide: token, useValue: tokenValue }
         ], fixture.componentRef.injector);
         fixture.componentInstance.providers = [{ provide: anotherToken, useValue: anotherTokenValue }];

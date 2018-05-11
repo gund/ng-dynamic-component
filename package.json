@@ -93,7 +93,7 @@
     "zone.js": "^0.8.16"
   },
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=8.0.0"
   },
   "config": {
     "commitizen": {

@@ -9,7 +9,7 @@ import {
   OnChanges,
   Output,
   Provider,
-  ReflectiveInjector,
+  StaticInjector,
   SimpleChanges,
   Type,
   ViewContainerRef
@@ -58,7 +58,7 @@ export class DynamicComponent implements OnChanges, ComponentInjector {
     let injector = this.ndcDynamicInjector || this._vcr.parentInjector;
 
     if (this.ndcDynamicProviders) {
-      injector = ReflectiveInjector.resolveAndCreate(this.ndcDynamicProviders, injector);
+      injector = StaticInjector.resolveAndCreate(this.ndcDynamicProviders, injector);
     }
 
     return injector;
