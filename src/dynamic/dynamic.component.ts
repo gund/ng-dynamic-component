@@ -57,7 +57,10 @@ export class DynamicComponent implements OnChanges, ComponentInjector {
     let injector = this.ndcDynamicInjector || this._vcr.parentInjector;
 
     if (this.ndcDynamicProviders) {
-      injector = Injector.create(this.ndcDynamicProviders, injector);
+      injector = Injector.create({
+        providers: this.ndcDynamicProviders,
+        parent: injector,
+      });
     }
 
     return injector;
