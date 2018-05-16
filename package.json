@@ -90,10 +90,10 @@
     "uglify-js": "^3.3.24",
     "webpack": "^4.8.1",
     "webpack-dev-server": "^3.1.4",
-    "zone.js": "^0.8.16"
+    "zone.js": "~0.8.26"
   },
   "engines": {
-    "node": ">=8.0.0"
+    "node": ">=6.0.0"
   },
   "config": {
     "commitizen": {
