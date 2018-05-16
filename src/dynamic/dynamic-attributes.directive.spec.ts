@@ -42,7 +42,7 @@ describe('DynamicAttributesDirective', () => {
           TestComponent,
           ComponentOutletInjectorDirective,
         ],
-        providers: [{ provide: COMPONENT_INJECTOR, useValue: null }],
+        providers: [{ provide: COMPONENT_INJECTOR, useValue: DynamicComponent }],
       }).compileComponents();
 
       fixture = TestBed.createComponent(TestComponent);
@@ -225,7 +225,7 @@ describe('DynamicAttributesDirective', () => {
           TestComponent,
           ComponentOutletInjectorDirective,
         ],
-        providers: [{ provide: COMPONENT_INJECTOR, useValue: null }],
+        providers: [{ provide: COMPONENT_INJECTOR, useValue: DynamicComponent }],
       }).compileComponents();
 
       fixture = TestBed.createComponent(TestComponent);
