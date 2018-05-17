@@ -4,13 +4,12 @@ import {
   InjectionToken,
   Injector,
   NO_ERRORS_SCHEMA,
-  Provider,
   QueryList,
-  ReflectiveInjector,
   TemplateRef,
   Type,
   ViewChildren,
   ViewContainerRef,
+  StaticProvider,
 } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
@@ -115,7 +114,7 @@ describe('DynamicComponent', () => {
 
     it('should use [ndcDynamicInjector] if provided', () => {
         fixture.componentInstance.component = InjectedComponent;
-        fixture.componentInstance.injector = ReflectiveInjector.resolveAndCreate([
+        fixture.componentInstance.injector = Injector.create([
             { provide: token, useValue: tokenValue }
         ], fixture.componentRef.injector);
         fixture.detectChanges();
@@ -140,7 +139,7 @@ describe('DynamicComponent', () => {
         const anotherTokenValue = {};
 
         fixture.componentInstance.component = InjectedComponent;
-        fixture.componentInstance.injector = ReflectiveInjector.resolveAndCreate([
+        fixture.componentInstance.injector = Injector.create([
             { provide: token, useValue: tokenValue }
         ], fixture.componentRef.injector);
         fixture.componentInstance.providers = [{ provide: anotherToken, useValue: anotherTokenValue }];
@@ -187,7 +186,7 @@ describe('DynamicComponent', () => {
 class TestComponent {
     component: Type<any>;
     injector: Injector;
-    providers: Provider[];
+    providers: StaticProvider[];
     content: any[][];
 
     comp: ComponentRef<any>;

@@ -15,13 +15,13 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 
 import { COMPONENT_INJECTOR, ComponentInjector } from './component-injector';
 import { ComponentOutletInjectorDirective } from './component-outlet-injector.directive';
 import { changesFromRecord, createNewChange } from './util';
 
-export type IOMapInfo = { propName: string, templateName: string };
+export type IOMapInfo = { propName: string; templateName: string };
 export type IOMappingList = IOMapInfo[];
 export type KeyValueChangesAny = KeyValueChanges<any, any>;
 
@@ -29,16 +29,19 @@ const recordToChanges = changesFromRecord({ isFirstChanges: true });
 const recordToNewChanges = changesFromRecord({ onlyNewChanges: true });
 
 @Directive({
-  selector: '[ndcDynamicInputs],[ndcDynamicOutputs],[ngComponentOutletNdcDynamicInputs],[ngComponentOutletNdcDynamicOutputs]'
+  selector:
+    '[ndcDynamicInputs],[ndcDynamicOutputs],[ngComponentOutletNdcDynamicInputs],[ngComponentOutletNdcDynamicOutputs]',
 })
 export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
-
   @Input() ndcDynamicInputs: { [k: string]: any };
   @Input() ngComponentOutletNdcDynamicInputs: { [k: string]: any };
   @Input() ndcDynamicOutputs: { [k: string]: Function };
   @Input() ngComponentOutletNdcDynamicOutputs: { [k: string]: Function };
 
-  private _componentInjector: ComponentInjector = this._injector.get(this._componentInjectorType, null);
+  private _componentInjector: ComponentInjector = this._injector.get(
+    this._componentInjectorType,
+    null,
+  );
   private _lastComponentInst: any = this._componentInjector;
   private _lastInputChanges: SimpleChanges;
   private _inputsDiffer = this._differs.find({}).create();
@@ -78,9 +81,12 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
     private _differs: KeyValueDiffers,
     private _injector: Injector,
     private _cfr: ComponentFactoryResolver,
-    @Inject(COMPONENT_INJECTOR) private _componentInjectorType: ComponentInjector,
-    @Host() @Optional() private _componentOutletInjector: ComponentOutletInjectorDirective,
-  ) { }
+    @Inject(COMPONENT_INJECTOR)
+    private _componentInjectorType: ComponentInjector,
+    @Host()
+    @Optional()
+    private _componentOutletInjector: ComponentOutletInjectorDirective,
+  ) {}
 
   ngOnChanges(changes: SimpleChanges) {
     const compChanged = this._componentInstChanged;
@@ -143,9 +149,7 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
 
     inputs = this._resolveInputs(inputs);
 
-    Object
-      .keys(inputs)
-      .forEach(p => compInst[p] = inputs[p]);
+    Object.keys(inputs).forEach(p => (compInst[p] = inputs[p]));
 
     this.notifyOnInputChanges(this._lastInputChanges, isFirstChange);
   }
@@ -164,12 +168,17 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
 
     Object.keys(outputs)
       .filter(p => compInst[p])
-      .forEach(p => compInst[p]
-        .pipe(takeUntil(this._outputsShouldDisconnect$))
-        .subscribe(outputs[p]));
+      .forEach(p =>
+        compInst[p]
+          .pipe(takeUntil(this._outputsShouldDisconnect$))
+          .subscribe(outputs[p]),
+      );
   }
 
-  notifyOnInputChanges(changes: SimpleChanges = {}, forceFirstChanges: boolean) {
+  notifyOnInputChanges(
+    changes: SimpleChanges = {},
+    forceFirstChanges: boolean,
+  ) {
     // Exit early if component not interested to receive changes
     if (!this._componentInst.ngOnChanges) {
       return;
@@ -198,15 +207,14 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
     const changes = {} as SimpleChanges;
     const inputs = this._inputs;
 
-    Object.keys(inputs).forEach(prop =>
-      changes[prop] = createNewChange(inputs[prop]));
+    Object.keys(inputs).forEach(
+      prop => (changes[prop] = createNewChange(inputs[prop])),
+    );
 
     return this._resolveChanges(changes);
   }
 
-  private _collectChangesFromDiffer(
-    differ: KeyValueChangesAny
-  ): SimpleChanges {
+  private _collectChangesFromDiffer(differ: KeyValueChangesAny): SimpleChanges {
     const changes = {} as SimpleChanges;
 
     differ.forEachAddedItem(recordToChanges(changes));
@@ -216,11 +224,17 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
   }
 
   private _inputsChanged(changes: SimpleChanges): boolean {
-    return 'ngComponentOutletNdcDynamicInputs' in changes || 'ndcDynamicInputs' in changes;
+    return (
+      'ngComponentOutletNdcDynamicInputs' in changes ||
+      'ndcDynamicInputs' in changes
+    );
   }
 
   private _outputsChanged(changes: SimpleChanges): boolean {
-    return 'ngComponentOutletNdcDynamicOutputs' in changes || 'ndcDynamicOutputs' in changes;
+    return (
+      'ngComponentOutletNdcDynamicOutputs' in changes ||
+      'ndcDynamicOutputs' in changes
+    );
   }
 
   private _resolveCompFactory(): ComponentFactory<any> | null {
@@ -229,7 +243,9 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
         return this._cfr.resolveComponentFactory(this._compRef.componentType);
       } catch (e) {
         // Fallback if componentType does not exist (happens on NgComponentOutlet)
-        return this._cfr.resolveComponentFactory(this._compRef.instance.constructor);
+        return this._cfr.resolveComponentFactory(
+          this._compRef.instance.constructor,
+        );
       }
     } catch (e) {
       // Factory not available - bailout
@@ -268,16 +284,18 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
   private _remapIO(io: any, mapping: IOMappingList): any {
     const newIO = {};
 
-    Object.keys(io)
-      .forEach(key => {
-        const newKey = this._findPropByTplInMapping(key, mapping) || key;
-        newIO[newKey] = io[key];
-      });
+    Object.keys(io).forEach(key => {
+      const newKey = this._findPropByTplInMapping(key, mapping) || key;
+      newIO[newKey] = io[key];
+    });
 
     return newIO;
   }
 
-  private _findPropByTplInMapping(tplName: string, mapping: IOMappingList): string | null {
+  private _findPropByTplInMapping(
+    tplName: string,
+    mapping: IOMappingList,
+  ): string | null {
     for (const map of mapping) {
       if (map.templateName === tplName) {
         return map.propName;
@@ -285,5 +303,4 @@ export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
     }
     return null;
   }
-
 }

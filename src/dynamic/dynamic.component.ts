@@ -8,8 +8,7 @@ import {
   Input,
   OnChanges,
   Output,
-  Provider,
-  ReflectiveInjector,
+  StaticProvider,
   SimpleChanges,
   Type,
   ViewContainerRef
@@ -23,7 +22,7 @@ export class DynamicComponent implements OnChanges, ComponentInjector {
 
   @Input() ndcDynamicComponent: Type<any>;
   @Input() ndcDynamicInjector: Injector;
-  @Input() ndcDynamicProviders: Provider[];
+  @Input() ndcDynamicProviders: StaticProvider[];
   @Input() ndcDynamicContent: any[][];
 
   @Output() ndcDynamicCreated: EventEmitter<ComponentRef<any>> = new EventEmitter();
@@ -58,7 +57,10 @@ export class DynamicComponent implements OnChanges, ComponentInjector {
     let injector = this.ndcDynamicInjector || this._vcr.parentInjector;
 
     if (this.ndcDynamicProviders) {
-      injector = ReflectiveInjector.resolveAndCreate(this.ndcDynamicProviders, injector);
+      injector = Injector.create({
+        providers: this.ndcDynamicProviders,
+        parent: injector,
+      });
     }
 
     return injector;
