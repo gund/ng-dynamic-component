@@ -91,7 +91,7 @@ You can subscribe to component creation events, being passed a reference to the 
 @Component({
   selector: 'my-component',
   template: `<ndc-dynamic [ndcDynamicComponent]="component"
-                          [ndcDynamicCreated]="componentCreated($event)"
+                          (ndcDynamicCreated)="componentCreated($event)"
                           ></ndc-dynamic>`
 })
 class MyComponent {
