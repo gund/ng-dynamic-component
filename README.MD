@@ -161,7 +161,7 @@ directive from `@angular/common` instead of `<ndc-dynamic>` and apply `inputs` a
 class MyComponent {
   component = MyDynamicComponent1;
   inputs = {...};
-  outputs = {...}
+  outputs = {...};
 }
 ```
 
@@ -177,7 +177,7 @@ Also you can use `ngComponentOutlet` with `*` syntax:
 class MyComponent {
   component = MyDynamicComponent1;
   inputs = {...};
-  outputs = {...}
+  outputs = {...};
 }
 ```
 
