@@ -11,6 +11,8 @@
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 [![Greenkeeper badge](https://badges.greenkeeper.io/gund/ng-dynamic-component.svg)](https://greenkeeper.io/)
 
+Version 3.x.x supports Angular 6 (`ng-dynamic-component@^3.0.0`)
+
 Version 2.x.x supports Angular 5 (`ng-dynamic-component@^2.0.0`)
 
 Version 1.x.x supports Angular 4 (`ng-dynamic-component@^1.0.0`)
