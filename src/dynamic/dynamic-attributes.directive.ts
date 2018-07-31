@@ -51,11 +51,11 @@ export class DynamicAttributesDirective implements DoCheck {
   }
 
   private get _nativeElement() {
-    return this._compInjector.componentRef.location.nativeElement;
+    return this._compInjector.componentRef ? this._compInjector.componentRef.location.nativeElement : null;
   }
 
   private get _compType() {
-    return this._compInjector.componentRef.componentType;
+    return this._compInjector.componentRef ? this._compInjector.componentRef.componentType : null;
   }
 
   private get _isCompChanged() {
@@ -91,7 +91,9 @@ export class DynamicAttributesDirective implements DoCheck {
   }
 
   setAttribute(name: string, value: string, namespace?: string) {
-    this.renderer.setAttribute(this._nativeElement, name, value, namespace);
+    if (this._nativeElement) {
+      this.renderer.setAttribute(this._nativeElement, name, value, namespace);
+    }
   }
 
   removeAttribute(name: string, namespace?: string) {
