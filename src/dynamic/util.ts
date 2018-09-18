@@ -24,13 +24,13 @@ export function setChangeFromRecord(
 }
 
 function getChangesRecords(isFirstChanges: boolean) {
-  return (changes: SimpleChanges) => setChangeFromRecord(isFirstChanges,
-    (record, change) => changes[record.key] = change);
+  return (changes: SimpleChanges) =>
+    setChangeFromRecord(isFirstChanges, (record, change) => (changes[record.key] = change));
 }
 
 function getNewChangesRecords(isFirstChanges: boolean) {
-  return (changes: SimpleChanges) => setChangeFromRecord(isFirstChanges,
-    (record, change) => {
+  return (changes: SimpleChanges) =>
+    setChangeFromRecord(isFirstChanges, (record, change) => {
       if (!changes[record.key]) {
         changes[record.key] = change;
       }
@@ -44,10 +44,10 @@ export const defaultOpts = {
 
 export type DefaultOpts = Partial<typeof defaultOpts>;
 
-export function changesFromRecord(
-  opts: DefaultOpts = defaultOpts,
-) {
+export function changesFromRecord(opts: DefaultOpts = defaultOpts) {
   return opts.onlyNewChanges
     ? getNewChangesRecords(opts.isFirstChanges)
     : getChangesRecords(opts.isFirstChanges);
 }
+
+export function noop(...args: any[]): void {}
