@@ -11,6 +11,7 @@ import { takeUntil } from 'rxjs/operators';
 
 import { ComponentInjector } from './component-injector';
 import { changesFromRecord, createNewChange, noop } from './util';
+import { OnDestroy } from '@angular/core';
 
 export type InputsType = { [k: string]: any };
 export type OutputsType = { [k: string]: Function };
@@ -18,11 +19,15 @@ export type IOMapInfo = { propName: string; templateName: string };
 export type IOMappingList = IOMapInfo[];
 export type KeyValueChangesAny = KeyValueChanges<any, any>;
 
+export interface IoInitOptions {
+  trackOutputChanges?: boolean;
+}
+
 const recordToChanges = changesFromRecord({ isFirstChanges: true });
 const recordToNewChanges = changesFromRecord({ onlyNewChanges: true });
 
 @Injectable()
-export class IoService {
+export class IoService implements OnDestroy {
   private checkInit = this.failInit;
 
   private _lastComponentInst: any = null;
@@ -34,6 +39,7 @@ export class IoService {
   private _inputs: InputsType;
   private _outputs: OutputsType;
   private _compInjector: ComponentInjector;
+  private _outputsChanged: (outputs: OutputsType) => boolean = () => false;
 
   private get _compRef() {
     return this._compInjector.componentRef;
@@ -54,9 +60,18 @@ export class IoService {
 
   constructor(private _differs: KeyValueDiffers, private _cfr: ComponentFactoryResolver) {}
 
-  init(componentInjector: ComponentInjector) {
+  ngOnDestroy(): void {
+    this._disconnectOutputs();
+  }
+
+  init(componentInjector: ComponentInjector, options: IoInitOptions = {}) {
     this.checkInit = componentInjector ? noop : this.failInit;
     this._compInjector = componentInjector;
+
+    if (options.trackOutputChanges) {
+      const outputsDiffer = this._differs.find({}).create();
+      this._outputsChanged = (outputs) => !!outputsDiffer.diff(outputs);
+    }
   }
 
   update(
@@ -90,6 +105,10 @@ export class IoService {
       this.updateInputs(true);
       this.bindOutputs();
       return;
+    }
+
+    if (this._outputsChanged(this._outputs)) {
+      this.bindOutputs();
     }
 
     if (!this._inputs) {

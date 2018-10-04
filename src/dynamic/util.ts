@@ -1,5 +1,7 @@
 import { KeyValueChangeRecord, SimpleChange, SimpleChanges } from '@angular/core';
 
+const { Reflect } = window as any;
+
 export type KeyValueChangeRecordAny = KeyValueChangeRecord<any, any>;
 
 export function createNewChange(val: any): SimpleChange {
@@ -51,3 +53,7 @@ export function changesFromRecord(opts: DefaultOpts = defaultOpts) {
 }
 
 export function noop(...args: any[]): void {}
+
+export function getCtorType(ctor: any): any[] {
+  return Reflect.getMetadata('design:paramtypes', ctor);
+}
