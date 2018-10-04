@@ -90,9 +90,6 @@ export class DynamicDirectivesDirective implements OnInit, OnDestroy, DoCheck {
   private dirsDiffer = this.iterableDiffers
     .find([])
     .create<DynamicDirectiveDef<any>>((_, def) => def.type);
-  private inputsDiffer = this.iterableDiffers
-    .find([])
-    .create<DynamicDirectiveDef<any>>((_, def) => def.inputs);
 
   constructor(
     private injector: Injector,
