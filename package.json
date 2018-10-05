@@ -8,8 +8,9 @@
   "es2015": "dist/bundles/ng-dynamic-component.es2015.js",
   "typings": "dist/ng-dynamic-component.d.ts",
   "scripts": {
-    "precommit": "lint-staged",
     "commitmsg": "commitlint -E HUSKY_GIT_PARAMS",
+    "precommit": "lint-staged",
+    "prepush": "npm-run-all -p lint test",
     "ct": "git-cz",
     "build": "node scripts/build.js",
     "build:release": "node scripts/release.js",
@@ -20,12 +21,14 @@
     "test:report": "cd coverage && codecov",
     "cleancoverage": "rimraf coverage",
     "check-coverage": "istanbul check-coverage --functions 75 --lines 75 --branches 75 --statements 75",
-    "ci": "npm run test:ci && npm run check-coverage",
-    "presemantic-release": "npm run build && npm run build:release",
-    "semantic-release": "cd dist && semantic-release",
+    "lint": "tslint -p tsconfig.json -c tslint.json",
+    "ci:test": "npm-run-all -s test:ci check-coverage",
+    "ci": "npm-run-all -p ci:test lint",
     "format:code": "prettier --write \"src/**/*.{ts,js,json,?css}\"",
     "format:html": "prettyhtml \"src/**/*.html\"",
-    "format": "npm-run-all -p format:*"
+    "format": "npm-run-all -p format:*",
+    "presemantic-release": "npm run build && npm run build:release",
+    "semantic-release": "cd dist && semantic-release"
   },
   "keywords": [
     "angular",
