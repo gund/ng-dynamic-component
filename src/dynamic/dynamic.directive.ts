@@ -33,10 +33,14 @@ const recordToNewChanges = changesFromRecord({ onlyNewChanges: true });
     '[ndcDynamicInputs],[ndcDynamicOutputs],[ngComponentOutletNdcDynamicInputs],[ngComponentOutletNdcDynamicOutputs]',
 })
 export class DynamicDirective implements OnChanges, DoCheck, OnDestroy {
-  @Input() ndcDynamicInputs: { [k: string]: any };
-  @Input() ngComponentOutletNdcDynamicInputs: { [k: string]: any };
-  @Input() ndcDynamicOutputs: { [k: string]: Function };
-  @Input() ngComponentOutletNdcDynamicOutputs: { [k: string]: Function };
+  @Input()
+  ndcDynamicInputs: { [k: string]: any };
+  @Input()
+  ngComponentOutletNdcDynamicInputs: { [k: string]: any };
+  @Input()
+  ndcDynamicOutputs: { [k: string]: Function };
+  @Input()
+  ngComponentOutletNdcDynamicOutputs: { [k: string]: Function };
 
   private _componentInjector: ComponentInjector = this._injector.get(
     this._componentInjectorType,

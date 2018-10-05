@@ -3,18 +3,16 @@ import { Component, ComponentRef, EventEmitter, Input } from '@angular/core';
 
 @Component({
   selector: 'component-injector',
-  template: ''
+  template: '',
 })
 export class ComponentInjectorComponent implements ComponentInjector {
-
   component = new MockedInjectedComponent();
 
   get componentRef(): ComponentRef<ComponentInjectorComponent> {
     return {
-      instance: this.component
+      instance: this.component,
     } as any;
-  };
-
+  }
 }
 
 export class MockedInjectedComponent {

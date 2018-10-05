@@ -29,8 +29,10 @@ interface AttributeActions {
   exportAs: 'ndcDynamicAttributes',
 })
 export class DynamicAttributesDirective implements DoCheck {
-  @Input() ndcDynamicAttributes: AttributesMap;
-  @Input() ngComponentOutletNdcDynamicAttributes: AttributesMap;
+  @Input()
+  ndcDynamicAttributes: AttributesMap;
+  @Input()
+  ngComponentOutletNdcDynamicAttributes: AttributesMap;
 
   private _attrsDiffer = this.differs.find({}).create<string, string>();
   private _componentInjector: ComponentInjector = this.injector.get(

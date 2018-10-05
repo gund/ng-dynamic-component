@@ -4,5 +4,6 @@ export interface ComponentInjector {
   componentRef: ComponentRef<any> | null;
 }
 
-export const COMPONENT_INJECTOR =
-  new InjectionToken<ComponentInjector>('ComponentInjector');
+export const COMPONENT_INJECTOR = new InjectionToken<ComponentInjector>(
+  'ComponentInjector',
+);
