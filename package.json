@@ -8,7 +8,9 @@
   "es2015": "dist/bundles/ng-dynamic-component.es2015.js",
   "typings": "dist/ng-dynamic-component.d.ts",
   "scripts": {
-    "commit": "git-cz",
+    "precommit": "lint-staged",
+    "commitmsg": "commitlint -E HUSKY_GIT_PARAMS",
+    "ct": "git-cz",
     "build": "node scripts/build.js",
     "build:release": "node scripts/release.js",
     "pretest": "npm run cleancoverage",
@@ -34,6 +36,13 @@
   ],
   "author": "Alex Malkevich <malkevich.alex@gmail.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gund/ng-dynamic-component.git"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  },
   "peerDependencies": {
     "@angular/common": "^6.0.0",
     "@angular/core": "^6.0.0",
@@ -48,6 +57,9 @@
     "@angular/platform-browser": "^6.0.0",
     "@angular/platform-browser-dynamic": "^6.0.0",
     "@angular/platform-server": "^6.0.0",
+    "@commitlint/cli": "^7.1.2",
+    "@commitlint/config-conventional": "^7.1.2",
+    "@starptech/prettyhtml": "^0.1.9",
     "@types/jest": "^22.0.0",
     "angular2-template-loader": "^0.6.2",
     "awesome-typescript-loader": "^5.0.0",
@@ -57,22 +69,14 @@
     "copy-dir": "^0.3.0",
     "copyfiles": "^2.0.0",
     "cz-conventional-changelog": "^2.0.0",
+    "husky": "^1.1.0",
     "istanbul": "^0.4.5",
-    "jasmine-core": "^2.5.2",
-    "jasmine-spec-reporter": "^4.0.0",
     "jest": "^22.0.4",
     "jest-preset-angular": "^5.0.0",
     "json-loader": "^0.5.4",
-    "karma": "^1.4.1",
-    "karma-chrome-launcher": "^2.0.0",
-    "karma-cli": "^1.0.1",
-    "karma-coverage-istanbul-reporter": "^1.1.0",
-    "karma-jasmine": "^1.1.0",
-    "karma-mocha-reporter": "^2.2.2",
-    "karma-remap-istanbul": "^0.6.0",
-    "karma-sourcemap-loader": "^0.3.7",
-    "karma-webpack": "^3.0.0",
+    "lint-staged": "^7.3.0",
     "npm-run-all": "^4.0.2",
+    "prettier": "^1.14.3",
     "raw-loader": "^1.0.0-beta.0",
     "rimraf": "^2.6.1",
     "rollup": "^0.59.1",
@@ -92,23 +96,22 @@
     "webpack-dev-server": "^3.1.4",
     "zone.js": "~0.8.26"
   },
-  "engines": {
-    "node": ">=6.0.0"
-  },
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gund/ng-dynamic-component.git"
+  "commitlint": {
+    "extends": ["@commitlint/config-conventional"]
+  },
+  "lint-staged": {
+    "src/**/*.ts": ["tslint -p tsconfig.json -c tslint.json --fix", "git add"],
+    "src/**/*.{ts,js,json,?css}": ["prettier --write", "git add"],
+    "src/**/*.{html}": ["prettyhtml", "git add"]
   },
   "jest": {
     "preset": "jest-preset-angular",
-    "roots": [
-      "<rootDir>/src"
-    ],
+    "roots": ["<rootDir>/src"],
     "setupTestFrameworkScriptFile": "<rootDir>/src/setupJest.ts",
     "collectCoverageFrom": [
       "src/dynamic/**/*.ts",
