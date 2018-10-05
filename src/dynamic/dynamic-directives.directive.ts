@@ -55,10 +55,13 @@ export interface DirectiveRef<T> {
   selector: '[ndcDynamicDirectives],[ngComponentOutletNdcDynamicDirectives]',
 })
 export class DynamicDirectivesDirective implements OnInit, OnDestroy, DoCheck {
-  @Input() ndcDynamicDirectives: DynamicDirectiveDef<any>[];
-  @Input() ngComponentOutletNdcDynamicDirectives: DynamicDirectiveDef<any>[];
+  @Input()
+  ndcDynamicDirectives: DynamicDirectiveDef<any>[];
+  @Input()
+  ngComponentOutletNdcDynamicDirectives: DynamicDirectiveDef<any>[];
 
-  @Output() ndcDynamicDirectivesCreated = new EventEmitter<DirectiveRef<any>[]>();
+  @Output()
+  ndcDynamicDirectivesCreated = new EventEmitter<DirectiveRef<any>[]>();
 
   private componentInjector: ComponentInjector = this.injector.get(
     this.componentInjectorType,
@@ -66,7 +69,9 @@ export class DynamicDirectivesDirective implements OnInit, OnDestroy, DoCheck {
   );
 
   private get directives() {
-    return this.ndcDynamicDirectives || this.ngComponentOutletNdcDynamicDirectives;
+    return (
+      this.ndcDynamicDirectives || this.ngComponentOutletNdcDynamicDirectives
+    );
   }
 
   private get compInjector() {
@@ -95,7 +100,8 @@ export class DynamicDirectivesDirective implements OnInit, OnDestroy, DoCheck {
     private injector: Injector,
     private iterableDiffers: IterableDiffers,
     private ioFactoryService: IoFactoryService,
-    @Inject(COMPONENT_INJECTOR) private componentInjectorType: ComponentInjector,
+    @Inject(COMPONENT_INJECTOR)
+    private componentInjectorType: ComponentInjector,
     @Host()
     @Optional()
     private componentOutletInjector: ComponentOutletInjectorDirective,
@@ -112,7 +118,7 @@ export class DynamicDirectivesDirective implements OnInit, OnDestroy, DoCheck {
   }
 
   ngOnDestroy(): void {
-    this.dirRef.forEach((dir) => this.destroyDirRef(dir));
+    this.dirRef.forEach(dir => this.destroyDirRef(dir));
     this.dirRef.clear();
     this.dirIo.clear();
   }
@@ -128,7 +134,9 @@ export class DynamicDirectivesDirective implements OnInit, OnDestroy, DoCheck {
 
     const createdDirs = [];
 
-    dirsChanges.forEachAddedItem(({ item }) => createdDirs.push(this.initDirective(item)));
+    dirsChanges.forEachAddedItem(({ item }) =>
+      createdDirs.push(this.initDirective(item)),
+    );
 
     if (createdDirs.length) {
       this.ndcDynamicDirectivesCreated.emit(createdDirs.filter(Boolean));
@@ -136,7 +144,7 @@ export class DynamicDirectivesDirective implements OnInit, OnDestroy, DoCheck {
   }
 
   private updateDirectives() {
-    this.directives.forEach((dir) => this.updateDirective(dir));
+    this.directives.forEach(dir => this.updateDirective(dir));
   }
 
   private updateDirective(dirDef: DynamicDirectiveDef<any>) {
@@ -145,7 +153,9 @@ export class DynamicDirectivesDirective implements OnInit, OnDestroy, DoCheck {
     io.maybeUpdate();
   }
 
-  private initDirective(dirDef: DynamicDirectiveDef<any>): DirectiveRef<any> | undefined {
+  private initDirective(
+    dirDef: DynamicDirectiveDef<any>,
+  ): DirectiveRef<any> | undefined {
     if (this.dirRef.has(dirDef.type)) {
       return;
     }
@@ -182,7 +192,10 @@ export class DynamicDirectivesDirective implements OnInit, OnDestroy, DoCheck {
 
   private initDirIO(dir: DirectiveRef<any>, inputs?: any, outputs?: any) {
     const io = this.ioFactoryService.create();
-    io.init({ componentRef: this.dirToCompDef(dir) }, { trackOutputChanges: true });
+    io.init(
+      { componentRef: this.dirToCompDef(dir) },
+      { trackOutputChanges: true },
+    );
     io.update(inputs, outputs, !!inputs, !!outputs);
     this.dirIo.set(dir.type, io);
   }
@@ -208,7 +221,7 @@ export class DynamicDirectivesDirective implements OnInit, OnDestroy, DoCheck {
 
   private createDirective<T>(dirType: Type<T>): T {
     const ctorParams: any[] = getCtorType(dirType);
-    const resolvedParams = ctorParams.map((p) => this.resolveDep(p));
+    const resolvedParams = ctorParams.map(p => this.resolveDep(p));
     return new dirType(...resolvedParams);
   }
 

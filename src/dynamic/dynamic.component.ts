@@ -11,28 +11,32 @@ import {
   StaticProvider,
   SimpleChanges,
   Type,
-  ViewContainerRef
+  ViewContainerRef,
 } from '@angular/core';
 
 @Component({
   selector: 'ndc-dynamic',
-  template: ''
+  template: '',
 })
 export class DynamicComponent implements OnChanges, ComponentInjector {
+  @Input()
+  ndcDynamicComponent: Type<any>;
+  @Input()
+  ndcDynamicInjector: Injector;
+  @Input()
+  ndcDynamicProviders: StaticProvider[];
+  @Input()
+  ndcDynamicContent: any[][];
 
-  @Input() ndcDynamicComponent: Type<any>;
-  @Input() ndcDynamicInjector: Injector;
-  @Input() ndcDynamicProviders: StaticProvider[];
-  @Input() ndcDynamicContent: any[][];
-
-  @Output() ndcDynamicCreated: EventEmitter<ComponentRef<any>> = new EventEmitter();
+  @Output()
+  ndcDynamicCreated: EventEmitter<ComponentRef<any>> = new EventEmitter();
 
   componentRef: ComponentRef<any> | null;
 
   constructor(
     private _vcr: ViewContainerRef,
-    private _cfr: ComponentFactoryResolver
-  ) { }
+    private _cfr: ComponentFactoryResolver,
+  ) {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['ndcDynamicComponent']) {
@@ -47,7 +51,9 @@ export class DynamicComponent implements OnChanges, ComponentInjector {
     if (this.ndcDynamicComponent) {
       this.componentRef = this._vcr.createComponent(
         this._cfr.resolveComponentFactory(this.ndcDynamicComponent),
-        0, this._resolveInjector(), this.ndcDynamicContent
+        0,
+        this._resolveInjector(),
+        this.ndcDynamicContent,
       );
       this.ndcDynamicCreated.emit(this.componentRef);
     }
@@ -65,5 +71,4 @@ export class DynamicComponent implements OnChanges, ComponentInjector {
 
     return injector;
   }
-
 }

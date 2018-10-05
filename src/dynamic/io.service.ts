@@ -58,7 +58,10 @@ export class IoService implements OnDestroy {
     }
   }
 
-  constructor(private _differs: KeyValueDiffers, private _cfr: ComponentFactoryResolver) {}
+  constructor(
+    private _differs: KeyValueDiffers,
+    private _cfr: ComponentFactoryResolver,
+  ) {}
 
   ngOnDestroy(): void {
     this._disconnectOutputs();
@@ -70,7 +73,7 @@ export class IoService implements OnDestroy {
 
     if (options.trackOutputChanges) {
       const outputsDiffer = this._differs.find({}).create();
-      this._outputsChanged = (outputs) => !!outputsDiffer.diff(outputs);
+      this._outputsChanged = outputs => !!outputsDiffer.diff(outputs);
     }
   }
 
@@ -146,7 +149,7 @@ export class IoService implements OnDestroy {
 
     inputs = this._resolveInputs(inputs);
 
-    Object.keys(inputs).forEach((p) => (compInst[p] = inputs[p]));
+    Object.keys(inputs).forEach(p => (compInst[p] = inputs[p]));
 
     this.notifyOnInputChanges(this._lastInputChanges, isFirstChange);
   }
@@ -164,13 +167,18 @@ export class IoService implements OnDestroy {
     outputs = this._resolveOutputs(outputs);
 
     Object.keys(outputs)
-      .filter((p) => compInst[p])
-      .forEach((p) =>
-        compInst[p].pipe(takeUntil(this._outputsShouldDisconnect$)).subscribe(outputs[p]),
+      .filter(p => compInst[p])
+      .forEach(p =>
+        compInst[p]
+          .pipe(takeUntil(this._outputsShouldDisconnect$))
+          .subscribe(outputs[p]),
       );
   }
 
-  private notifyOnInputChanges(changes: SimpleChanges = {}, forceFirstChanges: boolean) {
+  private notifyOnInputChanges(
+    changes: SimpleChanges = {},
+    forceFirstChanges: boolean,
+  ) {
     // Exit early if component not interested to receive changes
     if (!this._componentInst.ngOnChanges) {
       return;
@@ -199,7 +207,9 @@ export class IoService implements OnDestroy {
     const changes = {} as SimpleChanges;
     const inputs = this._inputs;
 
-    Object.keys(inputs).forEach((prop) => (changes[prop] = createNewChange(inputs[prop])));
+    Object.keys(inputs).forEach(
+      prop => (changes[prop] = createNewChange(inputs[prop])),
+    );
 
     return this._resolveChanges(changes);
   }
@@ -219,7 +229,9 @@ export class IoService implements OnDestroy {
         return this._cfr.resolveComponentFactory(this._compRef.componentType);
       } catch (e) {
         // Fallback if componentType does not exist (happens on NgComponentOutlet)
-        return this._cfr.resolveComponentFactory(this._compRef.instance.constructor);
+        return this._cfr.resolveComponentFactory(
+          this._compRef.instance.constructor,
+        );
       }
     } catch (e) {
       // Factory not available - bailout
@@ -258,7 +270,7 @@ export class IoService implements OnDestroy {
   private _remapIO(io: any, mapping: IOMappingList): any {
     const newIO = {};
 
-    Object.keys(io).forEach((key) => {
+    Object.keys(io).forEach(key => {
       const newKey = this._findPropByTplInMapping(key, mapping) || key;
       newIO[newKey] = io[key];
     });
@@ -266,7 +278,10 @@ export class IoService implements OnDestroy {
     return newIO;
   }
 
-  private _findPropByTplInMapping(tplName: string, mapping: IOMappingList): string | null {
+  private _findPropByTplInMapping(
+    tplName: string,
+    mapping: IOMappingList,
+  ): string | null {
     for (const map of mapping) {
       if (map.templateName === tplName) {
         return map.propName;
@@ -276,6 +291,8 @@ export class IoService implements OnDestroy {
   }
 
   private failInit() {
-    throw Error('IoService: ComponentInjector was not set! Please call init() method!');
+    throw Error(
+      'IoService: ComponentInjector was not set! Please call init() method!',
+    );
   }
 }

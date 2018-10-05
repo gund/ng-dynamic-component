@@ -1,5 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { ANALYZE_FOR_ENTRY_COMPONENTS, ModuleWithProviders, NgModule, Type } from '@angular/core';
+import {
+  ANALYZE_FOR_ENTRY_COMPONENTS,
+  ModuleWithProviders,
+  NgModule,
+  Type,
+} from '@angular/core';
 
 import { COMPONENT_INJECTOR, ComponentInjector } from './component-injector';
 import { ComponentOutletInjectorDirective } from './component-outlet-injector.directive';

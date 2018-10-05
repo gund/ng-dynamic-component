@@ -20,10 +20,14 @@ import { InputsType, IoService, OutputsType } from './io.service';
   providers: [IoService],
 })
 export class DynamicDirective implements OnChanges, DoCheck {
-  @Input() ndcDynamicInputs: InputsType;
-  @Input() ngComponentOutletNdcDynamicInputs: InputsType;
-  @Input() ndcDynamicOutputs: OutputsType;
-  @Input() ngComponentOutletNdcDynamicOutputs: OutputsType;
+  @Input()
+  ndcDynamicInputs: InputsType;
+  @Input()
+  ngComponentOutletNdcDynamicInputs: InputsType;
+  @Input()
+  ndcDynamicOutputs: OutputsType;
+  @Input()
+  ngComponentOutletNdcDynamicOutputs: OutputsType;
 
   private _componentInjector: ComponentInjector = this._injector.get(
     this._componentInjectorType,
@@ -45,7 +49,8 @@ export class DynamicDirective implements OnChanges, DoCheck {
   constructor(
     private _injector: Injector,
     private ioService: IoService,
-    @Inject(COMPONENT_INJECTOR) private _componentInjectorType: ComponentInjector,
+    @Inject(COMPONENT_INJECTOR)
+    private _componentInjectorType: ComponentInjector,
     @Host()
     @Optional()
     private _componentOutletInjector: ComponentOutletInjectorDirective,
@@ -67,10 +72,16 @@ export class DynamicDirective implements OnChanges, DoCheck {
   }
 
   private _inputsChanged(changes: SimpleChanges): boolean {
-    return 'ngComponentOutletNdcDynamicInputs' in changes || 'ndcDynamicInputs' in changes;
+    return (
+      'ngComponentOutletNdcDynamicInputs' in changes ||
+      'ndcDynamicInputs' in changes
+    );
   }
 
   private _outputsChanged(changes: SimpleChanges): boolean {
-    return 'ngComponentOutletNdcDynamicOutputs' in changes || 'ndcDynamicOutputs' in changes;
+    return (
+      'ngComponentOutletNdcDynamicOutputs' in changes ||
+      'ndcDynamicOutputs' in changes
+    );
   }
 }

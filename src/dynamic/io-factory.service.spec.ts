@@ -6,7 +6,7 @@ import { IoFactoryService } from './io-factory.service';
 describe('Service: IoFactory', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [IoFactoryService]
+      providers: [IoFactoryService],
     });
   });
 

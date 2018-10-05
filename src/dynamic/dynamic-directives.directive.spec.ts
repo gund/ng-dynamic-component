@@ -41,7 +41,8 @@ const getInjectedBoundComponentFrom = getDirective(InjectedBoundComponent);
 
 @Directive({ selector: 'mock' })
 class MockDirective
-  implements OnInit,
+  implements
+    OnInit,
     OnDestroy,
     OnChanges,
     AfterViewInit,
@@ -49,14 +50,26 @@ class MockDirective
     AfterContentInit,
     AfterContentChecked {
   static INSTANCES = new Set<MockDirective>();
-  @Input() in: any;
-  @Input() in2: any;
-  @Output() out = new Subject<any>();
-  @Output() out2 = new Subject<any>();
-  ngAfterContentChecked = jest.fn().mockImplementation(this.logHook('ngAfterContentChecked'));
-  ngAfterContentInit = jest.fn().mockImplementation(this.logHook('ngAfterContentInit'));
-  ngAfterViewChecked = jest.fn().mockImplementation(this.logHook('ngAfterViewChecked'));
-  ngAfterViewInit = jest.fn().mockImplementation(this.logHook('ngAfterViewInit'));
+  @Input()
+  in: any;
+  @Input()
+  in2: any;
+  @Output()
+  out = new Subject<any>();
+  @Output()
+  out2 = new Subject<any>();
+  ngAfterContentChecked = jest
+    .fn()
+    .mockImplementation(this.logHook('ngAfterContentChecked'));
+  ngAfterContentInit = jest
+    .fn()
+    .mockImplementation(this.logHook('ngAfterContentInit'));
+  ngAfterViewChecked = jest
+    .fn()
+    .mockImplementation(this.logHook('ngAfterViewChecked'));
+  ngAfterViewInit = jest
+    .fn()
+    .mockImplementation(this.logHook('ngAfterViewInit'));
   ngOnChanges = jest.fn().mockImplementation(this.logHook('ngOnChanges'));
   ngOnInit = jest.fn().mockImplementation(this.logHook('ngOnInit'));
   ngOnDestroy = jest.fn().mockImplementation(() => {
@@ -105,7 +118,10 @@ describe('Directive: DynamicDirectives', () => {
     });
 
     it('should init directives', () => {
-      hostComp.dirs = [dynamicDirectiveDef(MockDirective), dynamicDirectiveDef(Mock2Directive)];
+      hostComp.dirs = [
+        dynamicDirectiveDef(MockDirective),
+        dynamicDirectiveDef(Mock2Directive),
+      ];
 
       expect(MockDirective.INSTANCES.size).toBe(0);
       fixture.detectChanges();
@@ -113,7 +129,10 @@ describe('Directive: DynamicDirectives', () => {
     });
 
     it('should destroy all directives', () => {
-      hostComp.dirs = [dynamicDirectiveDef(MockDirective), dynamicDirectiveDef(Mock2Directive)];
+      hostComp.dirs = [
+        dynamicDirectiveDef(MockDirective),
+        dynamicDirectiveDef(Mock2Directive),
+      ];
 
       fixture.detectChanges();
       expect(MockDirective.INSTANCES.size).toBeGreaterThan(0);
@@ -163,7 +182,10 @@ describe('Directive: DynamicDirectives', () => {
 
       expect(MockDirective.INSTANCES.size).toBe(1);
 
-      hostComp.dirs = [dynamicDirectiveDef(MockDirective), dynamicDirectiveDef(Mock2Directive)];
+      hostComp.dirs = [
+        dynamicDirectiveDef(MockDirective),
+        dynamicDirectiveDef(Mock2Directive),
+      ];
       fixture.detectChanges();
 
       expect(MockDirective.INSTANCES.size).toBe(2);
@@ -183,7 +205,10 @@ describe('Directive: DynamicDirectives', () => {
     });
 
     it('should destroy removed directive', () => {
-      hostComp.dirs = [dynamicDirectiveDef(MockDirective), dynamicDirectiveDef(Mock2Directive)];
+      hostComp.dirs = [
+        dynamicDirectiveDef(MockDirective),
+        dynamicDirectiveDef(Mock2Directive),
+      ];
       fixture.detectChanges();
 
       expect(MockDirective.INSTANCES.size).toBe(2);
@@ -340,7 +365,9 @@ describe('Directive: DynamicDirectives', () => {
       const [{ instance }] = getCreateDirs<TestDirective>(created);
 
       expect(instance).toBeTruthy();
-      expect(instance.cdr).toEqual(expect.objectContaining(ChangeDetectorRef.prototype));
+      expect(instance.cdr).toEqual(
+        expect.objectContaining(ChangeDetectorRef.prototype),
+      );
     });
 
     it('should be able to inject `ViewContainerRef`', () => {
@@ -355,7 +382,9 @@ describe('Directive: DynamicDirectives', () => {
       const [{ instance }] = getCreateDirs<TestDirective>(created);
 
       expect(instance).toBeTruthy();
-      expect(instance.vcr).toEqual(expect.objectContaining(ViewContainerRef.prototype));
+      expect(instance.vcr).toEqual(
+        expect.objectContaining(ViewContainerRef.prototype),
+      );
     });
   });
 
@@ -551,7 +580,9 @@ describe('Directive: DynamicDirectives', () => {
 
     it('should disconnect when host component destroyed', () => {
       const callback = jest.fn();
-      hostComp.dirs = [dynamicDirectiveDef(MockDirective, null, { out: callback })];
+      hostComp.dirs = [
+        dynamicDirectiveDef(MockDirective, null, { out: callback }),
+      ];
 
       fixture.detectChanges();
 

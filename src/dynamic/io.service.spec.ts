@@ -6,7 +6,7 @@ import { IoService } from './io.service';
 describe('Service: Io', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [IoService]
+      providers: [IoService],
     });
   });
 

@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, Output, EventEmitter, NgModule } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  NgModule,
+} from '@angular/core';
 
 @Component({
   selector: 'test',
@@ -24,14 +30,28 @@ export class AnotherInjectedComponent {}
   template: 'baz',
 })
 export class InjectedBoundComponent {
-  @Input('outerProp') innerProp: any;
-  @Output('outerEvt') innerEvt = new EventEmitter<any>();
+  @Input('outerProp')
+  innerProp: any;
+  @Output('outerEvt')
+  innerEvt = new EventEmitter<any>();
 }
 
 @NgModule({
   imports: [CommonModule],
-  declarations: [InjectedComponent, AnotherInjectedComponent, InjectedBoundComponent],
-  exports: [InjectedComponent, AnotherInjectedComponent, InjectedBoundComponent],
-  entryComponents: [InjectedComponent, AnotherInjectedComponent, InjectedBoundComponent],
+  declarations: [
+    InjectedComponent,
+    AnotherInjectedComponent,
+    InjectedBoundComponent,
+  ],
+  exports: [
+    InjectedComponent,
+    AnotherInjectedComponent,
+    InjectedBoundComponent,
+  ],
+  entryComponents: [
+    InjectedComponent,
+    AnotherInjectedComponent,
+    InjectedBoundComponent,
+  ],
 })
 export class TestModule {}

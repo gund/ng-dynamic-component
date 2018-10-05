@@ -18,9 +18,9 @@ import { DynamicComponent } from './dynamic.component';
 const getInjectedComponentFrom = getByPredicate<InjectedComponent>(
   By.directive(InjectedComponent),
 );
-const getAnotherInjectedComponentFrom = getByPredicate<AnotherInjectedComponent>(
-  By.directive(AnotherInjectedComponent),
-);
+const getAnotherInjectedComponentFrom = getByPredicate<
+  AnotherInjectedComponent
+>(By.directive(AnotherInjectedComponent));
 
 describe('DynamicAttributesDirective', () => {
   describe('with `ngComponentOutlet`', () => {
@@ -42,7 +42,9 @@ describe('DynamicAttributesDirective', () => {
           TestComponent,
           ComponentOutletInjectorDirective,
         ],
-        providers: [{ provide: COMPONENT_INJECTOR, useValue: DynamicComponent }],
+        providers: [
+          { provide: COMPONENT_INJECTOR, useValue: DynamicComponent },
+        ],
       }).compileComponents();
 
       fixture = TestBed.createComponent(TestComponent);
@@ -200,7 +202,8 @@ describe('DynamicAttributesDirective', () => {
 
       fixture.detectChanges();
 
-      const injectedElem = getAnotherInjectedComponentFrom(fixture).componentElem;
+      const injectedElem = getAnotherInjectedComponentFrom(fixture)
+        .componentElem;
 
       expect(injectedElem.attributes).toMatchObject(attrs);
     });
@@ -225,7 +228,9 @@ describe('DynamicAttributesDirective', () => {
           TestComponent,
           ComponentOutletInjectorDirective,
         ],
-        providers: [{ provide: COMPONENT_INJECTOR, useValue: DynamicComponent }],
+        providers: [
+          { provide: COMPONENT_INJECTOR, useValue: DynamicComponent },
+        ],
       }).compileComponents();
 
       fixture = TestBed.createComponent(TestComponent);
@@ -254,7 +259,8 @@ describe('DynamicAttributesDirective', () => {
       template: `<ndc-dynamic [ndcDynamicComponent]="comp" [ndcDynamicAttributes]="attrs"></ndc-dynamic>`,
     })
     class TestComponent {
-      @ViewChild(DynamicComponent) dynamicComp: DynamicComponent;
+      @ViewChild(DynamicComponent)
+      dynamicComp: DynamicComponent;
       comp = InjectedComponent;
       attrs: { [k: string]: string };
     }

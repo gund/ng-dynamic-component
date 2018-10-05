@@ -16,22 +16,35 @@ import { COMPONENT_INJECTOR } from './component-injector';
 import { DynamicDirective } from './dynamic.directive';
 import { ComponentOutletInjectorDirective } from './component-outlet-injector.directive';
 
-const getComponentInjectorFrom = getByPredicate<ComponentInjectorComponent>(By.directive(ComponentInjectorComponent));
-const getInjectedComponentFrom = getByPredicate<InjectedComponent>(By.directive(InjectedComponent));
-const getInjectedBoundComponentFrom = getByPredicate<InjectedBoundComponent>(By.directive(InjectedBoundComponent));
+const getComponentInjectorFrom = getByPredicate<ComponentInjectorComponent>(
+  By.directive(ComponentInjectorComponent),
+);
+const getInjectedComponentFrom = getByPredicate<InjectedComponent>(
+  By.directive(InjectedComponent),
+);
+const getInjectedBoundComponentFrom = getByPredicate<InjectedBoundComponent>(
+  By.directive(InjectedBoundComponent),
+);
 
 describe('Directive: Dynamic', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [TestComponent, ComponentInjectorComponent, DynamicDirective, ComponentOutletInjectorDirective],
-      providers: [{ provide: COMPONENT_INJECTOR, useValue: ComponentInjectorComponent }]
+      declarations: [
+        TestComponent,
+        ComponentInjectorComponent,
+        DynamicDirective,
+        ComponentOutletInjectorDirective,
+      ],
+      providers: [
+        { provide: COMPONENT_INJECTOR, useValue: ComponentInjectorComponent },
+      ],
     });
   });
 
   describe('inputs', () => {
-    let fixture: ComponentFixture<TestComponent>
-      , injectorComp: ComponentInjectorComponent
-      , injectedComp: MockedInjectedComponent;
+    let fixture: ComponentFixture<TestComponent>,
+      injectorComp: ComponentInjectorComponent,
+      injectedComp: MockedInjectedComponent;
 
     beforeEach(async(() => {
       const template = `<component-injector [ndcDynamicInputs]="inputs"></component-injector>`;
@@ -116,7 +129,10 @@ describe('Directive: Dynamic', () => {
 
       expect(injectedComp.ngOnChanges).toHaveBeenCalledTimes(1);
 
-      let newInjectedComp = injectorComp.component = Object.assign({}, injectorComp.component);
+      let newInjectedComp = (injectorComp.component = Object.assign(
+        {},
+        injectorComp.component,
+      ));
       fixture.detectChanges();
 
       expect(newInjectedComp.ngOnChanges).toHaveBeenCalledTimes(2);
@@ -139,7 +155,9 @@ describe('Directive: Dynamic', () => {
 
     it('should NOT throw exception when same inputs are reassigned with new object', () => {
       fixture.detectChanges();
-      fixture.componentInstance['inputs'] = { ...fixture.componentInstance['inputs'] };
+      fixture.componentInstance['inputs'] = {
+        ...fixture.componentInstance['inputs'],
+      };
       expect(() => fixture.detectChanges()).not.toThrow();
     });
 
@@ -149,19 +167,23 @@ describe('Directive: Dynamic', () => {
 
       const inputs = fixture.componentInstance['inputs'];
       fixture.componentInstance['inputs'] = { ...inputs, prop: 'any' };
-      const newInjectedComp = injectorComp.component = { ...injectorComp.component };
-
-      newInjectedComp.ngOnChanges.mockImplementation((changes: SimpleChanges) => {
-        expect(changes.prop).toBeDefined();
-        expect(changes.prop.currentValue).toBe('any');
-        expect(changes.prop.previousValue).toBeUndefined();
-        expect(changes.prop.isFirstChange()).toBeTruthy();
-
-        expect(changes.prop1).toBeDefined();
-        expect(changes.prop1.currentValue).toBe('prop1');
-        expect(changes.prop1.previousValue).toBeUndefined();
-        expect(changes.prop1.isFirstChange()).toBeTruthy();
+      const newInjectedComp = (injectorComp.component = {
+        ...injectorComp.component,
       });
+
+      newInjectedComp.ngOnChanges.mockImplementation(
+        (changes: SimpleChanges) => {
+          expect(changes.prop).toBeDefined();
+          expect(changes.prop.currentValue).toBe('any');
+          expect(changes.prop.previousValue).toBeUndefined();
+          expect(changes.prop.isFirstChange()).toBeTruthy();
+
+          expect(changes.prop1).toBeDefined();
+          expect(changes.prop1.currentValue).toBe('prop1');
+          expect(changes.prop1.previousValue).toBeUndefined();
+          expect(changes.prop1.isFirstChange()).toBeTruthy();
+        },
+      );
 
       fixture.detectChanges();
 
@@ -236,9 +258,9 @@ describe('Directive: Dynamic', () => {
       });
 
       const template = `<ng-container [ngComponentOutlet]="comp" [ndcDynamicInputs]="inputs"></ng-container>`;
-      TestBed
-        .overrideComponent(TestComponent, { set: { template } })
-        .compileComponents();
+      TestBed.overrideComponent(TestComponent, {
+        set: { template },
+      }).compileComponents();
       fixture = TestBed.createComponent(TestComponent);
 
       testComp = fixture.componentInstance;
@@ -284,10 +306,10 @@ describe('Directive: Dynamic', () => {
   });
 
   describe('outputs', () => {
-    let fixture: ComponentFixture<TestComponent>
-      , injectorComp: ComponentInjectorComponent
-      , injectedComp: MockedInjectedComponent
-      , outputSpy: jasmine.Spy;
+    let fixture: ComponentFixture<TestComponent>,
+      injectorComp: ComponentInjectorComponent,
+      injectedComp: MockedInjectedComponent,
+      outputSpy: jasmine.Spy;
 
     beforeEach(async(() => {
       const template = `<component-injector [ndcDynamicOutputs]="outputs"></component-injector>`;
@@ -356,8 +378,7 @@ describe('Directive: Dynamic', () => {
   });
 
   describe('outputs with `NgComponentOutlet`', () => {
-    let fixture: ComponentFixture<TestComponent>
-      , outputSpy: jasmine.Spy;
+    let fixture: ComponentFixture<TestComponent>, outputSpy: jasmine.Spy;
 
     beforeEach(async(() => {
       TestBed.configureTestingModule({
@@ -392,8 +413,7 @@ describe('Directive: Dynamic', () => {
   });
 
   describe('outputs with `NgComponentOutlet` * syntax', () => {
-    let fixture: ComponentFixture<TestComponent>
-      , outputSpy: jasmine.Spy;
+    let fixture: ComponentFixture<TestComponent>, outputSpy: jasmine.Spy;
 
     beforeEach(async(() => {
       TestBed.configureTestingModule({
@@ -440,9 +460,9 @@ describe('Directive: Dynamic', () => {
       });
 
       const template = `<ng-container [ngComponentOutlet]="comp" [ndcDynamicOutputs]="outputs"></ng-container>`;
-      TestBed
-        .overrideComponent(TestComponent, { set: { template } })
-        .compileComponents();
+      TestBed.overrideComponent(TestComponent, {
+        set: { template },
+      }).compileComponents();
       fixture = TestBed.createComponent(TestComponent);
 
       testComp = fixture.componentInstance;
@@ -464,6 +484,5 @@ describe('Directive: Dynamic', () => {
       expect(outputHandler).toHaveBeenCalledTimes(1);
       expect(outputHandler).toHaveBeenCalledWith('data');
     });
-
   });
 });

@@ -1,4 +1,8 @@
-import { KeyValueChangeRecord, SimpleChange, SimpleChanges } from '@angular/core';
+import {
+  KeyValueChangeRecord,
+  SimpleChange,
+  SimpleChanges,
+} from '@angular/core';
 
 const { Reflect } = window as any;
 
@@ -27,7 +31,10 @@ export function setChangeFromRecord(
 
 function getChangesRecords(isFirstChanges: boolean) {
   return (changes: SimpleChanges) =>
-    setChangeFromRecord(isFirstChanges, (record, change) => (changes[record.key] = change));
+    setChangeFromRecord(
+      isFirstChanges,
+      (record, change) => (changes[record.key] = change),
+    );
 }
 
 function getNewChangesRecords(isFirstChanges: boolean) {
