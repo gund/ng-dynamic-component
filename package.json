@@ -113,7 +113,7 @@
     ]
   },
   "lint-staged": {
-    "src/dynamic/**/*.ts": [
+    "src/dynamic/**/*(!.spec).ts": [
       "tslint -p tsconfig.json -c tslint.json --fix",
       "git add"
     ],
