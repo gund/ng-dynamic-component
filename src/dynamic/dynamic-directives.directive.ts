@@ -11,10 +11,8 @@ import {
   Input,
   IterableDiffers,
   OnDestroy,
-  OnInit,
   Optional,
   Output,
-  SimpleChanges,
   Type,
   ViewContainerRef,
   ViewRef,
@@ -54,7 +52,7 @@ export interface DirectiveRef<T> {
 @Directive({
   selector: '[ndcDynamicDirectives],[ngComponentOutletNdcDynamicDirectives]',
 })
-export class DynamicDirectivesDirective implements OnInit, OnDestroy, DoCheck {
+export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
   @Input()
   ndcDynamicDirectives: DynamicDirectiveDef<any>[];
   @Input()
@@ -106,12 +104,6 @@ export class DynamicDirectivesDirective implements OnInit, OnDestroy, DoCheck {
     @Optional()
     private componentOutletInjector: ComponentOutletInjectorDirective,
   ) {}
-
-  ngOnInit(): void {
-    if (!this.componentRef) {
-      throw Error('DynamicDirectivesDirective: ComponentRef not available!');
-    }
-  }
 
   ngDoCheck(): void {
     this.checkDirectives();
@@ -181,10 +173,6 @@ export class DynamicDirectivesDirective implements OnInit, OnDestroy, DoCheck {
   }
 
   private destroyDirective(dirDef: DynamicDirectiveDef<any>) {
-    if (!this.dirRef.has(dirDef.type)) {
-      return;
-    }
-
     this.destroyDirRef(this.dirRef.get(dirDef.type));
     this.dirRef.delete(dirDef.type);
     this.dirIo.delete(dirDef.type);

@@ -59,7 +59,7 @@ export function changesFromRecord(opts: DefaultOpts = defaultOpts) {
     : getChangesRecords(opts.isFirstChanges);
 }
 
-export function noop(...args: any[]): void {}
+export function noop(): void {}
 
 export function getCtorType(ctor: any): any[] {
   return Reflect.getMetadata('design:paramtypes', ctor);
