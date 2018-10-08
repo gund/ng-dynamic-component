@@ -150,7 +150,7 @@ class MyComponent {
 
 ### Directives
 
-**Since v3.0.0** you can now declaratively set directives, via `ndcDynamicDirectives`:
+**Since v3.1.0** you can now declaratively set directives, via `ndcDynamicDirectives`:
 
 **NOTE**: In dynamic directives queries like `@ContentChild` and host decorators like `@HostBinding`
 will not work due to involved complexity required to handle it (but PRs are welcome!).
