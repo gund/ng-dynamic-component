@@ -148,6 +148,79 @@ class MyComponent {
 }
 ```
 
+### Directives
+
+**Since v3.0.0** you can now declaratively set directives, via `ndcDynamicDirectives`:
+
+**NOTE**: In dynamic directives queries like `@ContentChild` and host decorators like `@HostBinding`
+will not work due to involved complexity required to handle it (but PRs are welcome!).
+
+```ts
+import { dynamicDirectiveDef } from 'ng-dynamic-component';
+
+@Component({
+  selector: 'my-component',
+  template: `<ng-container [ngComponentOutlet]="component"
+                           [ndcDynamicDirectives]="dirs"
+                           ></ng-container>`
+})
+class MyComponent {
+  component = MyDynamicComponent1;
+  dirs = [dynamicDirectiveDef(MyDirective)];
+}
+```
+
+It's also possible to bind inputs and outputs to every dynamic directive:
+
+```ts
+import { dynamicDirectiveDef } from 'ng-dynamic-component';
+
+@Component({
+  selector: 'my-component',
+  template: `<ng-container [ngComponentOutlet]="component"
+                           [ndcDynamicDirectives]="dirs"
+                           ></ng-container>`
+})
+class MyComponent {
+  component = MyDynamicComponent1;
+  directiveInputs = { prop1: 'value' };
+  directiveOutputs = { output1: (evt) => this.doSomeStuff(evt) };
+  dirs = [dynamicDirectiveDef(MyDirective, this.directiveInputs, this.directiveOutputs)];
+}
+```
+
+To change inputs, just update the object:
+
+```ts
+class MyComponent {
+  updateDirectiveInput() {
+    this.directiveInputs.prop1 = 'new value';
+  }
+}
+```
+
+You can have multiple directives applied to same dynamic component (only one directive by same type):
+
+```ts
+import { dynamicDirectiveDef } from 'ng-dynamic-component';
+
+@Component({
+  selector: 'my-component',
+  template: `<ng-container [ngComponentOutlet]="component"
+                           [ndcDynamicDirectives]="dirs"
+                           ></ng-container>`
+})
+class MyComponent {
+  component = MyDynamicComponent1;
+  dirs = [
+    dynamicDirectiveDef(MyDirective1),
+    dynamicDirectiveDef(MyDirective2),
+    dynamicDirectiveDef(MyDirective3),
+    dynamicDirectiveDef(MyDirective1), // This will be ignored because MyDirective1 already applied above
+  ];
+}
+```
+
 ### NgComponentOutlet support
 
 You can also use [`NgComponentOutlet`](https://angular.io/docs/ts/latest/api/common/index/NgComponentOutlet-directive.html)
