@@ -65,7 +65,7 @@
     "@angular/platform-server": "^6.0.0",
     "@commitlint/cli": "^7.1.2",
     "@commitlint/config-conventional": "^7.1.2",
-    "@starptech/prettyhtml": "^0.1.9",
+    "@starptech/prettyhtml": "^0.2.2",
     "@types/jest": "^22.0.0",
     "angular2-template-loader": "^0.6.2",
     "awesome-typescript-loader": "^5.0.0",
