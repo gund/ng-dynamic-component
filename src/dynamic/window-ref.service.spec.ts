@@ -16,7 +16,7 @@ describe('Service: WindowRef', () => {
     service = TestBed.get(WindowRefService);
   });
 
-  it('should have `` prop', () => {
+  it('should have `nativeWindow` prop', () => {
     expect(service.nativeWindow).toBeDefined();
   });
 
