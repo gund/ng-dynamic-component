@@ -23,6 +23,7 @@ import { ComponentOutletInjectorDirective } from './component-outlet-injector.di
 import { IoFactoryService } from './io-factory.service';
 import { InputsType, IoService, OutputsType } from './io.service';
 import { getCtorType } from './util';
+import { WindowRefService } from './window-ref.service';
 
 export interface DynamicDirectiveDef<T> {
   type: Type<T>;
@@ -88,6 +89,10 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
     return this.componentRef['_viewRef']['_viewContainerRef'];
   }
 
+  private get reflect() {
+    return (this.windowRef.nativeWindow as any).Reflect;
+  }
+
   private dirRef = new Map<Type<any>, DirectiveRef<any>>();
   private dirIo = new Map<Type<any>, IoService>();
   private dirsDiffer = this.iterableDiffers
@@ -98,6 +103,7 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
     private injector: Injector,
     private iterableDiffers: IterableDiffers,
     private ioFactoryService: IoFactoryService,
+    private windowRef: WindowRefService,
     @Inject(COMPONENT_INJECTOR)
     private componentInjectorType: ComponentInjector,
     @Host()
@@ -208,7 +214,7 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
   }
 
   private createDirective<T>(dirType: Type<T>): T {
-    const ctorParams: any[] = getCtorType(dirType);
+    const ctorParams: any[] = getCtorType(dirType, this.reflect);
     const resolvedParams = ctorParams.map(p => this.resolveDep(p));
     return new dirType(...resolvedParams);
   }

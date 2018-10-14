@@ -4,8 +4,6 @@ import {
   SimpleChanges,
 } from '@angular/core';
 
-const { Reflect } = window as any;
-
 export type KeyValueChangeRecordAny = KeyValueChangeRecord<any, any>;
 
 export function createNewChange(val: any): SimpleChange {
@@ -61,6 +59,9 @@ export function changesFromRecord(opts: DefaultOpts = defaultOpts) {
 
 export function noop(): void {}
 
-export function getCtorType(ctor: any): any[] {
-  return Reflect.getMetadata('design:paramtypes', ctor);
+export function getCtorType(
+  ctor: any,
+  reflect: { getMetadata: Function },
+): any[] {
+  return reflect.getMetadata('design:paramtypes', ctor);
 }
