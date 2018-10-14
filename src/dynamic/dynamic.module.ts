@@ -13,6 +13,11 @@ import { DynamicDirectivesDirective } from './dynamic-directives.directive';
 import { DynamicComponent } from './dynamic.component';
 import { DynamicDirective } from './dynamic.directive';
 import { IoFactoryService } from './io-factory.service';
+import { WindowRefService, WINDOW_REF } from './window-ref.service';
+
+export function windowRefFactory() {
+  return window;
+}
 
 @NgModule({
   imports: [CommonModule],
@@ -46,6 +51,8 @@ export class DynamicModule {
         },
         { provide: COMPONENT_INJECTOR, useValue: componentInjector },
         IoFactoryService,
+        { provide: WINDOW_REF, useFactory: windowRefFactory },
+        WindowRefService,
       ],
     };
   }

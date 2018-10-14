@@ -34,6 +34,7 @@ import {
   DynamicDirectivesDirective,
 } from './dynamic-directives.directive';
 import { IoFactoryService } from './io-factory.service';
+import { WindowRefService, WINDOW_REF } from './window-ref.service';
 
 const getComponentInjectorFrom = getDirective(ComponentInjectorComponent);
 const getInjectedComponentFrom = getDirective(InjectedComponent);
@@ -101,6 +102,8 @@ describe('Directive: DynamicDirectives', () => {
       ],
       providers: [
         { provide: COMPONENT_INJECTOR, useValue: ComponentInjectorComponent },
+        { provide: WINDOW_REF, useValue: window },
+        WindowRefService,
         IoFactoryService,
       ],
     });
