@@ -9,9 +9,9 @@ export class ComponentInjectorComponent implements ComponentInjector {
   component = new MockedInjectedComponent();
 
   get componentRef(): ComponentRef<ComponentInjectorComponent> {
-    return {
+    return this.component ? {
       instance: this.component,
-    } as any;
+    } as any : null;
   }
 }
 

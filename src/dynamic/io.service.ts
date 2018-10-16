@@ -46,7 +46,7 @@ export class IoService implements OnDestroy {
   }
 
   private get _componentInst() {
-    return this._compRef.instance;
+    return this._compRef ? this._compRef.instance : null;
   }
 
   private get _componentInstChanged(): boolean {
