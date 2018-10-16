@@ -161,6 +161,11 @@ describe('Directive: Dynamic', () => {
       expect(() => fixture.detectChanges()).not.toThrow();
     });
 
+    it('should NOT throw if component injector is null', () => {
+      injectorComp.component = null;
+      expect(() => fixture.detectChanges()).not.toThrow();
+    });
+
     it('should call `ngOnChanges` once when inputs and component updated', () => {
       fixture.detectChanges();
       injectorComp.component.ngOnChanges.mockReset();
