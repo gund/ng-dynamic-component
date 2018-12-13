@@ -197,8 +197,8 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
       onDestroy: this.componentRef.onDestroy,
     };
 
-    this.callInitHooks(instance);
     this.initDirIO(dir, dirDef.inputs, dirDef.outputs);
+    this.callInitHooks(instance);
 
     this.dirRef.set(dir.type, dir);
 
@@ -264,6 +264,7 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
 
   private callInitHooks(obj: any) {
     this.callHook(obj, 'ngOnInit');
+    this.callHook(obj, 'ngDoCheck');
     this.callHook(obj, 'ngAfterContentInit');
     this.callHook(obj, 'ngAfterContentChecked');
     this.callHook(obj, 'ngAfterViewInit');
