@@ -48,7 +48,14 @@ class MockDirective
     AfterContentChecked {
   static INSTANCES = new Set<MockDirective>();
   @Input()
-  in: any;
+  set in(val: any) {
+    this.logHook('inputSet:' + val)();
+    this._in = val;
+  }
+  get in(): any {
+    return this._in;
+  }
+  private _in: any;
   @Input()
   in2: any;
   @Output()
@@ -69,6 +76,7 @@ class MockDirective
     .mockImplementation(this.logHook('ngAfterViewInit'));
   ngOnChanges = jest.fn().mockImplementation(this.logHook('ngOnChanges'));
   ngOnInit = jest.fn().mockImplementation(this.logHook('ngOnInit'));
+  ngDoCheck = jest.fn().mockImplementation(this.logHook('ngDoCheck'));
   ngOnDestroy = jest.fn().mockImplementation(() => {
     this.hooksOrder.push('ngOnDestroy');
     MockDirective.INSTANCES.delete(this);
@@ -156,11 +164,24 @@ describe('Directive: DynamicDirectives', () => {
       // Verify order
       expect(dir.hooksOrder).toEqual([
         'ngOnInit',
+        'ngDoCheck',
         'ngAfterContentInit',
         'ngAfterContentChecked',
         'ngAfterViewInit',
         'ngAfterViewChecked',
       ]);
+    });
+
+    it('should set inputs before ngOnInit hook called', () => {
+      hostComp.dirs = [dynamicDirectiveDef(MockDirective, { in: true })];
+
+      fixture.detectChanges();
+
+      const dir = getFirstDir();
+
+      expect(dir.hooksOrder[0]).toBe('inputSet:true');
+      expect(dir.hooksOrder[1]).toBe('ngOnChanges');
+      expect(dir.hooksOrder[2]).toBe('ngOnInit');
     });
 
     it('should not init directives of same type', () => {
