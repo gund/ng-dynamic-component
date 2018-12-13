@@ -19,12 +19,10 @@ import { Subject } from 'rxjs';
 
 import {
   ComponentInjectorComponent,
-  getDirective,
-  InjectedBoundComponent,
   InjectedComponent,
-  MockedInjectedComponent,
   TestComponent,
   TestModule,
+  MockedInjectedComponent,
 } from '../test/index';
 import { COMPONENT_INJECTOR } from './component-injector';
 import { ComponentOutletInjectorDirective } from './component-outlet-injector.directive';
@@ -32,13 +30,11 @@ import {
   DirectiveRef,
   dynamicDirectiveDef,
   DynamicDirectivesDirective,
+  DynamicDirectiveDef,
 } from './dynamic-directives.directive';
 import { IoFactoryService } from './io-factory.service';
 import { WindowRefService, WINDOW_REF } from './window-ref.service';
-
-const getComponentInjectorFrom = getDirective(ComponentInjectorComponent);
-const getInjectedComponentFrom = getDirective(InjectedComponent);
-const getInjectedBoundComponentFrom = getDirective(InjectedBoundComponent);
+import { By } from '@angular/platform-browser';
 
 @Directive({ selector: 'mock' })
 class MockDirective
@@ -111,13 +107,13 @@ describe('Directive: DynamicDirectives', () => {
 
   describe('directives', () => {
     let fixture: ComponentFixture<TestComponent>;
-    let hostComp: any;
+    let hostComp: { dirs: DynamicDirectiveDef<any>[] };
 
     beforeEach(() => {
       const template = `<component-injector><div [ndcDynamicDirectives]="dirs"></div></component-injector>`;
       TestBed.overrideComponent(TestComponent, { set: { template } });
       fixture = TestBed.createComponent(TestComponent);
-      hostComp = fixture.componentInstance;
+      hostComp = fixture.componentInstance as any;
     });
 
     it('should init directives', () => {
@@ -221,11 +217,74 @@ describe('Directive: DynamicDirectives', () => {
 
       expect(MockDirective.INSTANCES.size).toBe(1);
     });
+
+    it('should not do anything when no component', () => {
+      hostComp.dirs = [dynamicDirectiveDef(MockDirective)];
+      const compInjectorElem = fixture.debugElement.query(
+        By.directive(ComponentInjectorComponent),
+      );
+      expect(compInjectorElem).toBeTruthy();
+      const compInjector = compInjectorElem.componentInstance as ComponentInjectorComponent;
+      compInjector.component = null;
+
+      fixture.detectChanges();
+
+      expect(MockDirective.INSTANCES.size).toBe(0);
+    });
+
+    it('should destroy directives when component unset', () => {
+      const compInjectorElem = fixture.debugElement.query(
+        By.directive(ComponentInjectorComponent),
+      );
+      expect(compInjectorElem).toBeTruthy();
+      const compInjector = compInjectorElem.componentInstance as ComponentInjectorComponent;
+
+      hostComp.dirs = [dynamicDirectiveDef(MockDirective)];
+
+      fixture.detectChanges();
+
+      expect(MockDirective.INSTANCES.size).toBe(1);
+      const dir = getFirstDir();
+      expect(dir).toEqual(expect.any(MockDirective));
+
+      compInjector.component = null;
+
+      fixture.detectChanges();
+
+      expect(MockDirective.INSTANCES.size).toBe(0);
+      expect(dir.ngOnDestroy).toHaveBeenCalled();
+    });
+
+    it('should re-create directives when component changed', () => {
+      const compInjectorElem = fixture.debugElement.query(
+        By.directive(ComponentInjectorComponent),
+      );
+      expect(compInjectorElem).toBeTruthy();
+      const compInjector = compInjectorElem.componentInstance as ComponentInjectorComponent;
+
+      hostComp.dirs = [dynamicDirectiveDef(MockDirective)];
+
+      fixture.detectChanges();
+
+      expect(MockDirective.INSTANCES.size).toBe(1);
+      const dir = getFirstDir();
+      expect(dir).toEqual(expect.any(MockDirective));
+
+      compInjector.component = new MockedInjectedComponent();
+
+      fixture.detectChanges();
+
+      expect(MockDirective.INSTANCES.size).toBe(1);
+      expect(dir.ngOnDestroy).toHaveBeenCalled();
+      const newDir = getFirstDir();
+      expect(newDir).toEqual(expect.any(MockDirective));
+      expect(newDir).not.toBe(dir);
+    });
   });
 
   describe('@Output(ndcDynamicDirectivesCreated)', () => {
     let fixture: ComponentFixture<TestComponent>;
-    let hostComp: any;
+    let hostComp: { dirs: DynamicDirectiveDef<any>[]; created: jest.Mock };
     let created = jest.fn();
 
     beforeEach(() => {
@@ -235,7 +294,7 @@ describe('Directive: DynamicDirectives', () => {
         (ndcDynamicDirectivesCreated)="created($event)"></div></component-injector>`;
       TestBed.overrideComponent(TestComponent, { set: { template } });
       fixture = TestBed.createComponent(TestComponent);
-      hostComp = fixture.componentInstance;
+      hostComp = fixture.componentInstance as any;
       hostComp.created = created;
     });
 

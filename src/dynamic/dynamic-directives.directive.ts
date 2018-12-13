@@ -9,6 +9,7 @@ import {
   Inject,
   Injector,
   Input,
+  IterableChanges,
   IterableDiffers,
   OnDestroy,
   Optional,
@@ -67,6 +68,8 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
     null,
   );
 
+  private lastCompInstance: any;
+
   private get directives() {
     return (
       this.ndcDynamicDirectives || this.ngComponentOutletNdcDynamicDirectives
@@ -79,6 +82,18 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
 
   private get componentRef() {
     return this.compInjector.componentRef;
+  }
+
+  private get compInstance() {
+    return this.componentRef && this.componentRef.instance;
+  }
+
+  private get isCompChanged() {
+    if (this.lastCompInstance !== this.compInstance) {
+      this.lastCompInstance = this.compInstance;
+      return true;
+    }
+    return false;
   }
 
   private get hostInjector() {
@@ -112,27 +127,39 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
   ) {}
 
   ngDoCheck(): void {
-    this.checkDirectives();
-  }
+    if (this.maybeDestroyDirectives()) {
+      return;
+    }
 
-  ngOnDestroy(): void {
-    this.dirRef.forEach(dir => this.destroyDirRef(dir));
-    this.dirRef.clear();
-    this.dirIo.clear();
-  }
-
-  private checkDirectives() {
     const dirsChanges = this.dirsDiffer.diff(this.directives);
 
     if (!dirsChanges) {
       return this.updateDirectives();
     }
 
-    dirsChanges.forEachRemovedItem(({ item }) => this.destroyDirective(item));
+    this.processDirChanges(dirsChanges);
+  }
+
+  ngOnDestroy(): void {
+    this.destroyAllDirectives();
+  }
+
+  private maybeDestroyDirectives() {
+    if (this.isCompChanged || !this.componentRef) {
+      this.dirsDiffer.diff([]);
+      this.destroyAllDirectives();
+    }
+
+    return !this.componentRef;
+  }
+
+  private processDirChanges(
+    changes: IterableChanges<DynamicDirectiveDef<any>>,
+  ) {
+    changes.forEachRemovedItem(({ item }) => this.destroyDirective(item));
 
     const createdDirs = [];
-
-    dirsChanges.forEachAddedItem(({ item }) =>
+    changes.forEachAddedItem(({ item }) =>
       createdDirs.push(this.initDirective(item)),
     );
 
@@ -176,6 +203,12 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
     this.dirRef.set(dir.type, dir);
 
     return dir;
+  }
+
+  private destroyAllDirectives() {
+    this.dirRef.forEach(dir => this.destroyDirRef(dir));
+    this.dirRef.clear();
+    this.dirIo.clear();
   }
 
   private destroyDirective(dirDef: DynamicDirectiveDef<any>) {
