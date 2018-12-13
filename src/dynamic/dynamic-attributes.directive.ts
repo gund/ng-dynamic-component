@@ -53,11 +53,17 @@ export class DynamicAttributesDirective implements DoCheck {
   }
 
   private get _nativeElement() {
-    return this._compInjector.componentRef.location.nativeElement;
+    return (
+      this._compInjector.componentRef &&
+      this._compInjector.componentRef.location.nativeElement
+    );
   }
 
   private get _compType() {
-    return this._compInjector.componentRef.componentType;
+    return (
+      this._compInjector.componentRef &&
+      this._compInjector.componentRef.componentType
+    );
   }
 
   private get _isCompChanged() {
@@ -93,14 +99,23 @@ export class DynamicAttributesDirective implements DoCheck {
   }
 
   setAttribute(name: string, value: string, namespace?: string) {
-    this.renderer.setAttribute(this._nativeElement, name, value, namespace);
+    if (this._nativeElement) {
+      this.renderer.setAttribute(this._nativeElement, name, value, namespace);
+    }
   }
 
   removeAttribute(name: string, namespace?: string) {
-    this.renderer.removeAttribute(this._nativeElement, name, namespace);
+    if (this._nativeElement) {
+      this.renderer.removeAttribute(this._nativeElement, name, namespace);
+    }
   }
 
   private _updateAttributes(actions: AttributeActions) {
+    // ? Early exit if no dynamic component
+    if (!this._compType) {
+      return;
+    }
+
     Object.keys(actions.set).forEach(key =>
       this.setAttribute(key, actions.set[key]),
     );
