@@ -12,7 +12,10 @@ import {
 import { getByPredicate } from '../test/util';
 import { COMPONENT_INJECTOR } from './component-injector';
 import { ComponentOutletInjectorDirective } from './component-outlet-injector.directive';
-import { DynamicAttributesDirective } from './dynamic-attributes.directive';
+import {
+  AttributesMap,
+  DynamicAttributesDirective,
+} from './dynamic-attributes.directive';
 import { DynamicComponent } from './dynamic.component';
 
 const getInjectedComponentFrom = getByPredicate<InjectedComponent>(
@@ -31,7 +34,7 @@ describe('DynamicAttributesDirective', () => {
     })
     class TestComponent extends TestComponentBase {
       comp = InjectedComponent;
-      attrs: { [k: string]: string };
+      attrs: AttributesMap;
     }
 
     beforeEach(async(() => {
@@ -217,7 +220,7 @@ describe('DynamicAttributesDirective', () => {
     })
     class TestComponent extends TestComponentBase {
       comp = InjectedComponent;
-      attrs: { [k: string]: string };
+      attrs: AttributesMap;
     }
 
     beforeEach(async(() => {
@@ -262,7 +265,7 @@ describe('DynamicAttributesDirective', () => {
       @ViewChild(DynamicComponent)
       dynamicComp: DynamicComponent;
       comp = InjectedComponent;
-      attrs: { [k: string]: string };
+      attrs: AttributesMap;
     }
 
     beforeEach(async(() => {
@@ -293,6 +296,78 @@ describe('DynamicAttributesDirective', () => {
       const injectedElem = getInjectedComponentFrom(fixture).componentElem;
 
       expect(injectedElem.attributes).toMatchObject(attrs);
+    });
+  });
+
+  describe('without dynamic component', () => {
+    let fixture: ComponentFixture<TestComponent>;
+
+    @Component({
+      template: `<div [ngComponentOutlet]="comp" [ndcDynamicAttributes]="attrs"></div>`,
+    })
+    class TestComponent extends TestComponentBase {
+      comp: any;
+      attrs: AttributesMap;
+    }
+
+    beforeEach(async(() => {
+      TestBed.configureTestingModule({
+        imports: [CommonModule],
+        declarations: [
+          DynamicAttributesDirective,
+          TestComponent,
+          ComponentOutletInjectorDirective,
+        ],
+        providers: [
+          { provide: COMPONENT_INJECTOR, useValue: DynamicComponent },
+        ],
+      }).compileComponents();
+
+      fixture = TestBed.createComponent(TestComponent);
+    }));
+
+    it('should not do anything', () => {
+      fixture.componentInstance.attrs = { 'my-attr': 'val' };
+
+      expect(() => fixture.detectChanges()).not.toThrow();
+    });
+
+    describe('setAttribute() method', () => {
+      it('should not do anything', () => {
+        fixture.detectChanges();
+
+        const dynamicElem = fixture.debugElement.query(
+          By.directive(DynamicAttributesDirective),
+        );
+
+        expect(dynamicElem).toBeTruthy();
+
+        const dynamicAttrDir = dynamicElem.injector.get(
+          DynamicAttributesDirective,
+        );
+
+        expect(() =>
+          dynamicAttrDir.setAttribute('my-att', 'val'),
+        ).not.toThrow();
+      });
+    });
+
+    describe('removeAttribute() method', () => {
+      it('should not do anything', () => {
+        fixture.detectChanges();
+
+        const dynamicElem = fixture.debugElement.query(
+          By.directive(DynamicAttributesDirective),
+        );
+
+        expect(dynamicElem).toBeTruthy();
+
+        const dynamicAttrDir = dynamicElem.injector.get(
+          DynamicAttributesDirective,
+        );
+
+        expect(() => dynamicAttrDir.removeAttribute('my-att')).not.toThrow();
+      });
     });
   });
 });
