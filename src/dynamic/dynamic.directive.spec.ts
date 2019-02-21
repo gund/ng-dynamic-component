@@ -1,4 +1,4 @@
-import { SimpleChanges } from '@angular/core';
+import { SimpleChanges, ChangeDetectorRef } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { Observable, Subject } from 'rxjs';
@@ -93,6 +93,17 @@ describe('Directive: Dynamic', () => {
       fixture.detectChanges();
 
       expect(injectedComp.ngOnChanges).toHaveBeenCalledTimes(1);
+    });
+
+    it('should trigger markForCheck of component`s `ChangeDetectorRef`', () => {
+      const cdr = { markForCheck: jest.fn() };
+      injectorComp.injectorGet.mockReturnValue(cdr);
+
+      fixture.detectChanges();
+
+      expect(injectedComp.ngOnChanges).toHaveBeenCalledTimes(1);
+      expect(injectorComp.injectorGet).toHaveBeenCalledWith(ChangeDetectorRef);
+      expect(cdr.markForCheck).toHaveBeenCalled();
     });
 
     it('should trigger `OnChanges` life-cycle hook on updates', () => {

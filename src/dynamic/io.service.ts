@@ -1,9 +1,11 @@
 import {
+  ChangeDetectorRef,
   ComponentFactory,
   ComponentFactoryResolver,
   Injectable,
   KeyValueChanges,
   KeyValueDiffers,
+  OnDestroy,
   SimpleChanges,
 } from '@angular/core';
 import { Subject } from 'rxjs';
@@ -11,7 +13,6 @@ import { takeUntil } from 'rxjs/operators';
 
 import { ComponentInjector } from './component-injector';
 import { changesFromRecord, createNewChange, noop } from './util';
-import { OnDestroy } from '@angular/core';
 
 export type InputsType = { [k: string]: any };
 export type OutputsType = { [k: string]: Function };
@@ -56,6 +57,10 @@ export class IoService implements OnDestroy {
     } else {
       return false;
     }
+  }
+
+  private get _compCdr(): ChangeDetectorRef {
+    return this._compRef ? this._compRef.injector.get(ChangeDetectorRef) : null;
   }
 
   constructor(
@@ -150,6 +155,11 @@ export class IoService implements OnDestroy {
     inputs = this._resolveInputs(inputs);
 
     Object.keys(inputs).forEach(p => (compInst[p] = inputs[p]));
+
+    // Mark component for check to re-render with new inputs
+    if (this._compCdr) {
+      this._compCdr.markForCheck();
+    }
 
     this.notifyOnInputChanges(this._lastInputChanges, isFirstChange);
   }

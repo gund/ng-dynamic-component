@@ -7,11 +7,15 @@ import { Component, ComponentRef, EventEmitter, Input } from '@angular/core';
 })
 export class ComponentInjectorComponent implements ComponentInjector {
   component = new MockedInjectedComponent();
+  injectorGet = jest.fn();
 
   get componentRef(): ComponentRef<ComponentInjectorComponent> {
-    return this.component ? {
-      instance: this.component,
-    } as any : null;
+    return this.component
+      ? ({
+          instance: this.component,
+          injector: { get: this.injectorGet },
+        } as any)
+      : null;
   }
 }
 
