@@ -232,6 +232,7 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
       ...this.componentRef,
       destroy: this.componentRef.destroy,
       onDestroy: this.componentRef.onDestroy,
+      injector: this.componentRef.injector,
       instance: dir.instance,
       componentType: dir.type,
     };
