@@ -3,6 +3,7 @@
 > Dynamic components with full life-cycle support for inputs and outputs
 
 [![Travis CI](https://img.shields.io/travis/gund/ng-dynamic-component/master.svg?maxAge=2592000)](https://travis-ci.org/gund/ng-dynamic-component)
+[![Appveyor](https://ci.appveyor.com/api/projects/status/qwfaor0nnt9l24nj/branch/master?svg=true)](https://ci.appveyor.com/project/gund/ng-dynamic-component/branch/master)
 [![Coverage](https://img.shields.io/codecov/c/github/gund/ng-dynamic-component.svg?maxAge=2592000)](https://codecov.io/gh/gund/ng-dynamic-component)
 [![Code Climate](https://img.shields.io/codeclimate/github/gund/ng-dynamic-component.svg?maxAge=2592000)](https://codeclimate.com/github/gund/ng-dynamic-component)
 [![Npm](https://img.shields.io/npm/v/ng-dynamic-component.svg?maxAge=2592000)](https://badge.fury.io/js/ng-dynamic-component)
@@ -30,6 +31,7 @@ $ npm install ng-dynamic-component --save
 ## Usage
 
 Import `DynamicModule` with dynamic components you want to insert later:
+
 ```ts
 import { DynamicModule } from 'ng-dynamic-component';
 import { MyDynamicComponent1, MyDynamicComponent2 } from './my-components';
@@ -45,10 +47,11 @@ import { MyDynamicComponent1, MyDynamicComponent2 } from './my-components';
 
 Then in your component's template include `<ndc-dynamic>` where you want to render component
 and bind from your component class type of component to render:
+
 ```ts
 @Component({
   selector: 'my-component',
-  template: `<ndc-dynamic [ndcDynamicComponent]="component"></ndc-dynamic>`
+  template: `<ndc-dynamic [ndcDynamicComponent]="component"></ndc-dynamic>`,
 })
 class MyComponent {
   component = Math.random() > 0.5 ? MyDynamicComponent1 : MyDynamicComponent2;
@@ -58,32 +61,40 @@ class MyComponent {
 ### Inputs and Outputs
 
 You can also pass `inputs` and `outputs` to your dynamic components:
+
 ```ts
 @Component({
   selector: 'my-component',
   template: `<ndc-dynamic [ndcDynamicComponent]="component"
                           [ndcDynamicInputs]="inputs"
                           [ndcDynamicOutputs]="outputs"
-                          ></ndc-dynamic>`
+                          ></ndc-dynamic>`,
 })
 class MyComponent {
   component = MyDynamicComponent1;
   inputs = {
     hello: 'world',
-    something: () => 'can be really complex'
+    something: () => 'can be really complex',
   };
   outputs = {
-    onSomething: (type) => alert(type)
-  }
+    onSomething: type => alert(type),
+  };
 }
 
-@Component({selector: 'my-dynamic-component1', template: 'Dynamic Component 1'})
+@Component({
+  selector: 'my-dynamic-component1',
+  template: 'Dynamic Component 1',
+})
 class MyDynamicComponent1 {
-  @Input() hello: string;
-  @Input() something: Function;
-  @Output() onSomething = new EventEmitter<string>();
+  @Input()
+  hello: string;
+  @Input()
+  something: Function;
+  @Output()
+  onSomething = new EventEmitter<string>();
 }
 ```
+
 Here you can update your inputs (ex. `inputs.hello = 'WORLD'`) and they will trigger standard Angular's life-cycle hooks
 (of course you should consider which change detection strategy you are using).
 
@@ -96,7 +107,7 @@ You can subscribe to component creation events, being passed a reference to the 
   selector: 'my-component',
   template: `<ndc-dynamic [ndcDynamicComponent]="component"
                           (ndcDynamicCreated)="componentCreated($event)"
-                          ></ndc-dynamic>`
+                          ></ndc-dynamic>`,
 })
 class MyComponent {
   component = MyDynamicComponent1;
@@ -117,21 +128,22 @@ import { AttributesMap } from 'ng-dynamic-component';
   selector: 'my-component',
   template: `<ndc-dynamic [ndcDynamicComponent]="component"
                           [ndcDynamicAttributes]="attrs"
-                          ></ndc-dynamic>`
+                          ></ndc-dynamic>`,
 })
 class MyComponent {
   component = MyDynamicComponent1;
   attrs: AttributesMap = {
     'my-attribute': 'attribute-value',
-    'class': 'some classes'
+    class: 'some classes',
   };
 }
 ```
+
 Remember that attributes values are always strings (while inputs can be any value).
 So to have better type safety you can use `AttributesMap` interface for your attributes maps.
 
-
 Also you can use `ngComponentOutlet` and `ndcDynamicAttributes` with `*` syntax:
+
 ```ts
 import { AttributesMap } from 'ng-dynamic-component';
 
@@ -139,13 +151,13 @@ import { AttributesMap } from 'ng-dynamic-component';
   selector: 'my-component',
   template: `<ng-container *ngComponentOutlet="component;
                             ndcDynamicAttributes: attrs"
-                            ></ng-container>`
+                            ></ng-container>`,
 })
 class MyComponent {
   component = MyDynamicComponent1;
   attrs: AttributesMap = {
     'my-attribute': 'attribute-value',
-    'class': 'some classes'
+    class: 'some classes',
   };
 }
 ```
@@ -164,7 +176,7 @@ import { dynamicDirectiveDef } from 'ng-dynamic-component';
   selector: 'my-component',
   template: `<ng-container [ngComponentOutlet]="component"
                            [ndcDynamicDirectives]="dirs"
-                           ></ng-container>`
+                           ></ng-container>`,
 })
 class MyComponent {
   component = MyDynamicComponent1;
@@ -181,13 +193,19 @@ import { dynamicDirectiveDef } from 'ng-dynamic-component';
   selector: 'my-component',
   template: `<ng-container [ngComponentOutlet]="component"
                            [ndcDynamicDirectives]="dirs"
-                           ></ng-container>`
+                           ></ng-container>`,
 })
 class MyComponent {
   component = MyDynamicComponent1;
   directiveInputs = { prop1: 'value' };
-  directiveOutputs = { output1: (evt) => this.doSomeStuff(evt) };
-  dirs = [dynamicDirectiveDef(MyDirective, this.directiveInputs, this.directiveOutputs)];
+  directiveOutputs = { output1: evt => this.doSomeStuff(evt) };
+  dirs = [
+    dynamicDirectiveDef(
+      MyDirective,
+      this.directiveInputs,
+      this.directiveOutputs,
+    ),
+  ];
 }
 ```
 
@@ -210,7 +228,7 @@ import { dynamicDirectiveDef } from 'ng-dynamic-component';
   selector: 'my-component',
   template: `<ng-container [ngComponentOutlet]="component"
                            [ndcDynamicDirectives]="dirs"
-                           ></ng-container>`
+                           ></ng-container>`,
 })
 class MyComponent {
   component = MyDynamicComponent1;
@@ -227,6 +245,7 @@ class MyComponent {
 
 You can also use [`NgComponentOutlet`](https://angular.io/docs/ts/latest/api/common/index/NgComponentOutlet-directive.html)
 directive from `@angular/common` instead of `<ndc-dynamic>` and apply `inputs` and `outputs` to your dynamic components:
+
 ```ts
 @Component({
   selector: 'my-component',
@@ -243,6 +262,7 @@ class MyComponent {
 ```
 
 Also you can use `ngComponentOutlet` with `*` syntax:
+
 ```ts
 @Component({
   selector: 'my-component',
@@ -265,9 +285,10 @@ or providing additional/overriding providers (`[ndcDynamicProviders]`) or both s
 or projecting nodes (`[ndcDynamicContent]`).
 
 NOTE: In practice funtionality of this library is splitted in two pieces:
-* one - component (`ndc-dynamic`) that is responsible for instantianting and rendering of dynamic components;
-* two - directive (`ndcDynamic` also bound to `ndc-dynamic`) that is responsible for carrying inputs/outputs
-to/from dynamic component by the help of so called `ComponentInjector` (it is `ndc-dynamic` by default).
+
+- one - component (`ndc-dynamic`) that is responsible for instantianting and rendering of dynamic components;
+- two - directive (`ndcDynamic` also bound to `ndc-dynamic`) that is responsible for carrying inputs/outputs
+  to/from dynamic component by the help of so called `ComponentInjector` (it is `ndc-dynamic` by default).
 
 Thanks to this separation you are able to connect inputs/outputs and life-cycle hooks to different mechanisms of injecting
 dynamic components by implementing `ComponentInjector` and providing it via `DynamicModule.withComponents(null, [here])` in second argument.
