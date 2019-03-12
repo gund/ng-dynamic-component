@@ -1,6 +1,5 @@
 environment:
-  global:
-    nodejs_version: '11'
+  nodejs_version: '11'
 
 matrix:
   fast_finish: true
@@ -9,10 +8,11 @@ skip_tags: true
 
 install:
   - ps: Install-Product node $env:nodejs_version
-  - node --version
   - yarn install --frozen-lockfile --non-interactive
 
 test_script:
+  - node --version
+  - yarn --version
   - yarn build
   - yarn ci
 
