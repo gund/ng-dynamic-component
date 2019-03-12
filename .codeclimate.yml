@@ -3,12 +3,13 @@ engines:
     enabled: true
     config:
       languages:
-      - javascript
+        - javascript
   tslint:
     enabled: true
   fixme:
     enabled: true
 ratings:
   paths:
-  - "src/**/*.ts"
-exclude_paths: []
+    - 'src/**/*.ts'
+exclude_patterns:
+  - 'src/**/*.spec.ts'
