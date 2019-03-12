@@ -12,4 +12,5 @@ ratings:
   paths:
     - 'src/**/*.ts'
 exclude_patterns:
-  - 'src/**/*.spec.ts'
+  - '**.*'
+  - '!src/dynamic/**/*.ts'
