@@ -149,5 +149,8 @@
         "statements": 80
       }
     }
+  },
+  "dependencies": {
+    "lodash.partition": "^4.6.0"
   }
 }

@@ -65,3 +65,64 @@ export function getCtorType(
 ): any[] {
   return reflect.getMetadata('design:paramtypes', ctor);
 }
+
+export class Hashcache<K, V> {
+  map: Map<K, V>;
+  defaultCreator: (key: K) => V;
+
+  constructor(creator: (key: K) => V) {
+    this.defaultCreator = creator;
+    this.map = new Map<K, V>();
+  }
+
+  get size(): number {
+    return this.map.size;
+  }
+
+  clear(): void {
+    this.map.clear();
+  }
+
+  delete(key: K): boolean {
+    return this.map.delete(key);
+  }
+
+  entries(): IterableIterator<[K, V]> {
+    return this.map.entries();
+  }
+
+  forEach(
+    callbackfn: (value: V, key: K, map: Map<K, V>) => void,
+    thisArg?: any,
+  ): void {
+    this.map.forEach(callbackfn);
+  }
+
+  get(key: K): V {
+    let value: V = this.map.get(key);
+
+    if (!value) {
+      value = this.defaultCreator(key);
+      this.map.set(key, value);
+    }
+
+    return value;
+  }
+
+  has(key: K): boolean {
+    return this.map.has(key);
+  }
+
+  keys(): IterableIterator<K> {
+    return this.map.keys();
+  }
+
+  set(key: K, value: V): this {
+    this.map.set(key, value);
+    return this;
+  }
+
+  values(): IterableIterator<V> {
+    return this.map.values();
+  }
+}
