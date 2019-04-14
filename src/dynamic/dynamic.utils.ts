@@ -2,12 +2,8 @@ import * as partition from 'lodash.partition';
 import { InputsType, OutputsType } from 'io.service';
 import { Hashcache } from 'util';
 
-const dynamicComponents: Hashcache<
-  any,
-  Map<any, IDynamicComponent>
-> = new Hashcache<any, Map<any, IDynamicComponent>>(
-  () => new Map<any, IDynamicComponent>(),
-);
+const dynamicComponents:Hashcache<any, Map<any, IDynamicComponent>> =
+  new Hashcache<any, Map<any, IDynamicComponent>>(() => new Map<any, IDynamicComponent>());
 /**
  * A Decorator representing a dynamically generated component
  *
@@ -15,7 +11,7 @@ const dynamicComponents: Hashcache<
  * @param (V) compType - single component of a dynamic components group
  * @returns (ClassDecorator) - A Decorator for a dynamic component
  */
-export function DynamicComp<K, V>(groupType: K, compType: V): ClassDecorator {
+export function DynamicComp<K, V>(groupType:K, compType:V):ClassDecorator {
   return function(comp: Function): void {
     const [inputs, outputs] = extractInputOutputs(comp);
 
@@ -36,11 +32,7 @@ export function DynamicComp<K, V>(groupType: K, compType: V): ClassDecorator {
  * @param (PropDefinition) propDef - A dynamic-components-conatiner's binding definitions
  * @returns (IDynamicComponent) - A dynamically generated component with bindings
  */
-export function getDynamicComponent<K, V>(
-  groupType: K,
-  compType: V,
-  propDef: PropDefinition,
-): IDynamicComponent {
+export function getDynamicComponent<K, V>(groupType:K, compType:V, propDef:PropDefinition):IDynamicComponent {
   const comp: IDynamicComponent = Object.assign(
     {},
     dynamicComponents.get(groupType).get(compType),
@@ -69,7 +61,7 @@ export function getDynamicComponent<K, V>(
  * @param (Function) comp
  * @returns (string[][]) - two dimensional array - 0:Inputs, 1:Outputs
  */
-function extractInputOutputs(comp: Function): string[][] {
+function extractInputOutputs(comp:Function):string[][] {
   const baseCompProps = (comp as any).__proto__.__prop__metadata__ || {};
   const compProps = (comp as any).__prop__metadata__;
   const propKeys: Set<string> = new Set<string>([
@@ -102,10 +94,7 @@ function extractInputOutputs(comp: Function): string[][] {
  * @param (any) propDefinitions - A dynamic-components-conatiner's binding definitions
  * @returns (any) - Bound inputs/outputs object for a dynamic component
  */
-function getComponentProperties(
-  props: string[],
-  propDefinitions: any = {},
-): any {
+function getComponentProperties(props:string[], propDefinitions:any = {}):any {
   return props.reduce((prev, curr) => {
     prev[curr] = propDefinitions[curr];
     return prev;
