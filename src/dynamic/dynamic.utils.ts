@@ -1,6 +1,6 @@
 import * as partition from 'lodash.partition';
-import { InputsType, OutputsType } from 'io.service';
-import { Hashcache } from 'util';
+import { InputsType, OutputsType } from './io.service';
+import { Hashcache } from './util';
 
 const dynamicComponents: Hashcache<any, Map<any, IDynamicComponent>> =
   new Hashcache<any, Map<any, IDynamicComponent>>(() => new Map<any, IDynamicComponent>());
