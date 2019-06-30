@@ -50,19 +50,19 @@
     "node": ">=6.0.0"
   },
   "peerDependencies": {
-    "@angular/common": "~8.0.3",
-    "@angular/core": "~8.0.3",
+    "@angular/common": "^8.0.0",
+    "@angular/core": "^8.0.0",
     "rxjs": "^6.0.0",
     "tslib": "^1.9.0"
   },
   "devDependencies": {
     "@angular/animations": "^8.0.3",
-    "@angular/common": "~8.0.3",
-    "@angular/compiler": "~8.0.3",
-    "@angular/core": "~8.0.3",
-    "@angular/platform-browser": "~8.0.3",
-    "@angular/platform-browser-dynamic": "~8.0.3",
-    "@angular/platform-server": "~8.0.3",
+    "@angular/common": "^8.0.3",
+    "@angular/compiler": "^8.0.3",
+    "@angular/core": "^8.0.3",
+    "@angular/platform-browser": "^8.0.3",
+    "@angular/platform-browser-dynamic": "^8.0.3",
+    "@angular/platform-server": "^8.0.3",
     "@commitlint/cli": "^7.2.1",
     "@commitlint/config-conventional": "^7.1.2",
     "@starptech/prettyhtml": "^0.8.12",
