@@ -71,15 +71,15 @@
     "angular2-template-loader": "^0.6.2",
     "awesome-typescript-loader": "^5.0.0",
     "codecov": "^3.1.0",
-    "codelyzer": "^4.5.0",
+    "codelyzer": "^5.1.0",
     "commitizen": "^3.0.5",
     "copy-dir": "^0.3.0",
     "copyfiles": "^2.0.0",
     "cz-conventional-changelog": "^2.1.0",
     "husky": "^1.1.0",
     "istanbul": "^0.4.5",
-    "jest": "^23.6.0",
-    "jest-preset-angular": "^6.0.2",
+    "jest": "^24.8.0",
+    "jest-preset-angular": "^7.1.1",
     "json-loader": "^0.5.4",
     "lint-staged": "^8.0.4",
     "npm-run-all": "^4.1.5",
@@ -94,15 +94,15 @@
     "source-map": "^0.7.2",
     "source-map-loader": "^0.2.0",
     "sourcemap-istanbul-instrumenter-loader": "^0.2.0",
-    "tsickle": "^0.34.0",
+    "tsickle": "^0.35.0",
     "tslib": "^1.9.3",
     "tslint": "^5.11.0",
     "tslint-loader": "^3.5.4",
-    "typescript": "~3.1.3",
+    "typescript": "~3.4.5",
     "uglify-js": "^3.3.24",
     "webpack": "^4.27.1",
     "webpack-dev-server": "^3.1.10",
-    "zone.js": "~0.8.26"
+    "zone.js": "^0.9.1"
   },
   "config": {
     "commitizen": {
@@ -148,5 +148,8 @@
         "statements": 80
       }
     }
+  },
+  "dependencies": {
+    "core-js": "^3.1.4"
   }
 }
