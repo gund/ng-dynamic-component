@@ -358,7 +358,7 @@ describe('Directive: DynamicDirectives', () => {
 
   describe('with `ngComponentOutlet`', () => {
     let fixture: ComponentFixture<TestComponent>;
-    let created = jest.fn<MockDirective>();
+    let created = jest.fn<MockDirective, any>();
 
     beforeEach(() => {
       created.mockReset();
@@ -385,7 +385,7 @@ describe('Directive: DynamicDirectives', () => {
 
   describe('with `*ngComponentOutlet`', () => {
     let fixture: ComponentFixture<TestComponent>;
-    let created = jest.fn<MockDirective>();
+    let created = jest.fn<MockDirective, any>();
 
     beforeEach(() => {
       created.mockReset();
@@ -408,7 +408,7 @@ describe('Directive: DynamicDirectives', () => {
 
   describe('injector', () => {
     let fixture: ComponentFixture<TestComponent>;
-    let created = jest.fn<any>();
+    let created = jest.fn<any, any>();
 
     beforeEach(() => {
       created.mockReset();
@@ -473,7 +473,7 @@ describe('Directive: DynamicDirectives', () => {
 
   describe('directive inputs', () => {
     let fixture: ComponentFixture<TestComponent>;
-    let created = jest.fn<MockDirective>();
+    let created = jest.fn<MockDirective, any>();
     let hostComp: any;
 
     beforeEach(() => {
@@ -590,7 +590,7 @@ describe('Directive: DynamicDirectives', () => {
 
   describe('directive outputs', () => {
     let fixture: ComponentFixture<TestComponent>;
-    let created = jest.fn<MockDirective>();
+    let created = jest.fn<MockDirective, any>();
     let hostComp: any;
 
     beforeEach(() => {
