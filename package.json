@@ -8,9 +8,6 @@
   "es2015": "dist/bundles/ng-dynamic-component.es2015.js",
   "typings": "dist/ng-dynamic-component.d.ts",
   "scripts": {
-    "commitmsg": "commitlint -E HUSKY_GIT_PARAMS",
-    "precommit": "lint-staged",
-    "prepush": "npm-run-all -p lint test",
     "ct": "git-cz",
     "build": "node scripts/build.js",
     "build:release": "node scripts/release.js",
@@ -130,6 +127,13 @@
       "prettyhtml",
       "git add"
     ]
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "pre-push": "npm-run-all -p lint test",
+      "precommit": "lint-staged"
+    }
   },
   "jest": {
     "preset": "jest-preset-angular",
