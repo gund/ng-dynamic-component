@@ -59,6 +59,7 @@
     "@angular/animations": "^8.0.3",
     "@angular/common": "^8.0.3",
     "@angular/compiler": "^8.0.3",
+    "@angular/compiler-cli": "^8.0.3",
     "@angular/core": "^8.0.3",
     "@angular/platform-browser": "^8.0.3",
     "@angular/platform-browser-dynamic": "^8.0.3",
