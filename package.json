@@ -132,7 +132,7 @@
     "hooks": {
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
       "pre-push": "npm-run-all -p lint test",
-      "precommit": "lint-staged"
+      "pre-commit": "lint-staged"
     }
   },
   "jest": {
