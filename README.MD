@@ -12,17 +12,14 @@
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 [![Greenkeeper badge](https://badges.greenkeeper.io/gund/ng-dynamic-component.svg)](https://greenkeeper.io/)
 
-Version 5.x.x supports Angular 8 (`ng-dynamic-component@^5.0.0`)
-
-Version 4.x.x supports Angular 7 (`ng-dynamic-component@^4.0.0`)
-
-Version 3.x.x supports Angular 6 (`ng-dynamic-component@^3.0.0`)
-
-Version 2.x.x supports Angular 5 (`ng-dynamic-component@^2.0.0`)
-
-Version 1.x.x supports Angular 4 (`ng-dynamic-component@^1.0.0`)
-
-Version 0.x.x supports Angular 2 (`ng-dynamic-component@^0.0.0`)
+| Angular | ng-dynamic-component | NPM package                   |
+|---------|----------------------|-------------------------------|
+| 8.x.x   | 5.x.x                | `ng-dynamic-component@^5.0.0` |
+| 7.x.x   | 4.x.x                | `ng-dynamic-component@^4.0.0` |
+| 6.x.x   | 3.x.x                | `ng-dynamic-component@^3.0.0` |
+| 5.x.x   | 2.x.x                | `ng-dynamic-component@^2.0.0` |
+| 4.x.x   | 1.x.x                | `ng-dynamic-component@^1.0.0` |
+| 2.x.x   | 0.x.x                | `ng-dynamic-component@^0.0.0` |
 
 ## Installation
 
