@@ -10,10 +10,12 @@ import {
 import { ComponentOutletInjectorDirective } from './component-outlet-injector.directive';
 
 @Component({
-  template: `<ng-container *ngComponentOutlet="comp"></ng-container>`,
+  template: `
+    <ng-container *ngComponentOutlet="comp"></ng-container>
+  `,
 })
 class TestComponent extends TestComponentBase {
-  @ViewChild(ComponentOutletInjectorDirective)
+  @ViewChild(ComponentOutletInjectorDirective, { static: false })
   directive: ComponentOutletInjectorDirective;
   comp: Type<any>;
 }

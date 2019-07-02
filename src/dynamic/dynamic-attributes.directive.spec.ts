@@ -30,7 +30,12 @@ describe('DynamicAttributesDirective', () => {
     let fixture: ComponentFixture<TestComponent>;
 
     @Component({
-      template: `<ng-container [ngComponentOutlet]="comp" [ndcDynamicAttributes]="attrs"></ng-container>`,
+      template: `
+        <ng-container
+          [ngComponentOutlet]="comp"
+          [ndcDynamicAttributes]="attrs"
+        ></ng-container>
+      `,
     })
     class TestComponent extends TestComponentBase {
       comp = InjectedComponent;
@@ -216,7 +221,11 @@ describe('DynamicAttributesDirective', () => {
     let fixture: ComponentFixture<TestComponent>;
 
     @Component({
-      template: `<ng-container *ngComponentOutlet="comp; ndcDynamicAttributes: attrs"></ng-container>`,
+      template: `
+        <ng-container
+          *ngComponentOutlet="comp; ndcDynamicAttributes: attrs"
+        ></ng-container>
+      `,
     })
     class TestComponent extends TestComponentBase {
       comp = InjectedComponent;
@@ -259,10 +268,15 @@ describe('DynamicAttributesDirective', () => {
 
     @Component({
       selector: 'host-comp',
-      template: `<ndc-dynamic [ndcDynamicComponent]="comp" [ndcDynamicAttributes]="attrs"></ndc-dynamic>`,
+      template: `
+        <ndc-dynamic
+          [ndcDynamicComponent]="comp"
+          [ndcDynamicAttributes]="attrs"
+        ></ndc-dynamic>
+      `,
     })
     class TestComponent {
-      @ViewChild(DynamicComponent)
+      @ViewChild(DynamicComponent, { static: false })
       dynamicComp: DynamicComponent;
       comp = InjectedComponent;
       attrs: AttributesMap;
@@ -303,7 +317,9 @@ describe('DynamicAttributesDirective', () => {
     let fixture: ComponentFixture<TestComponent>;
 
     @Component({
-      template: `<div [ngComponentOutlet]="comp" [ndcDynamicAttributes]="attrs"></div>`,
+      template: `
+        <div [ngComponentOutlet]="comp" [ndcDynamicAttributes]="attrs"></div>
+      `,
     })
     class TestComponent extends TestComponentBase {
       comp: any;

@@ -9,7 +9,8 @@
     "moduleResolution": "node",
     "outDir": "./dist/bundles/es5",
     "target": "es5",
-    "allowJs": true
+    "allowJs": true,
+    "types": []
   },
   "files": [
     "dist/bundles/ng-dynamic-component.es2015.js"
