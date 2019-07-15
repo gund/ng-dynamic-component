@@ -1,6 +1,6 @@
 # These are supported funding model platforms
 
-github: gund
+# github: gund # Not yet in beta program... =(
 patreon: gund
 tidelift: npm/ng-dynamic-component
 issuehunt: gund
