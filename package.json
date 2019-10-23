@@ -85,7 +85,7 @@
     "prettier": "^1.14.3",
     "raw-loader": "^1.0.0-beta.0",
     "rimraf": "^2.6.1",
-    "rollup": "^0.59.1",
+    "rollup": "^1.25.2",
     "rollup-globals-regex": "^0.0.3",
     "rollup-plugin-node-resolve": "^3.0.0",
     "rxjs": "^6.1.0",
