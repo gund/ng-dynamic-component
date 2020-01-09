@@ -75,7 +75,7 @@
     "copyfiles": "^2.0.0",
     "core-js": "^2.6.9",
     "cz-conventional-changelog": "^2.1.0",
-    "husky": "^1.1.0",
+    "husky": "^4.0.2",
     "istanbul": "^0.4.5",
     "jest": "^24.8.0",
     "jest-preset-angular": "^7.0.1",
