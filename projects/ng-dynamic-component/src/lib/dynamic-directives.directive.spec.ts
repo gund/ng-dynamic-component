@@ -57,6 +57,7 @@ class MockDirective
   get in(): any {
     return this._in;
   }
+  // tslint:disable-next-line: variable-name
   private _in: any;
   @Input()
   in2: any;

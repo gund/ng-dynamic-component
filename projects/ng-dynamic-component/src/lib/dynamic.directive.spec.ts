@@ -1,3 +1,4 @@
+// tslint:disable: no-string-literal
 import { SimpleChanges, ChangeDetectorRef } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
@@ -42,9 +43,9 @@ describe('Directive: Dynamic', () => {
   });
 
   describe('inputs', () => {
-    let fixture: ComponentFixture<TestComponent>,
-      injectorComp: ComponentInjectorComponent,
-      injectedComp: MockedInjectedComponent;
+    let fixture: ComponentFixture<TestComponent>;
+    let injectorComp: ComponentInjectorComponent;
+    let injectedComp: MockedInjectedComponent;
 
     beforeEach(async(() => {
       const template = `<component-injector [ndcDynamicInputs]="inputs"></component-injector>`;
@@ -140,7 +141,7 @@ describe('Directive: Dynamic', () => {
 
       expect(injectedComp.ngOnChanges).toHaveBeenCalledTimes(1);
 
-      let newInjectedComp = (injectorComp.component = Object.assign(
+      const newInjectedComp = (injectorComp.component = Object.assign(
         {},
         injectorComp.component,
       ));
@@ -322,10 +323,10 @@ describe('Directive: Dynamic', () => {
   });
 
   describe('outputs', () => {
-    let fixture: ComponentFixture<TestComponent>,
-      injectorComp: ComponentInjectorComponent,
-      injectedComp: MockedInjectedComponent,
-      outputSpy: jasmine.Spy;
+    let fixture: ComponentFixture<TestComponent>;
+    let injectorComp: ComponentInjectorComponent;
+    let injectedComp: MockedInjectedComponent;
+    let outputSpy: jasmine.Spy;
 
     beforeEach(async(() => {
       const template = `<component-injector [ndcDynamicOutputs]="outputs"></component-injector>`;
@@ -347,7 +348,7 @@ describe('Directive: Dynamic', () => {
       expect(outputSpy).toHaveBeenCalledWith('data');
     }));
 
-    it('should re-bind outputs after `null|undefiined` to component and receive events', async(() => {
+    it('should re-bind outputs after `null|undefined` to component and receive events', async(() => {
       fixture.componentInstance['outputs'] = null;
       fixture.detectChanges();
       fixture.componentInstance['outputs'] = { onEvent: outputSpy };
@@ -394,7 +395,8 @@ describe('Directive: Dynamic', () => {
   });
 
   describe('outputs with `NgComponentOutlet`', () => {
-    let fixture: ComponentFixture<TestComponent>, outputSpy: jasmine.Spy;
+    let fixture: ComponentFixture<TestComponent>;
+    let outputSpy: jasmine.Spy;
 
     beforeEach(async(() => {
       TestBed.configureTestingModule({
@@ -429,7 +431,8 @@ describe('Directive: Dynamic', () => {
   });
 
   describe('outputs with `NgComponentOutlet` * syntax', () => {
-    let fixture: ComponentFixture<TestComponent>, outputSpy: jasmine.Spy;
+    let fixture: ComponentFixture<TestComponent>;
+    let outputSpy: jasmine.Spy;
 
     beforeEach(async(() => {
       TestBed.configureTestingModule({

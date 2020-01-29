@@ -1,9 +1,9 @@
-import { ComponentRef, InjectionToken } from '@angular/core';
+import { ComponentRef, InjectionToken, Type } from '@angular/core';
 
 export interface ComponentInjector {
   componentRef: ComponentRef<any> | null;
 }
 
-export const COMPONENT_INJECTOR = new InjectionToken<ComponentInjector>(
+export const COMPONENT_INJECTOR = new InjectionToken<Type<ComponentInjector>>(
   'ComponentInjector',
 );

@@ -8,12 +8,14 @@ import {
   OnChanges,
   Optional,
   SimpleChanges,
+  Type,
 } from '@angular/core';
 
 import { COMPONENT_INJECTOR, ComponentInjector } from './component-injector';
 import { ComponentOutletInjectorDirective } from './component-outlet-injector.directive';
 import { InputsType, IoService, OutputsType } from './io.service';
 
+// tslint:disable-next-line: no-conflicting-lifecycle
 @Directive({
   selector:
     '[ndcDynamicInputs],[ndcDynamicOutputs],[ngComponentOutletNdcDynamicInputs],[ngComponentOutletNdcDynamicOutputs]',
@@ -29,41 +31,41 @@ export class DynamicDirective implements OnChanges, DoCheck {
   @Input()
   ngComponentOutletNdcDynamicOutputs: OutputsType;
 
-  private _componentInjector: ComponentInjector = this._injector.get(
-    this._componentInjectorType,
+  private componentInjector = this.injector.get(
+    this.componentInjectorType,
     null,
   );
 
-  private get _inputs() {
+  private get inputs() {
     return this.ndcDynamicInputs || this.ngComponentOutletNdcDynamicInputs;
   }
 
-  private get _outputs() {
+  private get outputs() {
     return this.ndcDynamicOutputs || this.ngComponentOutletNdcDynamicOutputs;
   }
 
-  private get _compInjector() {
-    return this._componentOutletInjector || this._componentInjector;
+  private get compInjector() {
+    return this.componentOutletInjector || this.componentInjector;
   }
 
   constructor(
-    private _injector: Injector,
+    private injector: Injector,
     private ioService: IoService,
     @Inject(COMPONENT_INJECTOR)
-    private _componentInjectorType: ComponentInjector,
+    private componentInjectorType: Type<ComponentInjector>,
     @Host()
     @Optional()
-    private _componentOutletInjector: ComponentOutletInjectorDirective,
+    private componentOutletInjector: ComponentOutletInjectorDirective,
   ) {
-    this.ioService.init(this._compInjector);
+    this.ioService.init(this.compInjector);
   }
 
   ngOnChanges(changes: SimpleChanges) {
     this.ioService.update(
-      this._inputs,
-      this._outputs,
-      this._inputsChanged(changes),
-      this._outputsChanged(changes),
+      this.inputs,
+      this.outputs,
+      this.inputsChanged(changes),
+      this.outputsChanged(changes),
     );
   }
 
@@ -71,14 +73,14 @@ export class DynamicDirective implements OnChanges, DoCheck {
     this.ioService.maybeUpdate();
   }
 
-  private _inputsChanged(changes: SimpleChanges): boolean {
+  private inputsChanged(changes: SimpleChanges): boolean {
     return (
       'ngComponentOutletNdcDynamicInputs' in changes ||
       'ndcDynamicInputs' in changes
     );
   }
 
-  private _outputsChanged(changes: SimpleChanges): boolean {
+  private outputsChanged(changes: SimpleChanges): boolean {
     return (
       'ngComponentOutletNdcDynamicOutputs' in changes ||
       'ndcDynamicOutputs' in changes

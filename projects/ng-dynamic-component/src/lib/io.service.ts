@@ -14,9 +14,17 @@ import { takeUntil } from 'rxjs/operators';
 import { ComponentInjector } from './component-injector';
 import { changesFromRecord, createNewChange, noop } from './util';
 
-export type InputsType = { [k: string]: any };
-export type OutputsType = { [k: string]: Function };
-export type IOMapInfo = { propName: string; templateName: string };
+export interface InputsType {
+  [k: string]: any;
+}
+export interface OutputsType {
+  // tslint:disable-next-line: ban-types
+  [k: string]: Function;
+}
+export interface IOMapInfo {
+  propName: string;
+  templateName: string;
+}
 export type IOMappingList = IOMapInfo[];
 export type KeyValueChangesAny = KeyValueChanges<any, any>;
 
@@ -31,41 +39,42 @@ const recordToNewChanges = changesFromRecord({ onlyNewChanges: true });
 export class IoService implements OnDestroy {
   private checkInit = this.failInit;
 
-  private _lastComponentInst: any = null;
-  private _lastInputChanges: SimpleChanges;
-  private _inputsDiffer = this._differs.find({}).create();
-  private _compFactory: ComponentFactory<any> | null = null;
-  private _outputsShouldDisconnect$ = new Subject<void>();
+  private lastComponentInst: any = null;
+  private lastInputChanges: SimpleChanges;
+  private inputsDiffer = this.differs.find({}).create();
+  private compFactory: ComponentFactory<any> | null = null;
+  private outputsShouldDisconnect$ = new Subject<void>();
 
-  private _inputs: InputsType;
-  private _outputs: OutputsType;
-  private _compInjector: ComponentInjector;
-  private _outputsChanged: (outputs: OutputsType) => boolean = () => false;
+  private inputs: InputsType;
+  private outputs: OutputsType;
+  private compInjector: ComponentInjector;
+  private outputsChanged: (outputs: OutputsType) => boolean = () => false;
 
-  private get _compRef() {
-    return this._compInjector.componentRef;
+  private get compRef() {
+    return this.compInjector.componentRef;
   }
 
-  private get _componentInst() {
-    return this._compRef ? this._compRef.instance : null;
+  private get componentInst() {
+    return this.compRef ? this.compRef.instance : null;
   }
 
-  private get _componentInstChanged(): boolean {
-    if (this._lastComponentInst !== this._componentInst) {
-      this._lastComponentInst = this._componentInst;
+  private get componentInstChanged(): boolean {
+    if (this.lastComponentInst !== this.componentInst) {
+      this.lastComponentInst = this.componentInst;
       return true;
     } else {
       return false;
     }
   }
 
-  private get _compCdr(): ChangeDetectorRef {
-    return this._compRef ? this._compRef.injector.get(ChangeDetectorRef) : null;
+  private get compCdr(): ChangeDetectorRef {
+    // tslint:disable-next-line: deprecation
+    return this.compRef ? this.compRef.injector.get(ChangeDetectorRef) : null;
   }
 
   constructor(
-    private _differs: KeyValueDiffers,
-    private _cfr: ComponentFactoryResolver,
+    private differs: KeyValueDiffers,
+    private cfr: ComponentFactoryResolver,
   ) {}
 
   ngOnDestroy(): void {
@@ -74,11 +83,11 @@ export class IoService implements OnDestroy {
 
   init(componentInjector: ComponentInjector, options: IoInitOptions = {}) {
     this.checkInit = componentInjector ? noop : this.failInit;
-    this._compInjector = componentInjector;
+    this.compInjector = componentInjector;
 
     if (options.trackOutputChanges) {
-      const outputsDiffer = this._differs.find({}).create();
-      this._outputsChanged = outputs => !!outputsDiffer.diff(outputs);
+      const outputsDiffer = this.differs.find({}).create();
+      this.outputsChanged = outputs => !!outputsDiffer.diff(outputs);
     }
   }
 
@@ -91,14 +100,14 @@ export class IoService implements OnDestroy {
     this.checkInit();
     this.updateIO(inputs, outputs);
 
-    const compChanged = this._componentInstChanged;
+    const compChanged = this.componentInstChanged;
 
     if (compChanged || inputsChanged) {
-      const inputsChanges = this._getInputsChanges(this._inputs);
+      const inputsChanges = this._getInputsChanges(this.inputs);
       if (inputsChanges) {
         this._updateInputChanges(inputsChanges);
       }
-      this.updateInputs(compChanged || !this._lastInputChanges);
+      this.updateInputs(compChanged || !this.lastInputChanges);
     }
 
     if (compChanged || outputsChanged) {
@@ -109,24 +118,24 @@ export class IoService implements OnDestroy {
   maybeUpdate() {
     this.checkInit();
 
-    if (this._componentInstChanged) {
+    if (this.componentInstChanged) {
       this.updateInputs(true);
       this.bindOutputs();
       return;
     }
 
-    if (this._outputsChanged(this._outputs)) {
+    if (this.outputsChanged(this.outputs)) {
       this.bindOutputs();
     }
 
-    if (!this._inputs) {
+    if (!this.inputs) {
       return;
     }
 
-    const inputsChanges = this._getInputsChanges(this._inputs);
+    const inputsChanges = this._getInputsChanges(this.inputs);
 
     if (inputsChanges) {
-      const isNotFirstChange = !!this._lastInputChanges;
+      const isNotFirstChange = !!this.lastInputChanges;
       this._updateInputChanges(inputsChanges);
 
       if (isNotFirstChange) {
@@ -136,8 +145,8 @@ export class IoService implements OnDestroy {
   }
 
   private updateIO(inputs: InputsType, outputs: OutputsType) {
-    this._inputs = inputs;
-    this._outputs = outputs;
+    this.inputs = inputs;
+    this.outputs = outputs;
   }
 
   private updateInputs(isFirstChange = false) {
@@ -145,8 +154,8 @@ export class IoService implements OnDestroy {
       this._updateCompFactory();
     }
 
-    const compInst = this._componentInst;
-    let inputs = this._inputs;
+    const compInst = this.componentInst;
+    let inputs = this.inputs;
 
     if (!inputs || !compInst) {
       return;
@@ -157,18 +166,18 @@ export class IoService implements OnDestroy {
     Object.keys(inputs).forEach(p => (compInst[p] = inputs[p]));
 
     // Mark component for check to re-render with new inputs
-    if (this._compCdr) {
-      this._compCdr.markForCheck();
+    if (this.compCdr) {
+      this.compCdr.markForCheck();
     }
 
-    this.notifyOnInputChanges(this._lastInputChanges, isFirstChange);
+    this.notifyOnInputChanges(this.lastInputChanges, isFirstChange);
   }
 
   private bindOutputs() {
     this._disconnectOutputs();
 
-    const compInst = this._componentInst;
-    let outputs = this._outputs;
+    const compInst = this.componentInst;
+    let outputs = this.outputs;
 
     if (!outputs || !compInst) {
       return;
@@ -180,7 +189,7 @@ export class IoService implements OnDestroy {
       .filter(p => compInst[p])
       .forEach(p =>
         compInst[p]
-          .pipe(takeUntil(this._outputsShouldDisconnect$))
+          .pipe(takeUntil(this.outputsShouldDisconnect$))
           .subscribe(outputs[p]),
       );
   }
@@ -190,7 +199,7 @@ export class IoService implements OnDestroy {
     forceFirstChanges: boolean,
   ) {
     // Exit early if component not interested to receive changes
-    if (!this._componentInst.ngOnChanges) {
+    if (!this.componentInst.ngOnChanges) {
       return;
     }
 
@@ -198,24 +207,24 @@ export class IoService implements OnDestroy {
       changes = this._collectFirstChanges();
     }
 
-    this._componentInst.ngOnChanges(changes);
+    this.componentInst.ngOnChanges(changes);
   }
 
   private _disconnectOutputs() {
-    this._outputsShouldDisconnect$.next();
+    this.outputsShouldDisconnect$.next();
   }
 
   private _getInputsChanges(inputs: any): KeyValueChangesAny {
-    return this._inputsDiffer.diff(this._inputs);
+    return this.inputsDiffer.diff(this.inputs);
   }
 
   private _updateInputChanges(differ: KeyValueChangesAny) {
-    this._lastInputChanges = this._collectChangesFromDiffer(differ);
+    this.lastInputChanges = this._collectChangesFromDiffer(differ);
   }
 
   private _collectFirstChanges(): SimpleChanges {
     const changes = {} as SimpleChanges;
-    const inputs = this._inputs;
+    const inputs = this.inputs;
 
     Object.keys(inputs).forEach(
       prop => (changes[prop] = createNewChange(inputs[prop])),
@@ -236,11 +245,11 @@ export class IoService implements OnDestroy {
   private _resolveCompFactory(): ComponentFactory<any> | null {
     try {
       try {
-        return this._cfr.resolveComponentFactory(this._compRef.componentType);
+        return this.cfr.resolveComponentFactory(this.compRef.componentType);
       } catch (e) {
         // Fallback if componentType does not exist (happens on NgComponentOutlet)
-        return this._cfr.resolveComponentFactory(
-          this._compRef.instance.constructor,
+        return this.cfr.resolveComponentFactory(
+          this.compRef.instance.constructor,
         );
       }
     } catch (e) {
@@ -250,31 +259,31 @@ export class IoService implements OnDestroy {
   }
 
   private _updateCompFactory() {
-    this._compFactory = this._resolveCompFactory();
+    this.compFactory = this._resolveCompFactory();
   }
 
   private _resolveInputs(inputs: any): any {
-    if (!this._compFactory) {
+    if (!this.compFactory) {
       return inputs;
     }
 
-    return this._remapIO(inputs, this._compFactory.inputs);
+    return this._remapIO(inputs, this.compFactory.inputs);
   }
 
   private _resolveOutputs(outputs: any): any {
-    if (!this._compFactory) {
+    if (!this.compFactory) {
       return outputs;
     }
 
-    return this._remapIO(outputs, this._compFactory.outputs);
+    return this._remapIO(outputs, this.compFactory.outputs);
   }
 
   private _resolveChanges(changes: SimpleChanges): SimpleChanges {
-    if (!this._compFactory) {
+    if (!this.compFactory) {
       return changes;
     }
 
-    return this._remapIO(changes, this._compFactory.inputs);
+    return this._remapIO(changes, this.compFactory.inputs);
   }
 
   private _remapIO(io: any, mapping: IOMappingList): any {

@@ -34,13 +34,13 @@ export class DynamicAttributesDirective implements DoCheck {
   @Input()
   ngComponentOutletNdcDynamicAttributes: AttributesMap;
 
-  private _attrsDiffer = this.differs.find({}).create<string, string>();
-  private _componentInjector: ComponentInjector = this.injector.get(
+  private attrsDiffer = this.differs.find({}).create<string, string>();
+  private componentInjector = this.injector.get(
     this.componentInjectorType,
     null,
   );
-  private _lastCompType: Type<any>;
-  private _lastAttrActions: AttributeActions;
+  private lastCompType: Type<any>;
+  private lastAttrActions: AttributeActions;
 
   private get _attributes() {
     return (
@@ -49,7 +49,7 @@ export class DynamicAttributesDirective implements DoCheck {
   }
 
   private get _compInjector() {
-    return this.componentOutletInjector || this._componentInjector;
+    return this.componentOutletInjector || this.componentInjector;
   }
 
   private get _nativeElement() {
@@ -67,8 +67,8 @@ export class DynamicAttributesDirective implements DoCheck {
   }
 
   private get _isCompChanged() {
-    if (this._lastCompType !== this._compType) {
-      this._lastCompType = this._compType;
+    if (this.lastCompType !== this._compType) {
+      this.lastCompType = this._compType;
       return true;
     }
     return false;
@@ -79,7 +79,7 @@ export class DynamicAttributesDirective implements DoCheck {
     private differs: KeyValueDiffers,
     private injector: Injector,
     @Inject(COMPONENT_INJECTOR)
-    private componentInjectorType: ComponentInjector,
+    private componentInjectorType: Type<ComponentInjector>,
     @Optional()
     @Host()
     private componentOutletInjector: ComponentOutletInjectorDirective,
@@ -87,14 +87,14 @@ export class DynamicAttributesDirective implements DoCheck {
 
   ngDoCheck(): void {
     const isCompChanged = this._isCompChanged;
-    const changes = this._attrsDiffer.diff(this._attributes);
+    const changes = this.attrsDiffer.diff(this._attributes);
 
     if (changes) {
-      this._lastAttrActions = this._changesToAttrActions(changes);
+      this.lastAttrActions = this._changesToAttrActions(changes);
     }
 
-    if (changes || (isCompChanged && this._lastAttrActions)) {
-      this._updateAttributes(this._lastAttrActions);
+    if (changes || (isCompChanged && this.lastAttrActions)) {
+      this._updateAttributes(this.lastAttrActions);
     }
   }
 

@@ -48,6 +48,7 @@ export interface DirectiveRef<T> {
   hostView: ViewRef;
   location: ElementRef;
   changeDetectorRef: ChangeDetectorRef;
+  // tslint:disable-next-line: ban-types
   onDestroy: (callback: Function) => void;
 }
 
@@ -63,7 +64,7 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
   @Output()
   ndcDynamicDirectivesCreated = new EventEmitter<DirectiveRef<any>[]>();
 
-  private componentInjector: ComponentInjector = this.injector.get(
+  private componentInjector = this.injector.get(
     this.componentInjectorType,
     null,
   );
@@ -101,6 +102,8 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
   }
 
   private get hostVcr(): ViewContainerRef {
+    // NOTE: Accessing private APIs of Angular
+    // tslint:disable-next-line: no-string-literal
     return this.componentRef['_viewRef']['_viewContainerRef'];
   }
 
@@ -120,7 +123,7 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
     private ioFactoryService: IoFactoryService,
     private windowRef: WindowRefService,
     @Inject(COMPONENT_INJECTOR)
-    private componentInjectorType: ComponentInjector,
+    private componentInjectorType: Type<ComponentInjector>,
     @Host()
     @Optional()
     private componentOutletInjector: ComponentOutletInjectorDirective,
@@ -254,6 +257,7 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
   }
 
   private resolveDep(dep: any): any {
+    // tslint:disable-next-line: deprecation
     return this.maybeResolveVCR(dep) || this.hostInjector.get(dep);
   }
 

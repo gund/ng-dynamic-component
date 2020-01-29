@@ -34,23 +34,23 @@ export class DynamicComponent implements OnChanges, ComponentInjector {
   componentRef: ComponentRef<any> | null;
 
   constructor(
-    private _vcr: ViewContainerRef,
-    private _cfr: ComponentFactoryResolver,
+    private vcr: ViewContainerRef,
+    private cfr: ComponentFactoryResolver,
   ) {}
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['ndcDynamicComponent']) {
+    if (changes.ndcDynamicComponent) {
       this.createDynamicComponent();
     }
   }
 
   createDynamicComponent() {
-    this._vcr.clear();
+    this.vcr.clear();
     this.componentRef = null;
 
     if (this.ndcDynamicComponent) {
-      this.componentRef = this._vcr.createComponent(
-        this._cfr.resolveComponentFactory(this.ndcDynamicComponent),
+      this.componentRef = this.vcr.createComponent(
+        this.cfr.resolveComponentFactory(this.ndcDynamicComponent),
         0,
         this._resolveInjector(),
         this.ndcDynamicContent,
@@ -60,7 +60,7 @@ export class DynamicComponent implements OnChanges, ComponentInjector {
   }
 
   private _resolveInjector(): Injector {
-    let injector = this.ndcDynamicInjector || this._vcr.parentInjector;
+    let injector = this.ndcDynamicInjector || this.vcr.injector;
 
     if (this.ndcDynamicProviders) {
       injector = Injector.create({

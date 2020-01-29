@@ -61,7 +61,7 @@ export function noop(): void {}
 
 export function getCtorType(
   ctor: any,
-  reflect: { getMetadata: Function },
+  reflect: { getMetadata: (type: string, obj: object) => any[] },
 ): any[] {
   return reflect.getMetadata('design:paramtypes', ctor);
 }
