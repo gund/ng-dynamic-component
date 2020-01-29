@@ -15,7 +15,7 @@
     [
       "@semantic-release/exec",
       {
-        "prepareCmd": "npm run pack"
+        "prepareCmd": "npm run pack && ls -lha dist/ng-dynamic-component"
       }
     ],
     [
