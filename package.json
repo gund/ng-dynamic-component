@@ -15,7 +15,7 @@
     "coverage:check": "istanbul check-coverage --functions 75 --lines 75 --branches 75 --statements 75 coverage/**/coverage*.json",
     "format": "prettier --write \"projects/**/src/**/*.{ts,js,json,?css,html}\"",
     "format:check": "prettier --check \"projects/**/src/**/*.{ts,js,json,?css,html}\"",
-    "pack": "copy LICENSE README.md CODE_OF_CONDUCT.md CHANGELOG.md dist/ng-dynamic-component",
+    "pack": "copyfiles LICENSE README.md CODE_OF_CONDUCT.md CHANGELOG.md dist/ng-dynamic-component",
     "semantic-release": "semantic-release"
   },
   "private": true,
@@ -50,7 +50,7 @@
     "codecov": "^3.6.2",
     "codelyzer": "^5.2.1",
     "commitizen": "^4.0.3",
-    "copy": "^0.3.2",
+    "copyfiles": "^2.2.0",
     "core-js": "^3.6.4",
     "cz-conventional-changelog": "^3.1.0",
     "husky": "^4.2.1",
