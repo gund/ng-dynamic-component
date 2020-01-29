@@ -1,5 +1,12 @@
 # ng-dynamic-component - Changelog
 
+## [5.0.2](https://github.com/gund/ng-dynamic-component/compare/v5.0.1...v5.0.2) (2020-01-29)
+
+
+### Bug Fixes
+
+* **dist:** correctly run pack script before publishing package ([d5037db](https://github.com/gund/ng-dynamic-component/commit/d5037db4dcec0776e271103af0f8b1c16792cb68))
+
 ## [5.0.1](https://github.com/gund/ng-dynamic-component/compare/v5.0.0...v5.0.1) (2020-01-29)
 
 
