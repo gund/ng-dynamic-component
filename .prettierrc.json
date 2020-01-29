@@ -2,5 +2,6 @@
   "$schema": "http://json.schemastore.org/prettierrc",
   "singleQuote": true,
   "trailingComma": "all",
-  "bracketSpacing": true
+  "bracketSpacing": true,
+  "endOfLine": "lf"
 }

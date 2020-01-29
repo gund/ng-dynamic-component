@@ -10,7 +10,7 @@ engines:
     enabled: true
 ratings:
   paths:
-    - 'src/**/*.ts'
+    - 'projects/ng-dynamic-component/src/lib/**/*.ts'
 exclude_patterns:
   - '**.*'
-  - '!src/dynamic/**/*.ts'
+  - '!projects/ng-dynamic-component/src/lib/**/*.ts'

@@ -1,3 +1,4 @@
+// tslint:disable: component-selector no-input-rename no-output-rename
 import { CommonModule } from '@angular/common';
 import {
   Component,

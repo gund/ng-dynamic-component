@@ -1,7 +1,9 @@
-import { ComponentInjector } from '../dynamic';
-import { Component, ComponentRef, EventEmitter, Input } from '@angular/core';
+import { Component, ComponentRef, EventEmitter } from '@angular/core';
+
+import { ComponentInjector } from '../lib/component-injector';
 
 @Component({
+  // tslint:disable-next-line: component-selector
   selector: 'component-injector',
   template: '',
 })

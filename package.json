@@ -1,107 +1,69 @@
 {
   "name": "ng-dynamic-component",
-  "version": "0.0.0-semantically-released",
-  "description": "Dynamic components with full life-cycle support for inputs and outputs for Angular",
-  "sideEffects": false,
-  "main": "dist/bundles/ng-dynamic-component.umd.js",
-  "module": "dist/bundles/ng-dynamic-component.es5.js",
-  "es2015": "dist/bundles/ng-dynamic-component.es2015.js",
-  "typings": "dist/ng-dynamic-component.d.ts",
+  "version": "0.0.0",
   "scripts": {
     "ct": "git-cz",
-    "build": "node scripts/build.js",
-    "build:release": "node scripts/release.js",
-    "pretest": "npm run cleancoverage",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:ci": "jest --runInBand --coverage",
-    "test:report": "cd coverage && codecov",
-    "cleancoverage": "rimraf coverage",
-    "check-coverage": "istanbul check-coverage --functions 75 --lines 75 --branches 75 --statements 75",
-    "lint": "tslint -p tsconfig.json -c tslint.json",
-    "ci:test": "npm-run-all -s test:ci check-coverage",
-    "ci": "npm-run-all -p ci:test lint",
-    "format:code": "prettier --write \"src/**/*.{ts,js,json,?css}\"",
-    "format:html": "prettyhtml \"src/**/*.html\"",
-    "format": "npm-run-all -p format:*",
-    "presemantic-release": "npm run build && npm run build:release",
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "test": "ng test",
+    "test:watch": "npm run test -- --watch",
+    "test:ci": "npm run test -- --runInBand --coverage",
+    "test:report": "cd coverage/ng-dynamic-component && codecov",
+    "lint": "ng lint",
+    "e2e": "ng e2e",
+    "coverage:check": "istanbul check-coverage --functions 75 --lines 75 --branches 75 --statements 75 coverage/**/coverage*.json",
+    "format": "prettier --write \"projects/**/src/**/*.{ts,js,json,?css,html}\"",
+    "format:check": "prettier --check \"projects/**/src/**/*.{ts,js,json,?css,html}\"",
+    "pack": "copyfiles README.md LICENSE CODE_OF_CONDUCT.md dist/ng-dynamic-component",
     "semantic-release": "cd dist && semantic-release"
   },
-  "keywords": [
-    "angular",
-    "angular2",
-    "ng",
-    "dynamic",
-    "component",
-    "input",
-    "output",
-    "life-cycle"
-  ],
-  "author": "Alex Malkevich <malkevich.alex@gmail.com>",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gund/ng-dynamic-component.git"
-  },
-  "engines": {
-    "node": ">=6.0.0"
-  },
-  "peerDependencies": {
-    "@angular/common": "^8.0.0",
-    "@angular/core": "^8.0.0",
-    "rxjs": "^6.0.0",
-    "tslib": "^1.9.0"
+  "private": true,
+  "dependencies": {
+    "@angular/common": "^8.2.14",
+    "@angular/compiler": "^8.2.14",
+    "@angular/core": "^8.2.14",
+    "@angular/platform-browser": "^8.2.14",
+    "@angular/platform-browser-dynamic": "^8.2.14",
+    "rxjs": "^6.5.4",
+    "tslib": "^1.10.0",
+    "zone.js": "^0.10.2"
   },
   "devDependencies": {
-    "@angular/animations": "^8.0.3",
-    "@angular/common": "^8.0.3",
-    "@angular/compiler": "^8.0.3",
-    "@angular/compiler-cli": "^8.0.3",
-    "@angular/core": "^8.0.3",
-    "@angular/platform-browser": "^8.0.3",
-    "@angular/platform-browser-dynamic": "^8.0.3",
-    "@angular/platform-server": "^8.0.3",
-    "@commitlint/cli": "^7.2.1",
-    "@commitlint/config-conventional": "^7.1.2",
-    "@starptech/prettyhtml": "^0.8.12",
-    "@types/jasmine": "^3.3.13",
-    "@types/jest": "^24.0.15",
-    "angular2-template-loader": "^0.6.2",
-    "awesome-typescript-loader": "^5.0.0",
-    "codecov": "^3.1.0",
-    "codelyzer": "^5.1.0",
-    "commitizen": "^3.0.5",
-    "copy-dir": "^0.3.0",
-    "copyfiles": "^2.0.0",
-    "core-js": "^2.6.9",
-    "cz-conventional-changelog": "^2.1.0",
-    "husky": "^1.1.0",
+    "@angular-builders/jest": "^8.3.2",
+    "@angular-devkit/build-angular": "^0.803.23",
+    "@angular-devkit/build-ng-packagr": "^0.803.23",
+    "@angular/cli": "^8.3.23",
+    "@angular/compiler-cli": "^8.2.14",
+    "@angular/language-service": "^8.2.14",
+    "@commitlint/cli": "^8.3.5",
+    "@commitlint/config-conventional": "^8.3.4",
+    "@semantic-release/changelog": "^5.0.0",
+    "@semantic-release/commit-analyzer": "^8.0.0",
+    "@semantic-release/git": "^9.0.0",
+    "@semantic-release/github": "^7.0.0",
+    "@semantic-release/npm": "^7.0.0",
+    "@semantic-release/release-notes-generator": "^9.0.0",
+    "@types/jest": "^24.0.0",
+    "@types/node": "^13.5.1",
+    "codecov": "^3.6.2",
+    "codelyzer": "^5.2.1",
+    "commitizen": "^4.0.3",
+    "copyfiles": "^2.2.0",
+    "core-js": "^3.6.4",
+    "cz-conventional-changelog": "^3.1.0",
+    "husky": "^4.2.1",
     "istanbul": "^0.4.5",
-    "jest": "^24.8.0",
-    "jest-preset-angular": "^7.0.1",
-    "json-loader": "^0.5.4",
-    "lint-staged": "^8.0.4",
+    "jest": "^24.0.0",
+    "lint-staged": "^10.0.3",
+    "ng-packagr": "^5.7.1",
     "npm-run-all": "^4.1.5",
-    "prettier": "^1.14.3",
-    "raw-loader": "^1.0.0-beta.0",
-    "rimraf": "^2.6.1",
-    "rollup": "^0.59.1",
-    "rollup-globals-regex": "^0.0.3",
-    "rollup-plugin-node-resolve": "^3.0.0",
-    "rxjs": "^6.1.0",
-    "semantic-release": "^15.1.4",
-    "source-map": "^0.7.2",
-    "source-map-loader": "^0.2.0",
-    "sourcemap-istanbul-instrumenter-loader": "^0.2.0",
-    "tsickle": "^0.35.0",
-    "tslib": "^1.9.3",
-    "tslint": "^5.11.0",
-    "tslint-loader": "^3.5.4",
-    "typescript": "~3.4.5",
-    "uglify-js": "^3.3.24",
-    "webpack": "^4.27.1",
-    "webpack-dev-server": "^3.1.10",
-    "zone.js": "^0.9.1"
+    "prettier": "^1.19.1",
+    "semantic-release": "^17.0.1",
+    "ts-node": "^8.6.2",
+    "tsickle": "^0.38.0",
+    "tslint": "^5.15.0",
+    "typescript": "~3.5.0"
   },
   "config": {
     "commitizen": {
@@ -114,16 +76,8 @@
     ]
   },
   "lint-staged": {
-    "src/dynamic/**/*(!.spec).ts": [
-      "tslint -p tsconfig.json -c tslint.json --fix",
-      "git add"
-    ],
-    "src/**/*.{ts,js,json,?css}": [
+    "projects/**/*.{ts,js,json,?css,html}": [
       "prettier --write",
-      "git add"
-    ],
-    "src/**/*.{html}": [
-      "prettyhtml",
       "git add"
     ]
   },
@@ -132,32 +86,6 @@
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
       "pre-push": "npm-run-all -p lint test",
       "pre-commit": "lint-staged"
-    }
-  },
-  "jest": {
-    "preset": "jest-preset-angular",
-    "roots": [
-      "<rootDir>/src"
-    ],
-    "modulePathIgnorePatterns": [
-      "src/test.ts"
-    ],
-    "setupFilesAfterEnv": [
-      "<rootDir>/src/setupJest.ts"
-    ],
-    "collectCoverageFrom": [
-      "src/dynamic/**/*.ts",
-      "!src/dynamic/index.ts",
-      "!src/dynamic/dynamic.module.ts"
-    ],
-    "coverageDirectory": "<rootDir>/coverage",
-    "coverageThreshold": {
-      "global": {
-        "branches": 80,
-        "functions": 80,
-        "lines": 80,
-        "statements": 80
-      }
     }
   }
 }

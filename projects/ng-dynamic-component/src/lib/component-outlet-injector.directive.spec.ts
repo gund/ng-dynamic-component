@@ -6,7 +6,7 @@ import {
   InjectedComponent,
   TestComponent as TestComponentBase,
   TestModule,
-} from '../test/test.component';
+} from '../test';
 import { ComponentOutletInjectorDirective } from './component-outlet-injector.directive';
 
 @Component({

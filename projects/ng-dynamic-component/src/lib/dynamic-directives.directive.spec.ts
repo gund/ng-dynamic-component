@@ -1,3 +1,5 @@
+// tslint:disable: no-string-literal
+// tslint:disable: directive-selector
 import {
   AfterContentChecked,
   AfterContentInit,
@@ -23,7 +25,7 @@ import {
   TestComponent,
   TestModule,
   MockedInjectedComponent,
-} from '../test/index';
+} from '../test';
 import { COMPONENT_INJECTOR } from './component-injector';
 import { ComponentOutletInjectorDirective } from './component-outlet-injector.directive';
 import {
@@ -306,7 +308,7 @@ describe('Directive: DynamicDirectives', () => {
   describe('@Output(ndcDynamicDirectivesCreated)', () => {
     let fixture: ComponentFixture<TestComponent>;
     let hostComp: { dirs: DynamicDirectiveDef<any>[]; created: jest.Mock };
-    let created = jest.fn();
+    const created = jest.fn();
 
     beforeEach(() => {
       created.mockReset();
@@ -358,7 +360,7 @@ describe('Directive: DynamicDirectives', () => {
 
   describe('with `ngComponentOutlet`', () => {
     let fixture: ComponentFixture<TestComponent>;
-    let created = jest.fn<MockDirective, any>();
+    const created = jest.fn<MockDirective, any>();
 
     beforeEach(() => {
       created.mockReset();
@@ -385,7 +387,7 @@ describe('Directive: DynamicDirectives', () => {
 
   describe('with `*ngComponentOutlet`', () => {
     let fixture: ComponentFixture<TestComponent>;
-    let created = jest.fn<MockDirective, any>();
+    const created = jest.fn<MockDirective, any>();
 
     beforeEach(() => {
       created.mockReset();
@@ -408,7 +410,7 @@ describe('Directive: DynamicDirectives', () => {
 
   describe('injector', () => {
     let fixture: ComponentFixture<TestComponent>;
-    let created = jest.fn<any, any>();
+    const created = jest.fn<any, any>();
 
     beforeEach(() => {
       created.mockReset();
@@ -473,7 +475,7 @@ describe('Directive: DynamicDirectives', () => {
 
   describe('directive inputs', () => {
     let fixture: ComponentFixture<TestComponent>;
-    let created = jest.fn<MockDirective, any>();
+    const created = jest.fn<MockDirective, any>();
     let hostComp: any;
 
     beforeEach(() => {
@@ -590,7 +592,7 @@ describe('Directive: DynamicDirectives', () => {
 
   describe('directive outputs', () => {
     let fixture: ComponentFixture<TestComponent>;
-    let created = jest.fn<MockDirective, any>();
+    const created = jest.fn<MockDirective, any>();
     let hostComp: any;
 
     beforeEach(() => {

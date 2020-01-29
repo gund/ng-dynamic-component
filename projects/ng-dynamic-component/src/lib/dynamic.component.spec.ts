@@ -18,7 +18,7 @@ import {
   AnotherInjectedComponent,
   InjectedComponent,
   TestModule,
-} from '../test/index';
+} from '../test';
 import { DynamicComponent } from './dynamic.component';
 
 /* tslint:disable:no-unused-variable */
@@ -27,13 +27,13 @@ const token = new InjectionToken<any>('TOKEN');
 const tokenValue = {};
 
 describe('DynamicComponent', () => {
-  let testTemplate = `<ndc-dynamic [ndcDynamicComponent]="component"
+  const testTemplate = `<ndc-dynamic [ndcDynamicComponent]="component"
                                    [ndcDynamicInjector]="injector"
                                    [ndcDynamicProviders]="providers"
                                    (ndcDynamicCreated)="createdComponent($event)"
                                    [ndcDynamicContent]="content"></ndc-dynamic>`;
-  let fixture: ComponentFixture<TestComponent>,
-    createComp = true;
+  let fixture: ComponentFixture<TestComponent>;
+  let createComp = true;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -90,7 +90,7 @@ describe('DynamicComponent', () => {
     expect(fixture.debugElement.children.length).toBe(1);
   });
 
-  it('should chnage component if [ndcDynamicComponent] updates', () => {
+  it('should change component if [ndcDynamicComponent] updates', () => {
     fixture.componentInstance.component = InjectedComponent;
     fixture.detectChanges();
 
@@ -132,10 +132,10 @@ describe('DynamicComponent', () => {
 
   it('should use [ndcDynamicInjector] if provided', () => {
     fixture.componentInstance.component = InjectedComponent;
-    fixture.componentInstance.injector = Injector.create(
-      [{ provide: token, useValue: tokenValue }],
-      fixture.componentRef.injector,
-    );
+    fixture.componentInstance.injector = Injector.create({
+      providers: [{ provide: token, useValue: tokenValue }],
+      parent: fixture.componentRef.injector,
+    });
     fixture.detectChanges();
 
     const injectedElem = fixture.debugElement.query(
@@ -164,10 +164,10 @@ describe('DynamicComponent', () => {
     const anotherTokenValue = {};
 
     fixture.componentInstance.component = InjectedComponent;
-    fixture.componentInstance.injector = Injector.create(
-      [{ provide: token, useValue: tokenValue }],
-      fixture.componentRef.injector,
-    );
+    fixture.componentInstance.injector = Injector.create({
+      providers: [{ provide: token, useValue: tokenValue }],
+      parent: fixture.componentRef.injector,
+    });
     fixture.componentInstance.providers = [
       { provide: anotherToken, useValue: anotherTokenValue },
     ];
@@ -217,6 +217,7 @@ describe('DynamicComponent', () => {
 });
 
 @Component({
+  // tslint:disable-next-line: component-selector
   selector: 'test',
   template: ``,
 })

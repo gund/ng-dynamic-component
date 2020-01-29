@@ -8,8 +8,8 @@ import {
   InjectedComponent,
   TestComponent as TestComponentBase,
   TestModule,
-} from '../test/test.component';
-import { getByPredicate } from '../test/util';
+  getByPredicate,
+} from '../test';
 import { COMPONENT_INJECTOR } from './component-injector';
 import { ComponentOutletInjectorDirective } from './component-outlet-injector.directive';
 import {
@@ -267,6 +267,7 @@ describe('DynamicAttributesDirective', () => {
     let fixture: ComponentFixture<TestComponent>;
 
     @Component({
+      // tslint:disable-next-line: component-selector
       selector: 'host-comp',
       template: `
         <ndc-dynamic

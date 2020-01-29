@@ -1,0 +1,37 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "ng-dynamic-component": {
+      "projectType": "library",
+      "root": "projects/ng-dynamic-component",
+      "sourceRoot": "projects/ng-dynamic-component/src",
+      "prefix": "ndc",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/ng-dynamic-component/tsconfig.lib.json",
+            "project": "projects/ng-dynamic-component/ng-package.json"
+          }
+        },
+        "test": {
+          "builder": "@angular-builders/jest:run",
+          "options": {}
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/ng-dynamic-component/tsconfig.lib.json",
+              "projects/ng-dynamic-component/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**"]
+          }
+        }
+      }
+    }
+  },
+  "defaultProject": "ng-dynamic-component"
+}
