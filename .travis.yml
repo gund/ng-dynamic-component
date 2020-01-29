@@ -23,6 +23,7 @@ jobs:
     - stage: release
       script:
         - npm run build
+        - npm run pack
       deploy:
         provider: script
         skip_cleanup: true
