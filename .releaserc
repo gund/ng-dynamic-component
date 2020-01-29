@@ -1,5 +1,7 @@
 {
-  "branches": ["master"],
+  "branches": [
+    "master"
+  ],
   "plugins": [
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
@@ -8,6 +10,12 @@
       {
         "changelogFile": "CHANGELOG.md",
         "changelogTitle": "# ng-dynamic-component - Changelog"
+      }
+    ],
+    [
+      "@semantic-release/exec",
+      {
+        "prepare": "npm run pack"
       }
     ],
     [
@@ -21,7 +29,9 @@
       "@semantic-release/git",
       {
         "message": "chore(release): release ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}",
-        "assets": ["CHANGELOG.md"]
+        "assets": [
+          "CHANGELOG.md"
+        ]
       }
     ],
     [

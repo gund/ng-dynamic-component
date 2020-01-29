@@ -32,5 +32,4 @@ jobs:
         skip_cleanup: true
         script:
           - npm run build
-          - npm run pack
           - npm run semantic-release

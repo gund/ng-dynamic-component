@@ -15,8 +15,8 @@
     "coverage:check": "istanbul check-coverage --functions 75 --lines 75 --branches 75 --statements 75 coverage/**/coverage*.json",
     "format": "prettier --write \"projects/**/src/**/*.{ts,js,json,?css,html}\"",
     "format:check": "prettier --check \"projects/**/src/**/*.{ts,js,json,?css,html}\"",
-    "pack": "copyfiles README.md LICENSE CODE_OF_CONDUCT.md dist/ng-dynamic-component",
-    "semantic-release": "cd dist && semantic-release"
+    "pack": "copyfiles README.md LICENSE CODE_OF_CONDUCT.md CHANGELOG.md dist/ng-dynamic-component",
+    "semantic-release": "semantic-release"
   },
   "private": true,
   "dependencies": {
@@ -40,6 +40,7 @@
     "@commitlint/config-conventional": "^8.3.4",
     "@semantic-release/changelog": "^5.0.0",
     "@semantic-release/commit-analyzer": "^8.0.0",
+    "@semantic-release/exec": "^5.0.0",
     "@semantic-release/git": "^9.0.0",
     "@semantic-release/github": "^7.0.0",
     "@semantic-release/npm": "^7.0.0",
