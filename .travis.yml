@@ -2,14 +2,10 @@ sudo: required
 dist: trusty
 language: node_js
 cache:
-  yarn: true
+  npm: true
 notifications:
   email: false
 node_js: lts/*
-branches:
-  only:
-    - master
-    - /^greenkeeper/.*$/
 stages:
   - test
   - name: deploy
