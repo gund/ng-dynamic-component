@@ -2,14 +2,10 @@ sudo: required
 dist: trusty
 language: node_js
 cache:
-  yarn: true
+  npm: true
 notifications:
   email: false
 node_js: lts/*
-branches:
-  only:
-    - master
-    - /^greenkeeper/.*$/
 stages:
   - test
   - name: deploy
@@ -18,9 +14,12 @@ jobs:
   include:
     - stage: test
       script:
-        - yarn build
-        - yarn ci
-        - yarn test:report
+        - npm run build
+        - npm run format:check
+        - npm run lint
+        - npm run test:ci
+        - npm run coverage:check
+        - npm run test:report
     - stage: release
       node_js: lts/*
       script: skip
@@ -28,4 +27,5 @@ jobs:
         provider: script
         skip_cleanup: true
         script:
-          - yarn semantic-release
+          - npm run build
+          - npm run semantic-release

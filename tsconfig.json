@@ -1,24 +1,29 @@
 {
+  "compileOnSave": false,
   "compilerOptions": {
-    "declaration": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "noEmitHelpers": true,
-    "importHelpers": true,
-    "lib": ["es6", "dom"],
-    "module": "es2015",
-    "moduleResolution": "node",
-    "outDir": "./dist",
+    "baseUrl": "./",
+    "outDir": "./dist/out-tsc",
     "sourceMap": true,
-    "target": "es5",
-    "typeRoots": [
-      "./node_modules/@types"
-    ]
+    "declaration": false,
+    "downlevelIteration": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "target": "es2015",
+    "typeRoots": ["node_modules/@types"],
+    "types": ["jest"],
+    "lib": ["es2018", "dom"],
+    "paths": {
+      "ng-dynamic-component": [
+        "projects/ng-dynamic-component/src/public-api.ts"
+      ],
+      "ng-dynamic-component/*": ["projects/ng-dynamic-component/src/*"]
+    }
   },
-  "files": [
-    "src/index.ts"
-  ],
   "angularCompilerOptions": {
-    "genDir": "compiled"
+    "fullTemplateTypeCheck": true,
+    "strictInjectionParameters": true
   }
 }

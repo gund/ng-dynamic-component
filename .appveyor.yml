@@ -1,5 +1,5 @@
 environment:
-  nodejs_version: '11'
+  nodejs_version: '12'
 
 matrix:
   fast_finish: true
@@ -8,17 +8,17 @@ skip_tags: true
 
 install:
   - ps: Install-Product node $env:nodejs_version
-  - yarn install --frozen-lockfile --non-interactive
+  - npm install
 
 test_script:
   - node --version
-  - yarn --version
-  - yarn build
-  - yarn ci
+  - npm run build
+  - npm run lint
+  - npm run test:ci
+  - npm run coverage:check
 
 build: off
 deploy: off
 
 cache:
   - node_modules
-  - "%LOCALAPPDATA%\\Yarn"
