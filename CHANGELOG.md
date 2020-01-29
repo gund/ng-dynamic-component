@@ -1,5 +1,12 @@
 # ng-dynamic-component - Changelog
 
+## [5.0.3](https://github.com/gund/ng-dynamic-component/compare/v5.0.2...v5.0.3) (2020-01-29)
+
+
+### Bug Fixes
+
+* **dist:** add readme file to package ([e973a42](https://github.com/gund/ng-dynamic-component/commit/e973a42e4fa4c88b94e77470f45f6cabf79ecf9c))
+
 ## [5.0.2](https://github.com/gund/ng-dynamic-component/compare/v5.0.1...v5.0.2) (2020-01-29)
 
 ### Bug Fixes
