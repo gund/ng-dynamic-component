@@ -232,7 +232,9 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
 
   private dirToCompDef(dir: DirectiveRef<any>): ComponentRef<any> {
     return {
-      ...this.componentRef,
+      changeDetectorRef: this.componentRef.changeDetectorRef,
+      hostView: this.componentRef.hostView,
+      location: this.componentRef.location,
       destroy: this.componentRef.destroy,
       onDestroy: this.componentRef.onDestroy,
       injector: this.componentRef.injector,
