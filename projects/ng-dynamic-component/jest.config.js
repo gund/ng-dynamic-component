@@ -1,4 +1,5 @@
 module.exports = {
+  setupFiles: ['<rootDir>/projects/ng-dynamic-component/src/polyfills.ts'],
   coverageDirectory: '<rootDir>/coverage/ng-dynamic-component',
   coveragePathIgnorePatterns: ['/node_modules/', '/src/test/'],
   globals: {
