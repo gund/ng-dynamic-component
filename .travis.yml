@@ -9,7 +9,7 @@ node_js: lts/*
 stages:
   - test
   - name: deploy
-    if: branch = master and type != pull_request
+    if: type != pull_request
 jobs:
   include:
     - stage: test
