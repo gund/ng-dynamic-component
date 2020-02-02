@@ -8,8 +8,7 @@ notifications:
 node_js: lts/*
 stages:
   - test
-  - name: deploy
-    if: type != pull_request
+  - deploy
 jobs:
   include:
     - stage: test
@@ -28,3 +27,6 @@ jobs:
         skip_cleanup: true
         script:
           - npm run semantic-release
+      on:
+        all_branches: true
+        condition: $TRAVIS_BRANCH =~ ^(master|next)$
