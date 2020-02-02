@@ -1,5 +1,18 @@
 # ng-dynamic-component - Changelog
 
+# [6.0.0-next.1](https://github.com/gund/ng-dynamic-component/compare/v5.0.6...v6.0.0-next.1) (2020-02-02)
+
+
+### Features
+
+* **lib:** upgrade to Angular v9 RC 12 ([e4e1e8e](https://github.com/gund/ng-dynamic-component/commit/e4e1e8e3f27d5d60cf175696a572cf89b181313c))
+
+
+### BREAKING CHANGES
+
+* **lib:** Now library is compiled with NG CLI v9 but still for View Engine as per recommendation from Angular team.
+Public APIs mostly did not change. There is 1 deprecation in `DynamicModule.withComponents()` - now it is not required to register dynamic components and so the method does not make sense anymore - please use `DynamicModule.forRoot()` instead
+
 # [5.1.0-next.1](https://github.com/gund/ng-dynamic-component/compare/v5.0.5...v5.1.0-next.1) (2020-02-02)
 
 ### Features
