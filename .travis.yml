@@ -24,6 +24,7 @@ jobs:
       deploy:
         provider: script
         script: npm run semantic-release
+        cleanup: false
         on:
           all_branches: true
           condition: $TRAVIS_BRANCH =~ ^(master|next)$
