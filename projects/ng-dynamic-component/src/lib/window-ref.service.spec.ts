@@ -12,7 +12,7 @@ describe('Service: WindowRef', () => {
         { provide: WINDOW_REF, useValue: 'my-window' },
       ],
     });
-    service = TestBed.get(WindowRefService);
+    service = TestBed.inject(WindowRefService);
   });
 
   it('should have `nativeWindow` prop', () => {

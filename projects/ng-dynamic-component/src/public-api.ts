@@ -8,3 +8,4 @@ export * from './lib/dynamic.component';
 export * from './lib/dynamic-attributes.directive';
 export * from './lib/dynamic-directives.directive';
 export { ComponentInjector } from './lib/component-injector';
+export * from './lib/component-outlet-injector.directive';

@@ -14,6 +14,7 @@
 
 | Angular | ng-dynamic-component | NPM package                   |
 | ------- | -------------------- | ----------------------------- |
+| 9.x.x   | 6.x.x                | `ng-dynamic-component@^6.0.0` |
 | 8.x.x   | 5.x.x                | `ng-dynamic-component@^5.0.0` |
 | 7.x.x   | 4.x.x                | `ng-dynamic-component@^4.0.0` |
 | 6.x.x   | 3.x.x                | `ng-dynamic-component@^3.0.0` |
@@ -29,17 +30,31 @@ $ npm install ng-dynamic-component --save
 
 ## Usage
 
-Import `DynamicModule` with dynamic components you want to insert later:
+### Root import
+
+Import `DynamicModule` **once** in your root module (usually `AppModule`):
 
 ```ts
 import { DynamicModule } from 'ng-dynamic-component';
-import { MyDynamicComponent1, MyDynamicComponent2 } from './my-components';
 
 @NgModule({
-  imports: [
-    DynamicModule.withComponents([MyDynamicComponent1, MyDynamicComponent2])
-  ]
+  imports: [DynamicModule.forRoot()],
 })
+export class AppModule {}
+```
+
+### Usage import
+
+And then you may import the module in any other of your modules where you need
+to render dynamic components:
+
+```ts
+import { DynamicModule } from 'ng-dynamic-component';
+
+@NgModule({
+  imports: [DynamicModule],
+})
+export class OtherModule {}
 ```
 
 ### DynamicComponent
@@ -174,7 +189,7 @@ class MyComponent {
 }
 ```
 
-### Directives
+### Directives (experimental)
 
 **Since v3.1.0** you can now declaratively set directives, via `ndcDynamicDirectives`:
 
@@ -305,9 +320,9 @@ You can have more advanced stuff over your dynamically rendered components like 
 or providing additional/overriding providers (`[ndcDynamicProviders]`) or both simultaneously
 or projecting nodes (`[ndcDynamicContent]`).
 
-NOTE: In practice funtionality of this library is splitted in two pieces:
+NOTE: In practice functionality of this library is split in two pieces:
 
-- one - component (`ndc-dynamic`) that is responsible for instantianting and rendering of dynamic components;
+- one - component (`ndc-dynamic`) that is responsible for instantiating and rendering of dynamic components;
 - two - directive (`ndcDynamic` also bound to `ndc-dynamic`) that is responsible for carrying inputs/outputs
   to/from dynamic component by the help of so called `ComponentInjector` (it is `ndc-dynamic` by default).
 

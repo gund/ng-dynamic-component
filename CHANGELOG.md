@@ -1,33 +1,55 @@
 # ng-dynamic-component - Changelog
 
-## [5.0.6](https://github.com/gund/ng-dynamic-component/compare/v5.0.5...v5.0.6) (2020-01-29)
+# [6.0.0-next.2](https://github.com/gund/ng-dynamic-component/compare/v6.0.0-next.1...v6.0.0-next.2) (2020-02-07)
 
+
+### Features
+
+* **package:** update to stable Angular v9 ([e1abbc2](https://github.com/gund/ng-dynamic-component/commit/e1abbc27b24e8a3774410a39bd2df80d366b9668))
+
+# [6.0.0-next.1](https://github.com/gund/ng-dynamic-component/compare/v5.0.6...v6.0.0-next.1) (2020-02-02)
+
+
+### Features
+
+* **lib:** upgrade to Angular v9 RC 12 ([e4e1e8e](https://github.com/gund/ng-dynamic-component/commit/e4e1e8e3f27d5d60cf175696a572cf89b181313c))
+
+
+### BREAKING CHANGES
+
+* **lib:** Now library is compiled with NG CLI v9 but still for View Engine as per recommendation from Angular team.
+Public APIs mostly did not change. There is 1 deprecation in `DynamicModule.withComponents()` - now it is not required to register dynamic components and so the method does not make sense anymore - please use `DynamicModule.forRoot()` instead
+
+# [5.1.0-next.1](https://github.com/gund/ng-dynamic-component/compare/v5.0.5...v5.1.0-next.1) (2020-02-02)
+
+### Features
+
+- **lib:** upgrade to Angular v9 RC 12 ([1a8dca6](https://github.com/gund/ng-dynamic-component/commit/1a8dca62e01934918642dafbfadce1c878ef10e1))
+
+## [5.0.6](https://github.com/gund/ng-dynamic-component/compare/v5.0.5...v5.0.6) (2020-01-29)
 
 ### Bug Fixes
 
-* **dist:** fix the readme file copying ([56d3d9f](https://github.com/gund/ng-dynamic-component/commit/56d3d9f49da88df944d87e9154ef5c0e283c10e5))
-* **dist:** use copy instead of copyfiles ([f65e12d](https://github.com/gund/ng-dynamic-component/commit/f65e12dab7ff0045f147090947b1200f736ee358))
+- **dist:** fix the readme file copying ([56d3d9f](https://github.com/gund/ng-dynamic-component/commit/56d3d9f49da88df944d87e9154ef5c0e283c10e5))
+- **dist:** use copy instead of copyfiles ([f65e12d](https://github.com/gund/ng-dynamic-component/commit/f65e12dab7ff0045f147090947b1200f736ee358))
 
 ## [5.0.5](https://github.com/gund/ng-dynamic-component/compare/v5.0.4...v5.0.5) (2020-01-29)
 
-
 ### Bug Fixes
 
-* **dist:** try copying readme inothe order ([c5d0c94](https://github.com/gund/ng-dynamic-component/commit/c5d0c941700dbfd1d0834c087bf510ce77a0b808))
+- **dist:** try copying readme inothe order ([c5d0c94](https://github.com/gund/ng-dynamic-component/commit/c5d0c941700dbfd1d0834c087bf510ce77a0b808))
 
 ## [5.0.4](https://github.com/gund/ng-dynamic-component/compare/v5.0.3...v5.0.4) (2020-01-29)
 
-
 ### Reverts
 
-* fix(dist): add readme file to package ([1eed88a](https://github.com/gund/ng-dynamic-component/commit/1eed88ac5a02c35433be25006cb5e0ea0ba283a3))
+- fix(dist): add readme file to package ([1eed88a](https://github.com/gund/ng-dynamic-component/commit/1eed88ac5a02c35433be25006cb5e0ea0ba283a3))
 
 ## [5.0.3](https://github.com/gund/ng-dynamic-component/compare/v5.0.2...v5.0.3) (2020-01-29)
 
-
 ### Bug Fixes
 
-* **dist:** add readme file to package ([e973a42](https://github.com/gund/ng-dynamic-component/commit/e973a42e4fa4c88b94e77470f45f6cabf79ecf9c))
+- **dist:** add readme file to package ([e973a42](https://github.com/gund/ng-dynamic-component/commit/e973a42e4fa4c88b94e77470f45f6cabf79ecf9c))
 
 ## [5.0.2](https://github.com/gund/ng-dynamic-component/compare/v5.0.1...v5.0.2) (2020-01-29)
 

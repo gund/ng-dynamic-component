@@ -9,7 +9,7 @@ describe('Service: Io', () => {
     TestBed.configureTestingModule({
       providers: [IoService],
     });
-    service = TestBed.get(IoService);
+    service = TestBed.inject(IoService);
   });
 
   it('should throw if init was not called', () => {
