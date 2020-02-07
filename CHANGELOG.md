@@ -1,5 +1,12 @@
 # ng-dynamic-component - Changelog
 
+# [6.0.0-next.2](https://github.com/gund/ng-dynamic-component/compare/v6.0.0-next.1...v6.0.0-next.2) (2020-02-07)
+
+
+### Features
+
+* **package:** update to stable Angular v9 ([e1abbc2](https://github.com/gund/ng-dynamic-component/commit/e1abbc27b24e8a3774410a39bd2df80d366b9668))
+
 # [6.0.0-next.1](https://github.com/gund/ng-dynamic-component/compare/v5.0.6...v6.0.0-next.1) (2020-02-02)
 
 
