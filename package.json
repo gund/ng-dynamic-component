@@ -47,7 +47,7 @@
     "@semantic-release/release-notes-generator": "^9.0.0",
     "@types/jest": "^24.0.0",
     "@types/node": "^13.5.1",
-    "codecov": "^3.6.2",
+    "codecov": "^3.6.5",
     "codelyzer": "^5.2.1",
     "commitizen": "^4.0.3",
     "copyfiles": "^2.2.0",
