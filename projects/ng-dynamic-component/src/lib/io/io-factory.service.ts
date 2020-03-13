@@ -14,7 +14,7 @@ export class IoFactoryService {
     private differs: KeyValueDiffers,
     private cfr: ComponentFactoryResolver,
     @Inject(EventArgumentToken)
-    private eventArgument: unknown,
+    private eventArgument: string,
   ) {}
 
   create() {
