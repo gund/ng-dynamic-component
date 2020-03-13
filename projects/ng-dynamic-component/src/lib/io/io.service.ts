@@ -2,6 +2,7 @@ import {
   ChangeDetectorRef,
   ComponentFactory,
   ComponentFactoryResolver,
+  Inject,
   Injectable,
   KeyValueChanges,
   KeyValueDiffers,
@@ -11,16 +12,11 @@ import {
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { ComponentInjector } from './component-injector';
-import { changesFromRecord, createNewChange, noop } from './util';
+import { DynamicComponentInjector } from '../component-injector';
+import { changesFromRecord, createNewChange, noop } from '../util';
+import { EventArgumentToken } from './event-argument';
+import { EventHandler, InputsType, OutputsType, OutputWithArgs } from './types';
 
-export interface InputsType {
-  [k: string]: any;
-}
-export interface OutputsType {
-  // tslint:disable-next-line: ban-types
-  [k: string]: Function;
-}
 export interface IOMapInfo {
   propName: string;
   templateName: string;
@@ -30,6 +26,10 @@ export type KeyValueChangesAny = KeyValueChanges<any, any>;
 
 export interface IoInitOptions {
   trackOutputChanges?: boolean;
+}
+
+interface OutputsTypeProcessed extends OutputsType {
+  [k: string]: EventHandler;
 }
 
 const recordToChanges = changesFromRecord({ isFirstChanges: true });
@@ -47,7 +47,7 @@ export class IoService implements OnDestroy {
 
   private inputs: InputsType;
   private outputs: OutputsType;
-  private compInjector: ComponentInjector;
+  private compInjector: DynamicComponentInjector;
   private outputsChanged: (outputs: OutputsType) => boolean = () => false;
 
   private get compRef() {
@@ -75,13 +75,18 @@ export class IoService implements OnDestroy {
   constructor(
     private differs: KeyValueDiffers,
     private cfr: ComponentFactoryResolver,
+    @Inject(EventArgumentToken)
+    private eventArgument: string,
   ) {}
 
   ngOnDestroy(): void {
     this._disconnectOutputs();
   }
 
-  init(componentInjector: ComponentInjector, options: IoInitOptions = {}) {
+  init(
+    componentInjector: DynamicComponentInjector,
+    options: IoInitOptions = {},
+  ) {
     this.checkInit = componentInjector ? noop : this.failInit;
     this.compInjector = componentInjector;
 
@@ -103,7 +108,7 @@ export class IoService implements OnDestroy {
     const compChanged = this.componentInstChanged;
 
     if (compChanged || inputsChanged) {
-      const inputsChanges = this._getInputsChanges(this.inputs);
+      const inputsChanges = this._getInputsChanges();
       if (inputsChanges) {
         this._updateInputChanges(inputsChanges);
       }
@@ -132,7 +137,7 @@ export class IoService implements OnDestroy {
       return;
     }
 
-    const inputsChanges = this._getInputsChanges(this.inputs);
+    const inputsChanges = this._getInputsChanges();
 
     if (inputsChanges) {
       const isNotFirstChange = !!this.lastInputChanges;
@@ -190,7 +195,7 @@ export class IoService implements OnDestroy {
       .forEach(p =>
         compInst[p]
           .pipe(takeUntil(this.outputsShouldDisconnect$))
-          .subscribe(outputs[p]),
+          .subscribe((event: any) => (outputs[p] as EventHandler)(event)),
       );
   }
 
@@ -214,7 +219,7 @@ export class IoService implements OnDestroy {
     this.outputsShouldDisconnect$.next();
   }
 
-  private _getInputsChanges(inputs: any): KeyValueChangesAny {
+  private _getInputsChanges(): KeyValueChangesAny {
     return this.inputsDiffer.diff(this.inputs);
   }
 
@@ -262,7 +267,7 @@ export class IoService implements OnDestroy {
     this.compFactory = this._resolveCompFactory();
   }
 
-  private _resolveInputs(inputs: any): any {
+  private _resolveInputs(inputs: InputsType): InputsType {
     if (!this.compFactory) {
       return inputs;
     }
@@ -270,12 +275,39 @@ export class IoService implements OnDestroy {
     return this._remapIO(inputs, this.compFactory.inputs);
   }
 
-  private _resolveOutputs(outputs: any): any {
+  private _resolveOutputs(outputs: OutputsType): OutputsType {
+    outputs = this._processOutputs(outputs);
+
     if (!this.compFactory) {
       return outputs;
     }
 
     return this._remapIO(outputs, this.compFactory.outputs);
+  }
+
+  private _processOutputs(outputs: OutputsType): OutputsTypeProcessed {
+    const processedOutputs: OutputsTypeProcessed = {};
+
+    Object.keys(outputs).forEach(key => {
+      const outputExpr = outputs[key];
+
+      if (typeof outputExpr === 'function') {
+        processedOutputs[key] = outputExpr;
+      } else {
+        processedOutputs[key] =
+          outputExpr && this._processOutputArgs(outputExpr);
+      }
+    });
+
+    return processedOutputs;
+  }
+
+  private _processOutputArgs(output: OutputWithArgs): EventHandler {
+    const { handler } = output;
+    const args = 'args' in output ? output.args || [] : [this.eventArgument];
+
+    return event =>
+      handler(...args.map(arg => (arg === this.eventArgument ? event : arg)));
   }
 
   private _resolveChanges(changes: SimpleChanges): SimpleChanges {
@@ -286,7 +318,10 @@ export class IoService implements OnDestroy {
     return this._remapIO(changes, this.compFactory.inputs);
   }
 
-  private _remapIO(io: any, mapping: IOMappingList): any {
+  private _remapIO<T extends Record<string, any>>(
+    io: T,
+    mapping: IOMappingList,
+  ): T {
     const newIO = {};
 
     Object.keys(io).forEach(key => {
@@ -294,7 +329,7 @@ export class IoService implements OnDestroy {
       newIO[newKey] = io[key];
     });
 
-    return newIO;
+    return newIO as T;
   }
 
   private _findPropByTplInMapping(

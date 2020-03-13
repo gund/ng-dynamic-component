@@ -19,12 +19,14 @@ import {
   ViewRef,
 } from '@angular/core';
 
-import { COMPONENT_INJECTOR, ComponentInjector } from './component-injector';
-import { ComponentOutletInjectorDirective } from './component-outlet-injector.directive';
-import { IoFactoryService } from './io-factory.service';
-import { InputsType, IoService, OutputsType } from './io.service';
-import { getCtorType } from './util';
-import { WindowRefService } from './window-ref.service';
+import {
+  ComponentOutletInjectorDirective,
+  DynamicComponentInjector,
+  DynamicComponentInjectorToken,
+} from '../component-injector';
+import { InputsType, IoFactoryService, IoService, OutputsType } from '../io';
+import { getCtorType } from '../util';
+import { WindowRefService } from '../window-ref';
 
 export interface DynamicDirectiveDef<T> {
   type: Type<T>;
@@ -63,11 +65,6 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
 
   @Output()
   ndcDynamicDirectivesCreated = new EventEmitter<DirectiveRef<any>[]>();
-
-  private componentInjector = this.injector.get(
-    this.componentInjectorType,
-    null,
-  );
 
   private lastCompInstance: any;
 
@@ -118,15 +115,15 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
     .create<DynamicDirectiveDef<any>>((_, def) => def.type);
 
   constructor(
-    private injector: Injector,
     private iterableDiffers: IterableDiffers,
     private ioFactoryService: IoFactoryService,
     private windowRef: WindowRefService,
-    @Inject(COMPONENT_INJECTOR)
-    private componentInjectorType: Type<ComponentInjector>,
+    @Inject(DynamicComponentInjectorToken)
+    @Optional()
+    private componentInjector?: DynamicComponentInjector,
     @Host()
     @Optional()
-    private componentOutletInjector: ComponentOutletInjectorDirective,
+    private componentOutletInjector?: ComponentOutletInjectorDirective,
   ) {}
 
   ngDoCheck(): void {

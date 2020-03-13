@@ -5,18 +5,20 @@ import { By } from '@angular/platform-browser';
 
 import {
   AnotherInjectedComponent,
+  getByPredicate,
   InjectedComponent,
   TestComponent as TestComponentBase,
   TestModule,
-  getByPredicate,
-} from '../test';
-import { COMPONENT_INJECTOR } from './component-injector';
-import { ComponentOutletInjectorDirective } from './component-outlet-injector.directive';
+} from '../../test';
+import {
+  ComponentOutletInjectorDirective,
+  DynamicComponentInjectorToken,
+} from '../component-injector';
+import { DynamicComponent } from '../dynamic.component';
 import {
   AttributesMap,
   DynamicAttributesDirective,
 } from './dynamic-attributes.directive';
-import { DynamicComponent } from './dynamic.component';
 
 const getInjectedComponentFrom = getByPredicate<InjectedComponent>(
   By.directive(InjectedComponent),
@@ -51,7 +53,10 @@ describe('DynamicAttributesDirective', () => {
           ComponentOutletInjectorDirective,
         ],
         providers: [
-          { provide: COMPONENT_INJECTOR, useValue: DynamicComponent },
+          {
+            provide: DynamicComponentInjectorToken,
+            useExisting: DynamicComponent,
+          },
         ],
       }).compileComponents();
 
@@ -241,7 +246,10 @@ describe('DynamicAttributesDirective', () => {
           ComponentOutletInjectorDirective,
         ],
         providers: [
-          { provide: COMPONENT_INJECTOR, useValue: DynamicComponent },
+          {
+            provide: DynamicComponentInjectorToken,
+            useExisting: DynamicComponent,
+          },
         ],
       }).compileComponents();
 
@@ -292,7 +300,10 @@ describe('DynamicAttributesDirective', () => {
           TestComponent,
         ],
         providers: [
-          { provide: COMPONENT_INJECTOR, useValue: DynamicComponent },
+          {
+            provide: DynamicComponentInjectorToken,
+            useExisting: DynamicComponent,
+          },
         ],
       }).compileComponents();
 
@@ -336,7 +347,10 @@ describe('DynamicAttributesDirective', () => {
           ComponentOutletInjectorDirective,
         ],
         providers: [
-          { provide: COMPONENT_INJECTOR, useValue: DynamicComponent },
+          {
+            provide: DynamicComponentInjectorToken,
+            useExisting: DynamicComponent,
+          },
         ],
       }).compileComponents();
 

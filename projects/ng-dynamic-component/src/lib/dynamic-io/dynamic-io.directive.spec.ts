@@ -1,5 +1,5 @@
 // tslint:disable: no-string-literal
-import { SimpleChanges, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectorRef, SimpleChanges } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { Observable, Subject } from 'rxjs';
@@ -7,15 +7,18 @@ import { Observable, Subject } from 'rxjs';
 import {
   ComponentInjectorComponent,
   getByPredicate,
+  InjectedBoundComponent,
   InjectedComponent,
   MockedInjectedComponent,
   TestComponent,
-  InjectedBoundComponent,
   TestModule,
-} from '../test/index';
-import { COMPONENT_INJECTOR } from './component-injector';
-import { DynamicDirective } from './dynamic.directive';
-import { ComponentOutletInjectorDirective } from './component-outlet-injector.directive';
+} from '../../test';
+import {
+  ComponentOutletInjectorDirective,
+  DynamicComponentInjectorToken,
+} from '../component-injector';
+import { DynamicIoDirective } from './dynamic-io.directive';
+import { EventArgumentToken } from '../io';
 
 const getComponentInjectorFrom = getByPredicate<ComponentInjectorComponent>(
   By.directive(ComponentInjectorComponent),
@@ -27,17 +30,20 @@ const getInjectedBoundComponentFrom = getByPredicate<InjectedBoundComponent>(
   By.directive(InjectedBoundComponent),
 );
 
-describe('Directive: Dynamic', () => {
+describe('Directive: DynamicIo', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [
         TestComponent,
         ComponentInjectorComponent,
-        DynamicDirective,
+        DynamicIoDirective,
         ComponentOutletInjectorDirective,
       ],
       providers: [
-        { provide: COMPONENT_INJECTOR, useValue: ComponentInjectorComponent },
+        {
+          provide: DynamicComponentInjectorToken,
+          useExisting: ComponentInjectorComponent,
+        },
       ],
     });
   });
@@ -214,7 +220,7 @@ describe('Directive: Dynamic', () => {
     beforeEach(async(() => {
       TestBed.configureTestingModule({
         imports: [TestModule],
-        declarations: [DynamicDirective, TestComponent],
+        declarations: [DynamicIoDirective, TestComponent],
       });
 
       const template = `<ng-container [ngComponentOutlet]="comp" [ndcDynamicInputs]="inputs"></ng-container>`;
@@ -241,7 +247,7 @@ describe('Directive: Dynamic', () => {
     beforeEach(async(() => {
       TestBed.configureTestingModule({
         imports: [TestModule],
-        declarations: [DynamicDirective, TestComponent],
+        declarations: [DynamicIoDirective, TestComponent],
       });
 
       const template = `<ng-container *ngComponentOutlet="comp; ndcDynamicInputs: inputs"></ng-container>`;
@@ -271,7 +277,7 @@ describe('Directive: Dynamic', () => {
     beforeEach(async(() => {
       TestBed.configureTestingModule({
         imports: [TestModule],
-        declarations: [DynamicDirective, TestComponent],
+        declarations: [DynamicIoDirective, TestComponent],
       });
 
       const template = `<ng-container [ngComponentOutlet]="comp" [ndcDynamicInputs]="inputs"></ng-container>`;
@@ -394,6 +400,99 @@ describe('Directive: Dynamic', () => {
     });
   });
 
+  describe('outputs with template arguments', () => {
+    let fixture: ComponentFixture<TestComponent>;
+    let injectorComp: ComponentInjectorComponent;
+    let injectedComp: MockedInjectedComponent;
+    let outputSpy: jest.Mock;
+
+    const init = (template: string) => {
+      TestBed.overrideTemplate(TestComponent, template);
+      fixture = TestBed.createComponent(TestComponent);
+      injectorComp = getComponentInjectorFrom(fixture).component;
+      injectedComp = injectorComp.component;
+      outputSpy = jest.fn();
+
+      fixture.componentInstance['outputSpy'] = outputSpy;
+    };
+
+    it('should bind outputs with event without specifying template arguments', () => {
+      init(
+        `<component-injector
+          [ndcDynamicOutputs]="{ onEvent: { handler: outputSpy } }"
+          ></component-injector>`,
+      );
+      fixture.detectChanges();
+
+      injectedComp.onEvent.next('data');
+
+      expect(outputSpy).toHaveBeenCalledWith('data');
+    });
+
+    it('should bind outputs without event when set to null/undefined', () => {
+      init(
+        `<component-injector
+          [ndcDynamicOutputs]="{ onEvent: { handler: outputSpy, args: null } }"
+          ></component-injector>`,
+      );
+      fixture.detectChanges();
+
+      injectedComp.onEvent.next('data');
+
+      expect(outputSpy).toHaveBeenCalledWith();
+    });
+
+    it('should bind outputs with event and template arguments', () => {
+      init(
+        `<component-injector
+          [ndcDynamicOutputs]="{ onEvent: { handler: outputSpy, args: ['$event', tplVar] } }"
+          ></component-injector>`,
+      );
+      fixture.componentInstance['tplVar'] = 'from-template';
+      fixture.detectChanges();
+
+      injectedComp.onEvent.next('data');
+
+      expect(outputSpy).toHaveBeenCalledWith('data', 'from-template');
+    });
+
+    it('should bind outputs with updated template arguments', () => {
+      init(
+        `<component-injector
+          [ndcDynamicOutputs]="{ onEvent: { handler: outputSpy, args: ['$event', tplVar] } }"
+          ></component-injector>`,
+      );
+      fixture.componentInstance['tplVar'] = 'from-template';
+      fixture.detectChanges();
+      injectedComp.onEvent.next('data');
+
+      expect(outputSpy).toHaveBeenCalledWith('data', 'from-template');
+
+      fixture.componentInstance['tplVar'] = 'new-value';
+      fixture.detectChanges();
+      injectedComp.onEvent.next('new-data');
+
+      expect(outputSpy).toHaveBeenCalledWith('new-data', 'new-value');
+    });
+
+    it('should bind outputs with custom event ID', () => {
+      TestBed.configureTestingModule({
+        providers: [{ provide: EventArgumentToken, useValue: '$e' }],
+      });
+      init(
+        `<component-injector
+          [ndcDynamicOutputs]="{ onEvent: { handler: outputSpy, args: ['$e', tplVar] } }"
+          ></component-injector>`,
+      );
+      fixture.componentInstance['tplVar'] = 'from-template';
+      fixture.detectChanges();
+
+      injectedComp.onEvent.next('data');
+
+      expect(outputSpy).toHaveBeenCalledWith('data', 'from-template');
+    });
+  });
+
   describe('outputs with `NgComponentOutlet`', () => {
     let fixture: ComponentFixture<TestComponent>;
     let outputSpy: jasmine.Spy;
@@ -401,7 +500,7 @@ describe('Directive: Dynamic', () => {
     beforeEach(async(() => {
       TestBed.configureTestingModule({
         imports: [TestModule],
-        declarations: [DynamicDirective, TestComponent],
+        declarations: [DynamicIoDirective, TestComponent],
       });
 
       const template = `<ng-container [ngComponentOutlet]="comp" [ndcDynamicOutputs]="outputs"></ng-container>`;
@@ -437,7 +536,7 @@ describe('Directive: Dynamic', () => {
     beforeEach(async(() => {
       TestBed.configureTestingModule({
         imports: [TestModule],
-        declarations: [DynamicDirective, TestComponent],
+        declarations: [DynamicIoDirective, TestComponent],
       });
 
       const template = `<ng-container *ngComponentOutlet="comp; ndcDynamicOutputs: outputs"></ng-container>`;
@@ -475,7 +574,7 @@ describe('Directive: Dynamic', () => {
     beforeEach(async(() => {
       TestBed.configureTestingModule({
         imports: [TestModule],
-        declarations: [DynamicDirective, TestComponent],
+        declarations: [DynamicIoDirective, TestComponent],
       });
 
       const template = `<ng-container [ngComponentOutlet]="comp" [ndcDynamicOutputs]="outputs"></ng-container>`;

@@ -17,26 +17,28 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
 
 import {
   ComponentInjectorComponent,
   InjectedComponent,
+  MockedInjectedComponent,
   TestComponent,
   TestModule,
-  MockedInjectedComponent,
-} from '../test';
-import { COMPONENT_INJECTOR } from './component-injector';
-import { ComponentOutletInjectorDirective } from './component-outlet-injector.directive';
+} from '../../test';
+import {
+  ComponentOutletInjectorDirective,
+  DynamicComponentInjectorToken,
+} from '../component-injector';
+import { IoFactoryService } from '../io';
+import { WindowRefToken, WindowRefService } from '../window-ref';
 import {
   DirectiveRef,
+  DynamicDirectiveDef,
   dynamicDirectiveDef,
   DynamicDirectivesDirective,
-  DynamicDirectiveDef,
 } from './dynamic-directives.directive';
-import { IoFactoryService } from './io-factory.service';
-import { WindowRefService, WINDOW_REF } from './window-ref.service';
-import { By } from '@angular/platform-browser';
 
 @Directive({ selector: 'mock' })
 class MockDirective
@@ -108,8 +110,11 @@ describe('Directive: DynamicDirectives', () => {
         ComponentOutletInjectorDirective,
       ],
       providers: [
-        { provide: COMPONENT_INJECTOR, useValue: ComponentInjectorComponent },
-        { provide: WINDOW_REF, useValue: window },
+        {
+          provide: DynamicComponentInjectorToken,
+          useExisting: ComponentInjectorComponent,
+        },
+        { provide: WindowRefToken, useValue: window },
         WindowRefService,
         IoFactoryService,
       ],

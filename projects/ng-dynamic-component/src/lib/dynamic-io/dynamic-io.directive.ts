@@ -3,17 +3,18 @@ import {
   DoCheck,
   Host,
   Inject,
-  Injector,
   Input,
   OnChanges,
   Optional,
   SimpleChanges,
-  Type,
 } from '@angular/core';
 
-import { COMPONENT_INJECTOR, ComponentInjector } from './component-injector';
-import { ComponentOutletInjectorDirective } from './component-outlet-injector.directive';
-import { InputsType, IoService, OutputsType } from './io.service';
+import {
+  ComponentOutletInjectorDirective,
+  DynamicComponentInjector,
+  DynamicComponentInjectorToken,
+} from '../component-injector';
+import { InputsType, IoService, OutputsType } from '../io';
 
 // tslint:disable-next-line: no-conflicting-lifecycle
 @Directive({
@@ -21,7 +22,7 @@ import { InputsType, IoService, OutputsType } from './io.service';
     '[ndcDynamicInputs],[ndcDynamicOutputs],[ngComponentOutletNdcDynamicInputs],[ngComponentOutletNdcDynamicOutputs]',
   providers: [IoService],
 })
-export class DynamicDirective implements OnChanges, DoCheck {
+export class DynamicIoDirective implements OnChanges, DoCheck {
   @Input()
   ndcDynamicInputs: InputsType;
   @Input()
@@ -30,11 +31,6 @@ export class DynamicDirective implements OnChanges, DoCheck {
   ndcDynamicOutputs: OutputsType;
   @Input()
   ngComponentOutletNdcDynamicOutputs: OutputsType;
-
-  private componentInjector = this.injector.get(
-    this.componentInjectorType,
-    null,
-  );
 
   private get inputs() {
     return this.ndcDynamicInputs || this.ngComponentOutletNdcDynamicInputs;
@@ -49,13 +45,13 @@ export class DynamicDirective implements OnChanges, DoCheck {
   }
 
   constructor(
-    private injector: Injector,
     private ioService: IoService,
-    @Inject(COMPONENT_INJECTOR)
-    private componentInjectorType: Type<ComponentInjector>,
+    @Inject(DynamicComponentInjectorToken)
+    @Optional()
+    private componentInjector?: DynamicComponentInjector,
     @Host()
     @Optional()
-    private componentOutletInjector: ComponentOutletInjectorDirective,
+    private componentOutletInjector?: ComponentOutletInjectorDirective,
   ) {
     this.ioService.init(this.compInjector);
   }

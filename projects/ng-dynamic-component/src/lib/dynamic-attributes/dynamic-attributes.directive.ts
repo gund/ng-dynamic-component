@@ -12,8 +12,11 @@ import {
   Type,
 } from '@angular/core';
 
-import { COMPONENT_INJECTOR, ComponentInjector } from './component-injector';
-import { ComponentOutletInjectorDirective } from './component-outlet-injector.directive';
+import {
+  ComponentOutletInjectorDirective,
+  DynamicComponentInjector,
+  DynamicComponentInjectorToken,
+} from '../component-injector';
 
 export interface AttributesMap {
   [key: string]: string;
@@ -35,10 +38,6 @@ export class DynamicAttributesDirective implements DoCheck {
   ngComponentOutletNdcDynamicAttributes: AttributesMap;
 
   private attrsDiffer = this.differs.find({}).create<string, string>();
-  private componentInjector = this.injector.get(
-    this.componentInjectorType,
-    null,
-  );
   private lastCompType: Type<any>;
   private lastAttrActions: AttributeActions;
 
@@ -78,11 +77,12 @@ export class DynamicAttributesDirective implements DoCheck {
     private renderer: Renderer2,
     private differs: KeyValueDiffers,
     private injector: Injector,
-    @Inject(COMPONENT_INJECTOR)
-    private componentInjectorType: Type<ComponentInjector>,
+    @Inject(DynamicComponentInjectorToken)
     @Optional()
+    private componentInjector?: DynamicComponentInjector,
     @Host()
-    private componentOutletInjector: ComponentOutletInjectorDirective,
+    @Optional()
+    private componentOutletInjector?: ComponentOutletInjectorDirective,
   ) {}
 
   ngDoCheck(): void {
