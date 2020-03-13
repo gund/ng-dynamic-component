@@ -1,47 +1,57 @@
-import { CommonModule } from '@angular/common';
 import { ModuleWithProviders, NgModule, Type } from '@angular/core';
 
-import { COMPONENT_INJECTOR, ComponentInjector } from './component-injector';
-import { ComponentOutletInjectorDirective } from './component-outlet-injector.directive';
-import { DynamicAttributesDirective } from './dynamic-attributes.directive';
-import { DynamicDirectivesDirective } from './dynamic-directives.directive';
+import {
+  ComponentOutletInjectorModule,
+  DynamicComponentInjector,
+  DynamicComponentInjectorToken,
+} from './component-injector';
+import { DynamicAttributesModule } from './dynamic-attributes';
+import { DynamicDirectivesModule } from './dynamic-directives';
+import { DynamicIoModule } from './dynamic-io';
 import { DynamicComponent } from './dynamic.component';
-import { DynamicDirective } from './dynamic.directive';
-import { IoFactoryService } from './io-factory.service';
-import { WINDOW_REF, WindowRefService } from './window-ref.service';
+import { DynamicComponentModule } from './dynamic.component.module';
 
-export function windowRefFactory() {
-  return window;
-}
-
+/**
+ * @deprecated Since v6.0.0 - use more specific module instead:
+ * - {@link DynamicIoModule}
+ * - {@link DynamicComponentModule}
+ * - {@link DynamicAttributesModule}
+ * - {@link DynamicDirectivesModule}
+ * - {@link ComponentOutletInjectorModule}
+ */
 @NgModule({
-  imports: [CommonModule],
-  declarations: [
-    DynamicComponent,
-    DynamicDirective,
-    ComponentOutletInjectorDirective,
-    DynamicAttributesDirective,
-    DynamicDirectivesDirective,
-  ],
   exports: [
-    DynamicComponent,
-    DynamicDirective,
-    ComponentOutletInjectorDirective,
-    DynamicAttributesDirective,
-    DynamicDirectivesDirective,
+    ComponentOutletInjectorModule,
+    DynamicIoModule,
+    DynamicComponentModule,
+    DynamicAttributesModule,
+    DynamicDirectivesModule,
   ],
 })
 export class DynamicModule {
+  /**
+   * @deprecated Since v6.0.0 - forRoot is not required anymore.
+   * Provide {@link DynamicComponentInjectorToken} on the component level instead of global!
+   *
+   * **Example:**
+   * ```ts
+   * @Component({
+   *   selector: '...',
+   *   providers: [{provide: DynamicComponentInjectorToken, useExisting: MyInjectorComponent}]
+   * })
+   * class MyInjectorComponent implements DynamicComponentInjector {...}
+   * ```
+   */
   static forRoot(
-    componentInjector: Type<ComponentInjector> = DynamicComponent,
+    componentInjector: Type<DynamicComponentInjector> = DynamicComponent,
   ): ModuleWithProviders<DynamicModule> {
     return {
       ngModule: DynamicModule,
       providers: [
-        { provide: COMPONENT_INJECTOR, useValue: componentInjector },
-        IoFactoryService,
-        { provide: WINDOW_REF, useFactory: windowRefFactory },
-        WindowRefService,
+        {
+          provide: DynamicComponentInjectorToken,
+          useExisting: componentInjector,
+        },
       ],
     };
   }
@@ -51,7 +61,7 @@ export class DynamicModule {
    */
   static withComponents(
     components: Type<any>[],
-    componentInjector: Type<ComponentInjector> = DynamicComponent,
+    componentInjector?: Type<DynamicComponentInjector>,
   ): ModuleWithProviders<DynamicModule> {
     return DynamicModule.forRoot(componentInjector);
   }

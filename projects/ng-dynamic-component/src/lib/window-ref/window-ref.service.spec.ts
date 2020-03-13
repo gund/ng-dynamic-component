@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { WINDOW_REF, WindowRefService } from './window-ref.service';
+import { WindowRefToken, WindowRefService } from './window-ref.service';
 
 describe('Service: WindowRef', () => {
   let service: WindowRefService;
@@ -9,7 +9,7 @@ describe('Service: WindowRef', () => {
     TestBed.configureTestingModule({
       providers: [
         WindowRefService,
-        { provide: WINDOW_REF, useValue: 'my-window' },
+        { provide: WindowRefToken, useValue: 'my-window' },
       ],
     });
     service = TestBed.inject(WindowRefService);

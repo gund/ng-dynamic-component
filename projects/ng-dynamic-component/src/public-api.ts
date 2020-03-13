@@ -3,9 +3,9 @@
  */
 
 export * from './lib/dynamic.module';
-export * from './lib/dynamic.directive';
+export * from './lib/component-injector';
 export * from './lib/dynamic.component';
-export * from './lib/dynamic-attributes.directive';
-export * from './lib/dynamic-directives.directive';
-export { ComponentInjector } from './lib/component-injector';
-export * from './lib/component-outlet-injector.directive';
+export * from './lib/dynamic.component.module';
+export * from './lib/dynamic-io';
+export * from './lib/dynamic-attributes';
+export * from './lib/dynamic-directives';

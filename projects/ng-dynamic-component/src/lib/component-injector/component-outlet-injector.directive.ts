@@ -1,14 +1,24 @@
 import { NgComponentOutlet } from '@angular/common';
 import { ComponentRef, Directive, Host } from '@angular/core';
 
-import { ComponentInjector } from './component-injector';
+import {
+  DynamicComponentInjector,
+  DynamicComponentInjectorToken,
+} from './token';
 
 @Directive({
   // tslint:disable-next-line: directive-selector
   selector: '[ngComponentOutlet]',
   exportAs: 'ndcComponentOutletInjector',
+  providers: [
+    {
+      provide: DynamicComponentInjectorToken,
+      useExisting: ComponentOutletInjectorDirective,
+    },
+  ],
 })
-export class ComponentOutletInjectorDirective implements ComponentInjector {
+export class ComponentOutletInjectorDirective
+  implements DynamicComponentInjector {
   get componentRef(): ComponentRef<any> {
     return (this.componentOutlet as any)._componentRef;
   }

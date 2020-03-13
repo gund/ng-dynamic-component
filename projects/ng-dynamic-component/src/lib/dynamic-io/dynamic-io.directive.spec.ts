@@ -1,5 +1,5 @@
 // tslint:disable: no-string-literal
-import { SimpleChanges, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectorRef, SimpleChanges } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { Observable, Subject } from 'rxjs';
@@ -7,15 +7,17 @@ import { Observable, Subject } from 'rxjs';
 import {
   ComponentInjectorComponent,
   getByPredicate,
+  InjectedBoundComponent,
   InjectedComponent,
   MockedInjectedComponent,
   TestComponent,
-  InjectedBoundComponent,
   TestModule,
-} from '../test/index';
-import { COMPONENT_INJECTOR } from './component-injector';
-import { DynamicDirective } from './dynamic.directive';
-import { ComponentOutletInjectorDirective } from './component-outlet-injector.directive';
+} from '../../test';
+import {
+  ComponentOutletInjectorDirective,
+  DynamicComponentInjectorToken,
+} from '../component-injector';
+import { DynamicIoDirective } from './dynamic-io.directive';
 
 const getComponentInjectorFrom = getByPredicate<ComponentInjectorComponent>(
   By.directive(ComponentInjectorComponent),
@@ -27,17 +29,20 @@ const getInjectedBoundComponentFrom = getByPredicate<InjectedBoundComponent>(
   By.directive(InjectedBoundComponent),
 );
 
-describe('Directive: Dynamic', () => {
+describe('Directive: DynamicIo', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [
         TestComponent,
         ComponentInjectorComponent,
-        DynamicDirective,
+        DynamicIoDirective,
         ComponentOutletInjectorDirective,
       ],
       providers: [
-        { provide: COMPONENT_INJECTOR, useValue: ComponentInjectorComponent },
+        {
+          provide: DynamicComponentInjectorToken,
+          useExisting: ComponentInjectorComponent,
+        },
       ],
     });
   });
@@ -214,7 +219,7 @@ describe('Directive: Dynamic', () => {
     beforeEach(async(() => {
       TestBed.configureTestingModule({
         imports: [TestModule],
-        declarations: [DynamicDirective, TestComponent],
+        declarations: [DynamicIoDirective, TestComponent],
       });
 
       const template = `<ng-container [ngComponentOutlet]="comp" [ndcDynamicInputs]="inputs"></ng-container>`;
@@ -241,7 +246,7 @@ describe('Directive: Dynamic', () => {
     beforeEach(async(() => {
       TestBed.configureTestingModule({
         imports: [TestModule],
-        declarations: [DynamicDirective, TestComponent],
+        declarations: [DynamicIoDirective, TestComponent],
       });
 
       const template = `<ng-container *ngComponentOutlet="comp; ndcDynamicInputs: inputs"></ng-container>`;
@@ -271,7 +276,7 @@ describe('Directive: Dynamic', () => {
     beforeEach(async(() => {
       TestBed.configureTestingModule({
         imports: [TestModule],
-        declarations: [DynamicDirective, TestComponent],
+        declarations: [DynamicIoDirective, TestComponent],
       });
 
       const template = `<ng-container [ngComponentOutlet]="comp" [ndcDynamicInputs]="inputs"></ng-container>`;
@@ -401,7 +406,7 @@ describe('Directive: Dynamic', () => {
     beforeEach(async(() => {
       TestBed.configureTestingModule({
         imports: [TestModule],
-        declarations: [DynamicDirective, TestComponent],
+        declarations: [DynamicIoDirective, TestComponent],
       });
 
       const template = `<ng-container [ngComponentOutlet]="comp" [ndcDynamicOutputs]="outputs"></ng-container>`;
@@ -437,7 +442,7 @@ describe('Directive: Dynamic', () => {
     beforeEach(async(() => {
       TestBed.configureTestingModule({
         imports: [TestModule],
-        declarations: [DynamicDirective, TestComponent],
+        declarations: [DynamicIoDirective, TestComponent],
       });
 
       const template = `<ng-container *ngComponentOutlet="comp; ndcDynamicOutputs: outputs"></ng-container>`;
@@ -475,7 +480,7 @@ describe('Directive: Dynamic', () => {
     beforeEach(async(() => {
       TestBed.configureTestingModule({
         imports: [TestModule],
-        declarations: [DynamicDirective, TestComponent],
+        declarations: [DynamicIoDirective, TestComponent],
       });
 
       const template = `<ng-container [ngComponentOutlet]="comp" [ndcDynamicOutputs]="outputs"></ng-container>`;

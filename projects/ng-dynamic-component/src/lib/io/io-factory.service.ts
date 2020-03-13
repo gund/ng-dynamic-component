@@ -6,7 +6,7 @@ import {
 
 import { IoService } from './io.service';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class IoFactoryService {
   constructor(
     private differs: KeyValueDiffers,

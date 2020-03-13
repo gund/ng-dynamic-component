@@ -1,13 +1,22 @@
 import { Component, ComponentRef, EventEmitter } from '@angular/core';
 
-import { ComponentInjector } from '../lib/component-injector';
+import {
+  DynamicComponentInjector,
+  DynamicComponentInjectorToken,
+} from '../lib/component-injector';
 
 @Component({
   // tslint:disable-next-line: component-selector
   selector: 'component-injector',
   template: '',
+  providers: [
+    {
+      provide: DynamicComponentInjectorToken,
+      useExisting: ComponentInjectorComponent,
+    },
+  ],
 })
-export class ComponentInjectorComponent implements ComponentInjector {
+export class ComponentInjectorComponent implements DynamicComponentInjector {
   component = new MockedInjectedComponent();
   injectorGet = jest.fn();
 

@@ -11,8 +11,8 @@ import {
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { ComponentInjector } from './component-injector';
-import { changesFromRecord, createNewChange, noop } from './util';
+import { DynamicComponentInjector } from '../component-injector';
+import { changesFromRecord, createNewChange, noop } from '../util';
 
 export interface InputsType {
   [k: string]: any;
@@ -47,7 +47,7 @@ export class IoService implements OnDestroy {
 
   private inputs: InputsType;
   private outputs: OutputsType;
-  private compInjector: ComponentInjector;
+  private compInjector: DynamicComponentInjector;
   private outputsChanged: (outputs: OutputsType) => boolean = () => false;
 
   private get compRef() {
@@ -81,7 +81,10 @@ export class IoService implements OnDestroy {
     this._disconnectOutputs();
   }
 
-  init(componentInjector: ComponentInjector, options: IoInitOptions = {}) {
+  init(
+    componentInjector: DynamicComponentInjector,
+    options: IoInitOptions = {},
+  ) {
     this.checkInit = componentInjector ? noop : this.failInit;
     this.compInjector = componentInjector;
 

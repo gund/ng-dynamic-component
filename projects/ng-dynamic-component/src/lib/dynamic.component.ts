@@ -1,4 +1,3 @@
-import { ComponentInjector } from './component-injector';
 import {
   Component,
   ComponentFactoryResolver,
@@ -8,17 +7,25 @@ import {
   Input,
   OnChanges,
   Output,
-  StaticProvider,
   SimpleChanges,
+  StaticProvider,
   Type,
   ViewContainerRef,
 } from '@angular/core';
 
+import {
+  DynamicComponentInjector,
+  DynamicComponentInjectorToken,
+} from './component-injector';
+
 @Component({
   selector: 'ndc-dynamic',
   template: '',
+  providers: [
+    { provide: DynamicComponentInjectorToken, useExisting: DynamicComponent },
+  ],
 })
-export class DynamicComponent implements OnChanges, ComponentInjector {
+export class DynamicComponent implements OnChanges, DynamicComponentInjector {
   @Input()
   ndcDynamicComponent: Type<any>;
   @Input()
