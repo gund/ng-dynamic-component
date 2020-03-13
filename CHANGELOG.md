@@ -1,5 +1,19 @@
 # ng-dynamic-component - Changelog
 
+# [6.1.0](https://github.com/gund/ng-dynamic-component/compare/v6.0.0...v6.1.0) (2020-03-13)
+
+
+### Bug Fixes
+
+* **component:** add DynamicIo module to component module ([eac4c5b](https://github.com/gund/ng-dynamic-component/commit/eac4c5b3c0e8cbf14ce7fbe91ea1bb629304b71f))
+* **io:** update type of event argument token ([3d85691](https://github.com/gund/ng-dynamic-component/commit/3d856915965e950efceb06db8e5a494a60f3173e))
+
+
+### Features
+
+* **modules:** split every directive into separate module ([5f2985b](https://github.com/gund/ng-dynamic-component/commit/5f2985bc4c9fa4937593975380fb9bf80ab94d5d))
+* **outputs:** add ability to pass template variables to outputs ([a13c7d6](https://github.com/gund/ng-dynamic-component/commit/a13c7d6c5b7a806e429af04d045ad39e73c68821)), closes [#331](https://github.com/gund/ng-dynamic-component/issues/331)
+
 # [6.1.0-next.1](https://github.com/gund/ng-dynamic-component/compare/v6.0.0...v6.1.0-next.1) (2020-03-13)
 
 
