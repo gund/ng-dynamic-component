@@ -1,26 +1,20 @@
 dist: trusty
 language: node_js
-cache:
-  npm: true
 notifications:
   email: false
 node_js: lts/*
 stages:
   - test
-  - deploy
 jobs:
   include:
     - stage: test
       script:
-        - npm run build
         - npm run format:check
         - npm run lint
         - npm run test:ci
         - npm run coverage:check
-        - npm run test:report
-    - stage: release
-      script:
         - npm run build
+        - npm run test:report
       deploy:
         provider: script
         script: npm run semantic-release
