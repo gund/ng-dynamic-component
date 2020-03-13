@@ -18,6 +18,7 @@ import {
   DynamicComponentInjectorToken,
 } from '../component-injector';
 import { DynamicIoDirective } from './dynamic-io.directive';
+import { EventArgumentToken } from '../io';
 
 const getComponentInjectorFrom = getByPredicate<ComponentInjectorComponent>(
   By.directive(ComponentInjectorComponent),
@@ -396,6 +397,99 @@ describe('Directive: DynamicIo', () => {
       fixture.detectChanges();
 
       expect(tearDownFn).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('outputs with template arguments', () => {
+    let fixture: ComponentFixture<TestComponent>;
+    let injectorComp: ComponentInjectorComponent;
+    let injectedComp: MockedInjectedComponent;
+    let outputSpy: jest.Mock;
+
+    const init = (template: string) => {
+      TestBed.overrideTemplate(TestComponent, template);
+      fixture = TestBed.createComponent(TestComponent);
+      injectorComp = getComponentInjectorFrom(fixture).component;
+      injectedComp = injectorComp.component;
+      outputSpy = jest.fn();
+
+      fixture.componentInstance['outputSpy'] = outputSpy;
+    };
+
+    it('should bind outputs with event without specifying template arguments', () => {
+      init(
+        `<component-injector
+          [ndcDynamicOutputs]="{ onEvent: { handler: outputSpy } }"
+          ></component-injector>`,
+      );
+      fixture.detectChanges();
+
+      injectedComp.onEvent.next('data');
+
+      expect(outputSpy).toHaveBeenCalledWith('data');
+    });
+
+    it('should bind outputs without event when set to null/undefined', () => {
+      init(
+        `<component-injector
+          [ndcDynamicOutputs]="{ onEvent: { handler: outputSpy, args: null } }"
+          ></component-injector>`,
+      );
+      fixture.detectChanges();
+
+      injectedComp.onEvent.next('data');
+
+      expect(outputSpy).toHaveBeenCalledWith();
+    });
+
+    it('should bind outputs with event and template arguments', () => {
+      init(
+        `<component-injector
+          [ndcDynamicOutputs]="{ onEvent: { handler: outputSpy, args: ['$event', tplVar] } }"
+          ></component-injector>`,
+      );
+      fixture.componentInstance['tplVar'] = 'from-template';
+      fixture.detectChanges();
+
+      injectedComp.onEvent.next('data');
+
+      expect(outputSpy).toHaveBeenCalledWith('data', 'from-template');
+    });
+
+    it('should bind outputs with updated template arguments', () => {
+      init(
+        `<component-injector
+          [ndcDynamicOutputs]="{ onEvent: { handler: outputSpy, args: ['$event', tplVar] } }"
+          ></component-injector>`,
+      );
+      fixture.componentInstance['tplVar'] = 'from-template';
+      fixture.detectChanges();
+      injectedComp.onEvent.next('data');
+
+      expect(outputSpy).toHaveBeenCalledWith('data', 'from-template');
+
+      fixture.componentInstance['tplVar'] = 'new-value';
+      fixture.detectChanges();
+      injectedComp.onEvent.next('new-data');
+
+      expect(outputSpy).toHaveBeenCalledWith('new-data', 'new-value');
+    });
+
+    it('should bind outputs with custom event ID', () => {
+      TestBed.configureTestingModule({
+        providers: [{ provide: EventArgumentToken, useValue: '$e' }],
+      });
+      init(
+        `<component-injector
+          [ndcDynamicOutputs]="{ onEvent: { handler: outputSpy, args: ['$e', tplVar] } }"
+          ></component-injector>`,
+      );
+      fixture.componentInstance['tplVar'] = 'from-template';
+      fixture.detectChanges();
+
+      injectedComp.onEvent.next('data');
+
+      expect(outputSpy).toHaveBeenCalledWith('data', 'from-template');
     });
   });
 

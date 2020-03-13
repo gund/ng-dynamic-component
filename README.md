@@ -117,6 +117,37 @@ class MyDynamicComponent1 {
 Here you can update your inputs (ex. `inputs.hello = 'WORLD'`) and they will trigger standard Angular's life-cycle hooks
 (of course you should consider which change detection strategy you are using).
 
+#### Output template variables
+
+**Since v6.1.0**
+
+When you want to provide some values to your output handlers from template -
+you can do so by supplying a special object to your output that has shape `{handler: fn, args: []}`:
+
+```ts
+@Component({
+  selector: 'my-component',
+  template: `
+    <ndc-dynamic
+      [ndcDynamicComponent]="component"
+      [ndcDynamicOutputs]="{
+        onSomething: { handler: doSomething, args: ['$event', tplVar] }
+      }"
+    ></ndc-dynamic>
+  `,
+})
+class MyComponent {
+  component = MyDynamicComponent1;
+  tplVar = 'some value';
+  doSomething(event, tplValue) {}
+}
+```
+
+Here you can specify at which argument event value should arrive via `'$event'` literal.
+
+_HINT:_ You can override event literal by providing
+[`EventArgumentToken`](projects\ng-dynamic-component\src\lib\io\event-argument.ts) in DI.
+
 ### Component Creation Events
 
 You can subscribe to component creation events, being passed a reference to the `ComponentRef`:
