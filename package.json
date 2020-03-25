@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "@angular-builders/jest": "^9.0.0-beta.3",
-    "@angular-devkit/build-angular": "^0.900.0",
+    "@angular-devkit/build-angular": "^0.901.0",
     "@angular-devkit/build-ng-packagr": "^0.900.0",
     "@angular/cli": "^9.0.0",
     "@angular/compiler-cli": "^9.0.0",
