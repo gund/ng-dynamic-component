@@ -10,10 +10,8 @@ import {
   TestComponent as TestComponentBase,
   TestModule,
 } from '../../test';
-import {
-  ComponentOutletInjectorDirective,
-  DynamicComponentInjectorToken,
-} from '../component-injector';
+import { ComponentOutletInjectorDirective } from '../component-injector/component-outlet-injector.directive';
+import { DynamicComponentInjectorToken } from '../component-injector/token';
 import { DynamicComponent } from '../dynamic.component';
 import {
   AttributesMap,

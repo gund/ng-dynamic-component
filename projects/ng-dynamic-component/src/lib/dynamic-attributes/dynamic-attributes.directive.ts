@@ -12,11 +12,8 @@ import {
   Type,
 } from '@angular/core';
 
-import {
-  ComponentOutletInjectorDirective,
-  DynamicComponentInjector,
-  DynamicComponentInjectorToken,
-} from '../component-injector';
+import { ComponentOutletInjectorDirective } from '../component-injector/component-outlet-injector.directive';
+import { DynamicComponentInjector, DynamicComponentInjectorToken } from '../component-injector/token';
 
 export interface AttributesMap {
   [key: string]: string;

@@ -9,12 +9,10 @@ import {
   SimpleChanges,
 } from '@angular/core';
 
-import {
-  ComponentOutletInjectorDirective,
-  DynamicComponentInjector,
-  DynamicComponentInjectorToken,
-} from '../component-injector';
-import { InputsType, IoService, OutputsType } from '../io';
+import { ComponentOutletInjectorDirective } from '../component-injector/component-outlet-injector.directive';
+import { DynamicComponentInjector, DynamicComponentInjectorToken } from '../component-injector/token';
+import { IoService } from '../io/io.service';
+import { InputsType, OutputsType } from '../io/types';
 
 // tslint:disable-next-line: no-conflicting-lifecycle
 @Directive({

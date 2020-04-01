@@ -27,12 +27,10 @@ import {
   TestComponent,
   TestModule,
 } from '../../test';
-import {
-  ComponentOutletInjectorDirective,
-  DynamicComponentInjectorToken,
-} from '../component-injector';
-import { IoFactoryService } from '../io';
-import { WindowRefToken, WindowRefService } from '../window-ref';
+import { ComponentOutletInjectorDirective } from '../component-injector/component-outlet-injector.directive';
+import { DynamicComponentInjectorToken } from '../component-injector/token';
+import { IoFactoryService } from '../io/io-factory.service';
+import { WindowRefToken, WindowRefService } from '../window-ref/window-ref.service';
 import {
   DirectiveRef,
   DynamicDirectiveDef,

@@ -1,13 +1,10 @@
 import { ModuleWithProviders, NgModule, Type } from '@angular/core';
 
-import {
-  ComponentOutletInjectorModule,
-  DynamicComponentInjector,
-  DynamicComponentInjectorToken,
-} from './component-injector';
-import { DynamicAttributesModule } from './dynamic-attributes';
-import { DynamicDirectivesModule } from './dynamic-directives';
-import { DynamicIoModule } from './dynamic-io';
+import { ComponentOutletInjectorModule } from './component-injector/component-outlet-injector.module';
+import { DynamicComponentInjector, DynamicComponentInjectorToken } from './component-injector/token';
+import { DynamicAttributesModule } from './dynamic-attributes/dynamic-attributes.module';
+import { DynamicDirectivesModule } from './dynamic-directives/dynamic-directives.module';
+import { DynamicIoModule } from './dynamic-io/dynamic-io.module';
 import { DynamicComponent } from './dynamic.component';
 import { DynamicComponentModule } from './dynamic.component.module';
 
