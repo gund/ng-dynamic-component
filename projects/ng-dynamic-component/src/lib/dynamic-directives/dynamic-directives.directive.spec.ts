@@ -30,7 +30,10 @@ import {
 import { ComponentOutletInjectorDirective } from '../component-injector/component-outlet-injector.directive';
 import { DynamicComponentInjectorToken } from '../component-injector/token';
 import { IoFactoryService } from '../io/io-factory.service';
-import { WindowRefToken, WindowRefService } from '../window-ref/window-ref.service';
+import {
+  WindowRefToken,
+  WindowRefService,
+} from '../window-ref/window-ref.service';
 import {
   DirectiveRef,
   DynamicDirectiveDef,

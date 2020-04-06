@@ -10,7 +10,10 @@ import {
 } from '@angular/core';
 
 import { ComponentOutletInjectorDirective } from '../component-injector/component-outlet-injector.directive';
-import { DynamicComponentInjector, DynamicComponentInjectorToken } from '../component-injector/token';
+import {
+  DynamicComponentInjector,
+  DynamicComponentInjectorToken,
+} from '../component-injector/token';
 import { IoService } from '../io/io.service';
 import { InputsType, OutputsType } from '../io/types';
 

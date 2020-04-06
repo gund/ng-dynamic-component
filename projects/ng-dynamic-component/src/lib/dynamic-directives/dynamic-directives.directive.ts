@@ -25,7 +25,7 @@ import {
   DynamicComponentInjectorToken,
 } from '../component-injector/token';
 import { IoService } from '../io/io.service';
-import { IoFactoryService  } from '../io/io-factory.service';
+import { IoFactoryService } from '../io/io-factory.service';
 import { InputsType, OutputsType } from '../io/types';
 import { getCtorType } from '../util';
 import { WindowRefService } from '../window-ref/window-ref.service';
