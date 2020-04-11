@@ -1,7 +1,14 @@
 {
   "branches": [
     "master",
-    { name: 'next', prerelease: true }
+    {
+      "name": "next",
+      "prerelease": true
+    },
+    {
+      "name": "no-barrels",
+      "prerelease": true
+    }
   ],
   "plugins": [
     "@semantic-release/commit-analyzer",

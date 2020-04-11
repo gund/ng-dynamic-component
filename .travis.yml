@@ -21,4 +21,4 @@ jobs:
         skip_cleanup: true
         on:
           all_branches: true
-          condition: $TRAVIS_BRANCH =~ ^(master|next)$
+          condition: $TRAVIS_BRANCH =~ ^(master|next|no\-barrels)$
