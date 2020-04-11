@@ -12,7 +12,7 @@ import {
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { DynamicComponentInjector } from '../component-injector';
+import { DynamicComponentInjector } from '../component-injector/token';
 import { changesFromRecord, createNewChange, noop } from '../util';
 import { EventArgumentToken } from './event-argument';
 import { EventHandler, InputsType, OutputsType, OutputWithArgs } from './types';

@@ -19,14 +19,16 @@ import {
   ViewRef,
 } from '@angular/core';
 
+import { ComponentOutletInjectorDirective } from '../component-injector/component-outlet-injector.directive';
 import {
-  ComponentOutletInjectorDirective,
   DynamicComponentInjector,
   DynamicComponentInjectorToken,
-} from '../component-injector';
-import { InputsType, IoFactoryService, IoService, OutputsType } from '../io';
+} from '../component-injector/token';
+import { IoService } from '../io/io.service';
+import { IoFactoryService } from '../io/io-factory.service';
+import { InputsType, OutputsType } from '../io/types';
 import { getCtorType } from '../util';
-import { WindowRefService } from '../window-ref';
+import { WindowRefService } from '../window-ref/window-ref.service';
 
 export interface DynamicDirectiveDef<T> {
   type: Type<T>;
