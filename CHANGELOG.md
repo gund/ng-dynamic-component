@@ -1,5 +1,12 @@
 # ng-dynamic-component - Changelog
 
+## [6.1.1-no-barrels.1](https://github.com/gund/ng-dynamic-component/compare/v6.1.0...v6.1.1-no-barrels.1) (2020-04-11)
+
+
+### Bug Fixes
+
+* **lib:** remove barrel re-exports ([d85dc7f](https://github.com/gund/ng-dynamic-component/commit/d85dc7f0bddf2a5e05cb044770709c70166a700e))
+
 # [6.1.0](https://github.com/gund/ng-dynamic-component/compare/v6.0.0...v6.1.0) (2020-03-13)
 
 
