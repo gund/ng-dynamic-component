@@ -21,10 +21,12 @@ import {
 import {
   DynamicComponentInjector,
   DynamicComponentInjectorToken,
-} from '../component-injector';
-import { InputsType, IoFactoryService, IoService, OutputsType } from '../io';
+} from '../component-injector/token';
+import { IoFactoryService } from '../io/io-factory.service';
+import { IoService } from '../io/io.service';
+import { InputsType, OutputsType } from '../io/types';
 import { extractNgParamTypes, getCtorParamTypes } from '../util';
-import { WindowRefService } from '../window-ref';
+import { WindowRefService } from '../window-ref/window-ref.service';
 
 export interface DynamicDirectiveDef<T> {
   type: Type<T>;
