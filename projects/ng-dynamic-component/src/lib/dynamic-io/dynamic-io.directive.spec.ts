@@ -13,12 +13,10 @@ import {
   TestComponent,
   TestModule,
 } from '../../test';
-import {
-  ComponentOutletInjectorDirective,
-  DynamicComponentInjectorToken,
-} from '../component-injector';
+import { ComponentOutletInjectorDirective } from '../component-injector/component-outlet-injector.directive';
+import { DynamicComponentInjectorToken } from '../component-injector/token';
 import { DynamicIoDirective } from './dynamic-io.directive';
-import { EventArgumentToken } from '../io';
+import { EventArgumentToken } from '../io/event-argument';
 
 const getComponentInjectorFrom = getByPredicate<ComponentInjectorComponent>(
   By.directive(ComponentInjectorComponent),
