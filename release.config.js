@@ -78,12 +78,17 @@ function getConfig() {
 }
 
 function adjustBranchesForIvy(branches) {
-  branches.forEach(
-    branch =>
-      (branch.channel =
-        branch.name === 'master' && !branch.channel
-          ? 'ivy'
-          : `${branch.channel || branch.name}-ivy`),
+  branches.forEach(branch =>
+    branch.prerelease
+      ? (branch.prerelease = `${
+          typeof branch.prerelease === 'string'
+            ? branch.prerelease
+            : branch.name
+        }-ivy`)
+      : (branch.channel =
+          branch.name === 'master' && !branch.channel
+            ? 'ivy'
+            : `${branch.channel || branch.name}-ivy`),
   );
 
   return branches;
