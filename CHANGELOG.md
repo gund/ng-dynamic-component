@@ -1,5 +1,12 @@
 # ng-dynamic-component - Changelog
 
+## [6.1.1-channel-ivy.3](https://github.com/gund/ng-dynamic-component/compare/v6.1.1-channel-ivy.2...v6.1.1-channel-ivy.3) (2020-04-14)
+
+
+### Bug Fixes
+
+* **release:** enable git tags for ivy releases ([5d6b7fb](https://github.com/gund/ng-dynamic-component/commit/5d6b7fbf84110b1ecdc6c62cb45668053e34ccf1))
+
 ## [6.1.1-channel-ivy.2](https://github.com/gund/ng-dynamic-component/compare/v6.1.1-channel-ivy.1...v6.1.1-channel-ivy.2) (2020-04-14)
 
 
