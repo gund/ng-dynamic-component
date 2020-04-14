@@ -14,6 +14,12 @@
           "options": {
             "tsConfig": "projects/ng-dynamic-component/tsconfig.lib.json",
             "project": "projects/ng-dynamic-component/ng-package.json"
+          },
+          "configurations": {
+            "ivy": {
+              "tsConfig": "projects/ng-dynamic-component/tsconfig.lib.ivy.json",
+              "project": "projects/ng-dynamic-component/ng-package.ivy.json"
+            }
           }
         },
         "test": {
