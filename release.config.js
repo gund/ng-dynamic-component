@@ -28,6 +28,10 @@ function getConfig() {
         name: 'next',
         prerelease: true,
       },
+      {
+        name: 'channel-ivy',
+        prerelease: true,
+      },
     ],
     plugins: [
       '@semantic-release/commit-analyzer',
