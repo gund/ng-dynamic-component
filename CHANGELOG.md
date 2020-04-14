@@ -1,5 +1,12 @@
 # ng-dynamic-component - Changelog
 
+## [6.1.1-channel-ivy-ivy.1-ivy.0](https://github.com/gund/ng-dynamic-component/compare/v6.1.1-channel-ivy-ivy.1-ivy...v6.1.1-channel-ivy-ivy.1-ivy.0) (2020-04-14)
+
+
+### Bug Fixes
+
+* **release:** remove prepublish script from ivy package.json ([3972720](https://github.com/gund/ng-dynamic-component/commit/397272004dd88bdb7ab5aaab1c1a840ad8513880))
+
 ## [6.1.1-channel-ivy.3](https://github.com/gund/ng-dynamic-component/compare/v6.1.1-channel-ivy.2...v6.1.1-channel-ivy.3) (2020-04-14)
 
 
