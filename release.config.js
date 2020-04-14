@@ -6,6 +6,7 @@ if (isIvy) {
   config = applyAdjusterOn(config, {
     branches: adjustBranchesForIvy,
     plugins: adjustPluginsForIvy,
+    tagFormat: adjustTagFormatForIvy,
   });
 }
 
@@ -70,7 +71,7 @@ function getConfig() {
           assets: ({ plugins }) =>
             `${
               getPluginConfigBy('@semantic-release/npm', plugins).pkgRoot
-            }.tgz`,
+            }-*.tgz`,
         },
       ],
     ],
@@ -98,6 +99,7 @@ function adjustPluginsForIvy(plugins) {
   const namesWhitelist = [
     '@semantic-release/commit-analyzer',
     '@semantic-release/npm',
+    '@semantic-release/git',
     '@semantic-release/github',
   ];
 
@@ -108,6 +110,10 @@ function adjustPluginsForIvy(plugins) {
   getPluginConfigBy('@semantic-release/npm', plugins).pkgRoot += '-ivy';
 
   return plugins;
+}
+
+function adjustTagFormatForIvy(tagFormat = 'v${version}') {
+  return `${tagFormat}-ivy`;
 }
 
 // ? #### HELPER FUNCTIONS ####
