@@ -1,5 +1,12 @@
 # ng-dynamic-component - Changelog
 
+## [6.1.1-channel-ivy.1](https://github.com/gund/ng-dynamic-component/compare/v6.1.0...v6.1.1-channel-ivy.1) (2020-04-14)
+
+
+### Bug Fixes
+
+* **release:** add `[@ivy](https://github.com/ivy)` NPM channel\nIt is automatically published when normal channels are published with `-ivy` postfix ([15d62ea](https://github.com/gund/ng-dynamic-component/commit/15d62eae44d5225a8b437e8dafe5450633ecba64))
+
 # [6.1.0](https://github.com/gund/ng-dynamic-component/compare/v6.0.0...v6.1.0) (2020-03-13)
 
 
