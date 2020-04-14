@@ -19,6 +19,7 @@
     "pack": "run-s pack:*",
     "pack:ve": "npm run run:pack -- dist/ng-dynamic-component",
     "pack:ivy": "npm run run:pack -- dist/ng-dynamic-component-ivy",
+    "pack:ivy-pkg": "sed -i '/prepublishOnly/d' dist/ng-dynamic-component-ivy/package.json",
     "run:pack": "copyfiles LICENSE README.md CODE_OF_CONDUCT.md CHANGELOG.md",
     "semantic-release": "run-s semantic-release:*",
     "semantic-release:primary": "semantic-release",
