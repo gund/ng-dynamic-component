@@ -1,5 +1,12 @@
 # ng-dynamic-component - Changelog
 
+## [6.1.1-channel-ivy.2](https://github.com/gund/ng-dynamic-component/compare/v6.1.1-channel-ivy.1...v6.1.1-channel-ivy.2) (2020-04-14)
+
+
+### Bug Fixes
+
+* **release:** adjust prerelease for ivy channels ([bbf11e7](https://github.com/gund/ng-dynamic-component/commit/bbf11e75186f6d9cfa20cd50f2dbe8cf4a3c7876))
+
 ## [6.1.1-channel-ivy.1](https://github.com/gund/ng-dynamic-component/compare/v6.1.0...v6.1.1-channel-ivy.1) (2020-04-14)
 
 
