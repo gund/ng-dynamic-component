@@ -29,6 +29,11 @@ and this was not tree-shakeable. Now it has been removed and replaced by the mod
 contains `DynamicComponent`. All other pieces are available in their own modules.
 * **deps:** Now library is built using Angular v10
 
+## [6.1.1-no-barrels.2](https://github.com/gund/ng-dynamic-component/compare/v6.1.1-no-barrels.1...v6.1.1-no-barrels.2) (2020-05-01)
+
+
+* **lib:** remove barrels from public API exports ([7749295](https://github.com/gund/ng-dynamic-component/commit/7749295cd2f30d2f82cd2fb97654451e234f107b))
+
 ## [6.1.1-no-barrels.1](https://github.com/gund/ng-dynamic-component/compare/v6.1.0...v6.1.1-no-barrels.1) (2020-04-11)
 
 
