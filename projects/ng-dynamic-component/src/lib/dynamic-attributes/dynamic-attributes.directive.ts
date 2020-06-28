@@ -1,7 +1,6 @@
 import {
   Directive,
   DoCheck,
-  Host,
   Inject,
   Injector,
   Input,
@@ -13,7 +12,6 @@ import {
 } from '@angular/core';
 
 import {
-  ComponentOutletInjectorDirective,
   DynamicComponentInjector,
   DynamicComponentInjectorToken,
 } from '../component-injector';
@@ -47,22 +45,12 @@ export class DynamicAttributesDirective implements DoCheck {
     );
   }
 
-  private get _compInjector() {
-    return this.componentOutletInjector || this.componentInjector;
-  }
-
   private get _nativeElement() {
-    return (
-      this._compInjector.componentRef &&
-      this._compInjector.componentRef.location.nativeElement
-    );
+    return this.componentInjector.componentRef?.location.nativeElement;
   }
 
   private get _compType() {
-    return (
-      this._compInjector.componentRef &&
-      this._compInjector.componentRef.componentType
-    );
+    return this.componentInjector.componentRef?.componentType;
   }
 
   private get _isCompChanged() {
@@ -80,9 +68,6 @@ export class DynamicAttributesDirective implements DoCheck {
     @Inject(DynamicComponentInjectorToken)
     @Optional()
     private componentInjector?: DynamicComponentInjector,
-    @Host()
-    @Optional()
-    private componentOutletInjector?: ComponentOutletInjectorDirective,
   ) {}
 
   ngDoCheck(): void {

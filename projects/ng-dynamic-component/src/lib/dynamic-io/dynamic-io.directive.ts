@@ -1,7 +1,6 @@
 import {
   Directive,
   DoCheck,
-  Host,
   Inject,
   Input,
   OnChanges,
@@ -10,7 +9,6 @@ import {
 } from '@angular/core';
 
 import {
-  ComponentOutletInjectorDirective,
   DynamicComponentInjector,
   DynamicComponentInjectorToken,
 } from '../component-injector';
@@ -40,20 +38,13 @@ export class DynamicIoDirective implements OnChanges, DoCheck {
     return this.ndcDynamicOutputs || this.ngComponentOutletNdcDynamicOutputs;
   }
 
-  private get compInjector() {
-    return this.componentOutletInjector || this.componentInjector;
-  }
-
   constructor(
     private ioService: IoService,
     @Inject(DynamicComponentInjectorToken)
     @Optional()
     private componentInjector?: DynamicComponentInjector,
-    @Host()
-    @Optional()
-    private componentOutletInjector?: ComponentOutletInjectorDirective,
   ) {
-    this.ioService.init(this.compInjector);
+    this.ioService.init(this.componentInjector);
   }
 
   ngOnChanges(changes: SimpleChanges) {

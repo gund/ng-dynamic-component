@@ -1,5 +1,6 @@
 // tslint:disable: no-string-literal
 // tslint:disable: directive-selector
+import { CommonModule, NgClass } from '@angular/common';
 import {
   AfterContentChecked,
   AfterContentInit,
@@ -32,7 +33,7 @@ import {
   DynamicComponentInjectorToken,
 } from '../component-injector';
 import { IoFactoryService } from '../io';
-import { WindowRefToken, WindowRefService } from '../window-ref';
+import { WindowRefService, WindowRefToken } from '../window-ref';
 import {
   DirectiveRef,
   DynamicDirectiveDef,
@@ -420,10 +421,20 @@ describe('Directive: DynamicDirectives', () => {
 
     beforeEach(() => {
       created.mockReset();
-      const template = `<ng-container [ngComponentOutlet]="comp"
+      const template = `<ng-container
+        [ngComponentOutlet]="comp"
         [ndcDynamicDirectives]="dirs"
         (ndcDynamicDirectivesCreated)="created($event)"></ng-container>`;
-      TestBed.overrideComponent(TestComponent, { set: { template } });
+      TestBed.resetTestingModule()
+        .configureTestingModule({
+          imports: [CommonModule, TestModule],
+          declarations: [
+            DynamicDirectivesDirective,
+            TestComponent,
+            ComponentOutletInjectorDirective,
+          ],
+        })
+        .overrideComponent(TestComponent, { set: { template } });
       fixture = TestBed.createComponent(TestComponent);
       fixture.componentInstance['comp'] = InjectedComponent;
       fixture.componentInstance['created'] = created;
@@ -441,7 +452,7 @@ describe('Directive: DynamicDirectives', () => {
       const [{ instance }] = getCreateDirs<TestDirective>(created);
 
       expect(instance).toBeTruthy();
-      expect(instance.elem).toEqual(expect.any(ElementRef));
+      expect(instance.elem).toBeInstanceOf(ElementRef);
     });
 
     it('should be able to inject `ChangeDetectorRef`', () => {
@@ -684,6 +695,47 @@ describe('Directive: DynamicDirectives', () => {
       instance.out.next('data');
 
       expect(callback).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('example: NgClass', () => {
+    type HostComponent = { dirs: DynamicDirectiveDef<any>[]; comp: any };
+    let fixture: ComponentFixture<HostComponent>;
+    let hostComp: HostComponent;
+
+    beforeEach(() => {
+      TestBed.resetTestingModule()
+        .configureTestingModule({
+          imports: [CommonModule, TestModule],
+          declarations: [
+            DynamicDirectivesDirective,
+            TestComponent,
+            ComponentOutletInjectorDirective,
+          ],
+        })
+        .overrideTemplate(
+          TestComponent,
+          `<ng-container *ngComponentOutlet="comp; ndcDynamicDirectives: dirs"></ng-container>`,
+        );
+
+      fixture = TestBed.createComponent(TestComponent as any);
+      hostComp = fixture.componentInstance;
+
+      hostComp.comp = InjectedComponent;
+    });
+
+    it('should apply classes', () => {
+      hostComp.dirs = [dynamicDirectiveDef(NgClass, { ngClass: 'cls1 cls2' })];
+
+      fixture.detectChanges();
+
+      const injectedComp = fixture.debugElement.query(
+        By.directive(InjectedComponent),
+      );
+
+      expect(injectedComp).toBeTruthy();
+      expect(injectedComp.classes.cls1).toBeTruthy();
+      expect(injectedComp.classes.cls2).toBeTruthy();
     });
   });
 });

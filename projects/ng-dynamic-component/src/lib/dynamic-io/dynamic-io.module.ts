@@ -5,7 +5,7 @@ import { ComponentOutletInjectorModule } from '../component-injector';
 import { DynamicIoDirective } from './dynamic-io.directive';
 
 @NgModule({
-  imports: [CommonModule, ComponentOutletInjectorModule],
+  imports: [CommonModule],
   exports: [DynamicIoDirective, ComponentOutletInjectorModule],
   declarations: [DynamicIoDirective],
 })

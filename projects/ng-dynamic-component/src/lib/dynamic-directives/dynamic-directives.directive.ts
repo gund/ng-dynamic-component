@@ -5,7 +5,6 @@ import {
   DoCheck,
   ElementRef,
   EventEmitter,
-  Host,
   Inject,
   Injector,
   Input,
@@ -20,12 +19,11 @@ import {
 } from '@angular/core';
 
 import {
-  ComponentOutletInjectorDirective,
   DynamicComponentInjector,
   DynamicComponentInjectorToken,
 } from '../component-injector';
 import { InputsType, IoFactoryService, IoService, OutputsType } from '../io';
-import { getCtorType } from '../util';
+import { extractNgParamTypes, getCtorParamTypes } from '../util';
 import { WindowRefService } from '../window-ref';
 
 export interface DynamicDirectiveDef<T> {
@@ -74,12 +72,8 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
     );
   }
 
-  private get compInjector() {
-    return this.componentOutletInjector || this.componentInjector;
-  }
-
   private get componentRef() {
-    return this.compInjector.componentRef;
+    return this.componentInjector.componentRef;
   }
 
   private get compInstance() {
@@ -121,9 +115,6 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
     @Inject(DynamicComponentInjectorToken)
     @Optional()
     private componentInjector?: DynamicComponentInjector,
-    @Host()
-    @Optional()
-    private componentOutletInjector?: ComponentOutletInjectorDirective,
   ) {}
 
   ngDoCheck(): void {
@@ -250,20 +241,31 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
   }
 
   private createDirective<T>(dirType: Type<T>): T {
-    const ctorParams: any[] = getCtorType(dirType, this.reflect);
-    const resolvedParams = ctorParams.map(p => this.resolveDep(p));
-    return new dirType(...resolvedParams);
+    const directiveInjector = Injector.create({
+      providers: [
+        {
+          provide: dirType,
+          useClass: dirType,
+          deps: this.resolveDirParamTypes(dirType),
+        },
+        { provide: ElementRef, useValue: this.componentRef.location },
+      ],
+      parent: this.hostInjector,
+      name: `DynamicDirectiveInjector:${dirType.name}@${this.componentRef.componentType.name}`,
+    });
+
+    return directiveInjector.get(dirType);
   }
 
-  private resolveDep(dep: any): any {
-    // tslint:disable-next-line: deprecation
-    return this.maybeResolveVCR(dep) || this.hostInjector.get(dep);
-  }
-
-  private maybeResolveVCR(dep: any): ViewContainerRef | undefined {
-    if (dep === ViewContainerRef) {
-      return this.hostVcr;
-    }
+  private resolveDirParamTypes(dirType: Type<any>): any[] {
+    return (
+      // First try Angular Compiler's metadata
+      extractNgParamTypes(dirType) ??
+      // Then fallback to Typescript Reflect API
+      getCtorParamTypes(dirType, this.reflect) ??
+      // Bailout
+      []
+    );
   }
 
   private callInitHooks(obj: any) {
