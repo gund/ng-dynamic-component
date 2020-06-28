@@ -62,7 +62,6 @@
     "prettier": "^1.19.1",
     "semantic-release": "^17.0.1",
     "ts-node": "^8.6.2",
-    "tsickle": "^0.38.0",
     "tslint": "^5.15.0",
     "typescript": "~3.7.5"
   },
@@ -78,8 +77,7 @@
   },
   "lint-staged": {
     "projects/**/*.{ts,js,json,?css,html}": [
-      "prettier --write",
-      "git add"
+      "prettier --write"
     ]
   },
   "husky": {
