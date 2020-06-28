@@ -1,5 +1,27 @@
 # ng-dynamic-component - Changelog
 
+# [7.0.0](https://github.com/gund/ng-dynamic-component/compare/v6.1.0...v7.0.0) (2020-06-28)
+
+
+### Bug Fixes
+
+* **api:** replace deprecated `DynamicModule` with component module ([412d517](https://github.com/gund/ng-dynamic-component/commit/412d517ce8b9eb39d321ebc589ae3a2395ee6514))
+* **package:** update Angular peer dependencies from v9 to v10 ([c4c059e](https://github.com/gund/ng-dynamic-component/commit/c4c059e873d1b9efb14b2929204d8f9ade3c4f04))
+
+
+### Features
+
+* **deps:** upgrade to Angular v10 ([f6a6ef7](https://github.com/gund/ng-dynamic-component/commit/f6a6ef711a2b7c347fea25d7fec54165efd0f3d1))
+
+
+### BREAKING CHANGES
+
+* **package:** Now you are required to have Angular v10 as a peer dependency.
+* **api:** Previously deprecated module contained all the pieces of public API in on module
+and this was not tree-shakeable. Now it has been removed and replaced by the module that only
+contains `DynamicComponent`. All other pieces are available in their own modules.
+* **deps:** Now library is built using Angular v10
+
 # [6.1.0](https://github.com/gund/ng-dynamic-component/compare/v6.0.0...v6.1.0) (2020-03-13)
 
 
