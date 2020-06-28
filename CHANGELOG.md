@@ -33,6 +33,12 @@
 
 * **attributes:** properly resolve constructor types from directives ([16efb28](https://github.com/gund/ng-dynamic-component/commit/16efb288282540e8da0ad499d6bedcebfec9c183))
 
+## [7.0.1-no-barrels.1](https://github.com/gund/ng-dynamic-component/compare/v7.0.0...v7.0.1-no-barrels.1) (2020-06-28)
+
+
+* **lib:** remove barrel re-exports ([3c7b294](https://github.com/gund/ng-dynamic-component/commit/3c7b29498acb5eb1ab9f7d544ec681d353ebfb75))
+* **lib:** remove barrels from public API exports ([bd70117](https://github.com/gund/ng-dynamic-component/commit/bd70117a46a5a574447ee1bc8e4a4edd124a44b3))
+
 # [7.0.0](https://github.com/gund/ng-dynamic-component/compare/v6.1.0...v7.0.0) (2020-06-28)
 
 
