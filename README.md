@@ -14,6 +14,7 @@
 
 | Angular | ng-dynamic-component | NPM package                   |
 | ------- | -------------------- | ----------------------------- |
+| 10.x.x  | 7.x.x                | `ng-dynamic-component@^7.0.0` |
 | 9.x.x   | 6.x.x                | `ng-dynamic-component@^6.0.0` |
 | 8.x.x   | 5.x.x                | `ng-dynamic-component@^5.0.0` |
 | 7.x.x   | 4.x.x                | `ng-dynamic-component@^4.0.0` |
