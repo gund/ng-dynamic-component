@@ -23,6 +23,7 @@ export class ComponentInjectorComponent implements DynamicComponentInjector {
   get componentRef(): ComponentRef<ComponentInjectorComponent> {
     return this.component
       ? ({
+          componentType: MockedInjectedComponent,
           instance: this.component,
           injector: { get: this.injectorGet },
         } as any)
