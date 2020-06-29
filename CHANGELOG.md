@@ -1,5 +1,12 @@
 # ng-dynamic-component - Changelog
 
+## [7.0.1](https://github.com/gund/ng-dynamic-component/compare/v7.0.0...v7.0.1) (2020-06-29)
+
+
+### Bug Fixes
+
+* **attributes:** properly resolve constructor types from directives ([16efb28](https://github.com/gund/ng-dynamic-component/commit/16efb288282540e8da0ad499d6bedcebfec9c183))
+
 # [7.0.0](https://github.com/gund/ng-dynamic-component/compare/v6.1.0...v7.0.0) (2020-06-28)
 
 
