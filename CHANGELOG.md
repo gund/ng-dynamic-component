@@ -18,6 +18,13 @@
 ### Bug Fixes
 
 * upgrade tslib from 2.0.0 to 2.0.2 ([ce04753](https://github.com/gund/ng-dynamic-component/commit/ce0475305d2ea95dbb1d538edb4e352ead8b28d5))
+## [7.0.2-no-barrels.1](https://github.com/gund/ng-dynamic-component/compare/v7.0.1...v7.0.2-no-barrels.1) (2020-06-29)
+
+
+### Bug Fixes
+
+* **lib:** remove barrel re-exports ([00513bf](https://github.com/gund/ng-dynamic-component/commit/00513bf2fadc97df8ff1ecccb9e3e51e764df9ab))
+* **lib:** remove barrels from public API exports ([17ae6b9](https://github.com/gund/ng-dynamic-component/commit/17ae6b9cc2257ddc33ce3b2c85502ca45b604b15))
 
 ## [7.0.2](https://github.com/gund/ng-dynamic-component/compare/v7.0.1...v7.0.2) (2020-10-14)
 
