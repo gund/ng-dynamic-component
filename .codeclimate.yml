@@ -1,16 +1,15 @@
-engines:
-  duplication:
-    enabled: true
-    config:
-      languages:
-        - javascript
+version: '2'
+plugins:
   tslint:
+    enabled: true
+    config: tslint.json
+  nodesecurity:
     enabled: true
   fixme:
     enabled: true
-ratings:
-  paths:
-    - 'projects/ng-dynamic-component/src/lib/**/*.ts'
+  editorconfig:
+    enabled: true
 exclude_patterns:
   - '**.*'
-  - '!projects/ng-dynamic-component/src/lib/**/*.ts'
+  - '!projects/ng-dynamic-component/src/**/*.ts'
+  - 'projects/ng-dynamic-component/src/**/*.spec.ts'
