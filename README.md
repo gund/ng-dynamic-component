@@ -113,6 +113,8 @@ class MyComponent {
 
 You can pass `inputs` and `outputs` to your dynamic components:
 
+Import module `DynamicIoModule` and then in template:
+
 ```ts
 @Component({
   selector: 'my-component',
@@ -207,7 +209,9 @@ class MyComponent {
 
 ### Attributes
 
-**Since v2.2.0** you can now declaratively set attributes, as you would inputs, via `ndcDynamicAttributes`:
+**Since v2.2.0** you can now declaratively set attributes, as you would inputs, via `ndcDynamicAttributes`.
+
+Import module `DynamicAttributesModule` and then in template:
 
 ```ts
 import { AttributesMap } from 'ng-dynamic-component';
@@ -257,10 +261,12 @@ class MyComponent {
 
 ### Directives (experimental)
 
-**Since v3.1.0** you can now declaratively set directives, via `ndcDynamicDirectives`:
+**Since v3.1.0** you can now declaratively set directives, via `ndcDynamicDirectives`.
 
 **NOTE**: In dynamic directives queries like `@ContentChild` and host decorators like `@HostBinding`
 will not work due to involved complexity required to handle it (but PRs are welcome!).
+
+Import module `DynamicDirectivesModule` and then in template:
 
 ```ts
 import { dynamicDirectiveDef } from 'ng-dynamic-component';
