@@ -33,13 +33,13 @@ $ npm install ng-dynamic-component --save
 
 ### DynamicComponent
 
-Import `DynamicComponentModule` where you need to render dynamic components:
+Import `DynamicModule` where you need to render dynamic components:
 
 ```ts
-import { DynamicComponentModule } from 'ng-dynamic-component';
+import { DynamicModule } from 'ng-dynamic-component';
 
 @NgModule({
-  imports: [DynamicComponentModule],
+  imports: [DynamicModule],
 })
 export class MyModule {}
 ```
@@ -64,7 +64,7 @@ class MyComponent {
 You can also use [`NgComponentOutlet`](https://angular.io/api/common/NgComponentOutlet)
 directive from `@angular/common` instead of `<ndc-dynamic>`.
 
-Import `DynamicIoModule` where you need to render dynamic components:
+Import `DynamicIoModule` where you need to render dynamic inputs:
 
 ```ts
 import { DynamicIoModule } from 'ng-dynamic-component';
