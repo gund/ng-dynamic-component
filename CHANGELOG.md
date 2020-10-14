@@ -1,5 +1,12 @@
 # ng-dynamic-component - Changelog
 
+## [7.0.2](https://github.com/gund/ng-dynamic-component/compare/v7.0.1...v7.0.2) (2020-10-14)
+
+
+### Bug Fixes
+
+* **io:** only add changed inputs to changes in OnChanges hook ([1d8c6c0](https://github.com/gund/ng-dynamic-component/commit/1d8c6c07497119a7d899363228780c1fc7982844)), closes [#403](https://github.com/gund/ng-dynamic-component/issues/403)
+
 ## [7.0.1](https://github.com/gund/ng-dynamic-component/compare/v7.0.0...v7.0.1) (2020-06-29)
 
 
