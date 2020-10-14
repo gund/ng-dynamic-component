@@ -13,7 +13,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { DynamicComponentInjector } from '../component-injector';
-import { changesFromRecord, createNewChange, noop } from '../util';
+import { createChange, createNewChange, noop } from '../util';
 import { EventArgumentToken } from './event-argument';
 import { EventHandler, InputsType, OutputsType, OutputWithArgs } from './types';
 
@@ -31,9 +31,6 @@ export interface IoInitOptions {
 interface OutputsTypeProcessed extends OutputsType {
   [k: string]: EventHandler;
 }
-
-const recordToChanges = changesFromRecord({ isFirstChanges: true });
-const recordToNewChanges = changesFromRecord({ onlyNewChanges: true });
 
 @Injectable()
 export class IoService implements OnDestroy {
@@ -239,10 +236,19 @@ export class IoService implements OnDestroy {
   }
 
   private _collectChangesFromDiffer(differ: KeyValueChangesAny): SimpleChanges {
-    const changes = {} as SimpleChanges;
+    const changes: SimpleChanges = {};
 
-    differ.forEachAddedItem(recordToChanges(changes));
-    differ.forEachItem(recordToNewChanges(changes));
+    differ.forEachAddedItem(
+      record => (changes[record.key] = createNewChange(record.currentValue)),
+    );
+
+    differ.forEachChangedItem(
+      record =>
+        (changes[record.key] = createChange(
+          record.currentValue,
+          record.previousValue,
+        )),
+    );
 
     return this._resolveChanges(changes);
   }

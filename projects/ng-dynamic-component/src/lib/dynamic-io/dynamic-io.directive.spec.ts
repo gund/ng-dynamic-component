@@ -1,5 +1,5 @@
 // tslint:disable: no-string-literal
-import { ChangeDetectorRef, SimpleChanges } from '@angular/core';
+import { ChangeDetectorRef, SimpleChange, SimpleChanges } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { Observable, Subject } from 'rxjs';
@@ -88,18 +88,13 @@ describe('Directive: DynamicIo', () => {
     });
 
     it('should trigger initially `OnChanges` life-cycle hook', () => {
-      injectedComp.ngOnChanges.mockImplementation((changes: SimpleChanges) => {
-        expect(changes.prop1).toBeDefined();
-        expect(changes.prop1.currentValue).toBe('prop1');
-        expect(changes.prop1.isFirstChange()).toBeTruthy();
-        expect(changes.prop2).toBeDefined();
-        expect(changes.prop2.currentValue).toBe(2);
-        expect(changes.prop2.isFirstChange()).toBeTruthy();
-      });
-
       fixture.detectChanges();
 
       expect(injectedComp.ngOnChanges).toHaveBeenCalledTimes(1);
+      expect(injectedComp.ngOnChanges).toHaveBeenCalledWith({
+        prop1: new SimpleChange(undefined, 'prop1', true),
+        prop2: new SimpleChange(undefined, 2, true),
+      });
     });
 
     it('should trigger markForCheck of component`s `ChangeDetectorRef`', () => {
@@ -117,20 +112,15 @@ describe('Directive: DynamicIo', () => {
       fixture.detectChanges();
 
       expect(injectedComp.ngOnChanges).toHaveBeenCalledTimes(1);
-
-      injectedComp.ngOnChanges.mockImplementation((changes: SimpleChanges) => {
-        expect(changes.prop1).toBeDefined();
-        expect(changes.prop1.currentValue).toBe('123');
-        expect(changes.prop1.isFirstChange()).toBeFalsy();
-        expect(changes.prop2).toBeDefined();
-        expect(changes.prop2.currentValue).toBe(2);
-        expect(changes.prop2.isFirstChange()).toBeFalsy();
-      });
+      injectedComp.ngOnChanges.mockReset();
 
       fixture.componentInstance['inputs'].prop1 = '123';
       fixture.detectChanges();
 
-      expect(injectedComp.ngOnChanges).toHaveBeenCalledTimes(2);
+      expect(injectedComp.ngOnChanges).toHaveBeenCalledTimes(1);
+      expect(injectedComp.ngOnChanges).toHaveBeenCalledWith({
+        prop1: new SimpleChange('prop1', '123', false),
+      });
     });
 
     it('should trigger `OnChanges` life-cycle hook if component instance was updated', () => {
