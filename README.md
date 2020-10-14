@@ -33,13 +33,13 @@ $ npm install ng-dynamic-component --save
 
 ### DynamicComponent
 
-Import `DynamicComponentModule` where you need to render dynamic components:
+Import `DynamicModule` where you need to render dynamic components:
 
 ```ts
-import { DynamicComponentModule } from 'ng-dynamic-component';
+import { DynamicModule } from 'ng-dynamic-component';
 
 @NgModule({
-  imports: [DynamicComponentModule],
+  imports: [DynamicModule],
 })
 export class MyModule {}
 ```
@@ -64,7 +64,7 @@ class MyComponent {
 You can also use [`NgComponentOutlet`](https://angular.io/api/common/NgComponentOutlet)
 directive from `@angular/common` instead of `<ndc-dynamic>`.
 
-Import `DynamicIoModule` where you need to render dynamic components:
+Import `DynamicIoModule` where you need to render dynamic inputs:
 
 ```ts
 import { DynamicIoModule } from 'ng-dynamic-component';
@@ -112,6 +112,8 @@ class MyComponent {
 ### Inputs and Outputs
 
 You can pass `inputs` and `outputs` to your dynamic components:
+
+Import module `DynamicIoModule` and then in template:
 
 ```ts
 @Component({
@@ -207,7 +209,9 @@ class MyComponent {
 
 ### Attributes
 
-**Since v2.2.0** you can now declaratively set attributes, as you would inputs, via `ndcDynamicAttributes`:
+**Since v2.2.0** you can now declaratively set attributes, as you would inputs, via `ndcDynamicAttributes`.
+
+Import module `DynamicAttributesModule` and then in template:
 
 ```ts
 import { AttributesMap } from 'ng-dynamic-component';
@@ -257,10 +261,12 @@ class MyComponent {
 
 ### Directives (experimental)
 
-**Since v3.1.0** you can now declaratively set directives, via `ndcDynamicDirectives`:
+**Since v3.1.0** you can now declaratively set directives, via `ndcDynamicDirectives`.
 
 **NOTE**: In dynamic directives queries like `@ContentChild` and host decorators like `@HostBinding`
 will not work due to involved complexity required to handle it (but PRs are welcome!).
+
+Import module `DynamicDirectivesModule` and then in template:
 
 ```ts
 import { dynamicDirectiveDef } from 'ng-dynamic-component';

@@ -1,7 +1,7 @@
 {
   "extends": "tslint:recommended",
   "rulesDirectory": [
-    "codelyzer"
+    "node_modules/codelyzer"
   ],
   "rules": {
     "align": {
