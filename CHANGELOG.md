@@ -1,5 +1,12 @@
 # ng-dynamic-component - Changelog
 
+## [7.0.3](https://github.com/gund/ng-dynamic-component/compare/v7.0.2...v7.0.3) (2020-11-02)
+
+
+### Bug Fixes
+
+* upgrade tslib from 2.0.0 to 2.0.2 ([ce04753](https://github.com/gund/ng-dynamic-component/commit/ce0475305d2ea95dbb1d538edb4e352ead8b28d5))
+
 ## [7.0.2](https://github.com/gund/ng-dynamic-component/compare/v7.0.1...v7.0.2) (2020-10-14)
 
 
