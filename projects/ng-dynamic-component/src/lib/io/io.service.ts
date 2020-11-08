@@ -136,6 +136,10 @@ export class IoService implements OnDestroy {
    * or when setting them for the first time
    */
   update(inputs: InputsType, outputs: OutputsType) {
+    if (!this.compRef) {
+      return;
+    }
+
     const changes = this.updateIO(inputs, outputs);
 
     const compChanged = this.componentInstChanged;
@@ -159,6 +163,11 @@ export class IoService implements OnDestroy {
    * Usually must be called from the `DoCheck` lifecycle hook
    */
   maybeUpdate() {
+    if (!this.compRef) {
+      this._disconnectOutputs();
+      return;
+    }
+
     if (this.componentInstChanged) {
       this.updateInputs(true);
       this.bindOutputs();
