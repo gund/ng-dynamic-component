@@ -19,7 +19,11 @@ import { By } from '@angular/platform-browser';
 import { TestFixture, TestSetup } from '../../test';
 import { ComponentOutletInjectorDirective } from '../component-injector';
 import { DynamicComponent as NdcDynamicComponent } from '../dynamic.component';
-import { EventArgumentToken, InputsType, OutputsType } from '../io';
+import { IoEventArgumentToken, InputsType, OutputsType } from '../io';
+import {
+  IoEventContextProviderToken,
+  IoEventContextToken,
+} from '../io/event-context';
 import { DynamicIoDirective } from './dynamic-io.directive';
 
 describe('Directive: DynamicIo', () => {
@@ -550,7 +554,77 @@ describe('Directive: DynamicIo', () => {
           ></ng-container>
         `,
         ngModule: {
-          providers: [{ provide: EventArgumentToken, useValue: '$e' }],
+          providers: [{ provide: IoEventArgumentToken, useValue: '$e' }],
+        },
+      });
+
+      fixture.setHostProps({ tplVar: 'from-template' });
+
+      fixture.getDynamicComponent().output1.emit('val1');
+
+      expect(outputs.output).toHaveBeenCalledTimes(1);
+      expect(outputs.output).toHaveBeenCalledWith('val1', 'from-template');
+    });
+
+    it('should bind outputs with custom global context', async () => {
+      const customEventContext = { customEventContext: 'global' };
+      const outputs = {
+        output: jest.fn().mockImplementation(function () {
+          // Use non-strict equal due to a bug in Jest
+          // that clones `this` object and destroys original ref
+          expect(this).toEqual(customEventContext);
+        }),
+      };
+
+      const fixture = await testSetup.redner<{ tplVar: any }>({
+        props: { outputs },
+        template: `
+          <ng-container [ngComponentOutlet]="component"
+            [ndcDynamicOutputs]="{ output1: { handler: outputs.output, args: ['$event', tplVar] } }"
+          ></ng-container>
+        `,
+        ngModule: {
+          providers: [
+            { provide: IoEventContextToken, useValue: customEventContext },
+          ],
+        },
+      });
+
+      fixture.setHostProps({ tplVar: 'from-template' });
+
+      fixture.getDynamicComponent().output1.emit('val1');
+
+      expect(outputs.output).toHaveBeenCalledTimes(1);
+      expect(outputs.output).toHaveBeenCalledWith('val1', 'from-template');
+    });
+
+    it('should bind outputs with custom local context', async () => {
+      const customEventContext = { customEventContext: 'local' };
+      const outputs = {
+        output: jest.fn().mockImplementation(function () {
+          // Use non-strict equal due to a bug in Jest
+          // that clones `this` object and destroys original ref
+          expect(this).toEqual(customEventContext);
+        }),
+      };
+
+      const fixture = await testSetup.redner<{ tplVar: any }>({
+        props: { outputs },
+        template: `
+          <ng-container [ngComponentOutlet]="component"
+            [ndcDynamicOutputs]="{ output1: { handler: outputs.output, args: ['$event', tplVar] } }"
+          ></ng-container>
+        `,
+        ngModule: {
+          providers: [
+            {
+              provide: IoEventContextProviderToken,
+              useValue: {
+                provide: IoEventContextToken,
+                useValue: customEventContext,
+              },
+            },
+          ],
         },
       });
 

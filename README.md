@@ -199,7 +199,53 @@ class MyComponent {
 Here you can specify at which argument event value should arrive via `'$event'` literal.
 
 _HINT:_ You can override event literal by providing
-[`EventArgumentToken`](projects/ng-dynamic-component/src/lib/io/event-argument.ts) in DI.
+[`IoEventArgumentToken`](projects/ng-dynamic-component/src/lib/io/event-argument.ts) in DI.
+
+#### Output Handler Context
+
+**Since v7.1.0**
+
+You can specify the context (`this`) that will be used when calling
+the output handlers by providing either:
+
+- [`IoEventContextToken`](projects/ng-dynamic-component/src/lib/io/event-context.ts) - which will be;
+  injected and used directly as a context value
+- [`IoEventContextProviderToken`](projects/ng-dynamic-component/src/lib/io/event-context.ts) - which
+  will be provided and instantiated within the `IoService` and used as a context value.  
+  This useful if you have some generic way of retrieving a
+  context for every dynamic component so you may encapsulate
+  it in an Angular DI provider that will be instantiated
+  within every component's injector;
+
+Example using your component as an output context:
+
+```ts
+import { IoEventContextToken } from 'ng-dynamic-component';
+
+@Component({
+  selector: 'my-component',
+  template: `
+    <ndc-dynamic
+      [ndcDynamicComponent]="component"
+      [ndcDynamicOutputs]="{
+        onSomething: doSomething
+      }"
+    ></ndc-dynamic>
+  `,
+  providers: [
+    {
+      provide: IoEventContextToken,
+      useExisting: MyComponent,
+    },
+  ],
+})
+class MyComponent {
+  component = MyDynamicComponent1;
+  doSomething(event) {
+    // Here `this` will be an instance of `MyComponent`
+  }
+}
+```
 
 ### Component Creation Events
 

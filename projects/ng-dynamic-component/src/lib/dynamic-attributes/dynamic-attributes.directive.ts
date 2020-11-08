@@ -36,7 +36,7 @@ export class DynamicAttributesDirective implements DoCheck {
   ngComponentOutletNdcDynamicAttributes: AttributesMap;
 
   private attrsDiffer = this.differs.find({}).create<string, string>();
-  private lastCompType: Type<any>;
+  private lastCompType: Type<unknown>;
   private lastAttrActions: AttributeActions;
 
   private get _attributes() {
