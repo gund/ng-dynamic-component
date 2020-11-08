@@ -9,6 +9,7 @@ import {
   KeyValueChangeRecord,
   KeyValueChanges,
   KeyValueDiffers,
+  OnChanges,
   OnDestroy,
   Optional,
   StaticProvider,
@@ -86,6 +87,7 @@ export class IoService implements OnDestroy {
   private inputs: InputsType;
   private outputs: OutputsType;
   private outputsChanged: (outputs: OutputsType) => boolean = () => false;
+  private maybeNotifyInputChanges: (isFirstChange: boolean) => void = () => {};
 
   private get compRef() {
     return this.compInjector.componentRef;
@@ -128,7 +130,7 @@ export class IoService implements OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this._disconnectOutputs();
+    this.disconnectOutputs();
   }
 
   /**
@@ -145,9 +147,9 @@ export class IoService implements OnDestroy {
     const compChanged = this.componentInstChanged;
 
     if (compChanged || changes.inputsChanged) {
-      const inputsChanges = this._getInputsChanges();
+      const inputsChanges = this.getInputsChanges();
       if (inputsChanges) {
-        this._updateChangedInputs(inputsChanges);
+        this.updateChangedInputs(inputsChanges);
       }
       this.updateInputs(compChanged || !this.lastChangedInputs.size);
     }
@@ -164,7 +166,7 @@ export class IoService implements OnDestroy {
    */
   maybeUpdate() {
     if (!this.compRef) {
-      this._disconnectOutputs();
+      this.disconnectOutputs();
       return;
     }
 
@@ -182,11 +184,11 @@ export class IoService implements OnDestroy {
       return;
     }
 
-    const inputsChanges = this._getInputsChanges();
+    const inputsChanges = this.getInputsChanges();
 
     if (inputsChanges) {
       const isNotFirstChange = !!this.lastChangedInputs.size;
-      this._updateChangedInputs(inputsChanges);
+      this.updateChangedInputs(inputsChanges);
 
       if (isNotFirstChange) {
         this.updateInputs();
@@ -206,7 +208,7 @@ export class IoService implements OnDestroy {
 
   private updateInputs(isFirstChange = false) {
     if (isFirstChange) {
-      this._updateCompFactory();
+      this.updateCompFactory();
     }
 
     const compRef = this.compRef;
@@ -226,7 +228,7 @@ export class IoService implements OnDestroy {
   }
 
   private bindOutputs() {
-    this._disconnectOutputs();
+    this.disconnectOutputs();
 
     const compInst = this.componentInst;
     let outputs = this.outputs;
@@ -235,7 +237,7 @@ export class IoService implements OnDestroy {
       return;
     }
 
-    outputs = this._resolveOutputs(outputs);
+    outputs = this.resolveOutputs(outputs);
 
     Object.keys(outputs)
       .filter((p) => compInst[p])
@@ -249,15 +251,15 @@ export class IoService implements OnDestroy {
       );
   }
 
-  private _disconnectOutputs() {
+  private disconnectOutputs() {
     this.outputsShouldDisconnect$.next();
   }
 
-  private _getInputsChanges(): KeyValueChangesAny {
+  private getInputsChanges(): KeyValueChangesAny {
     return this.inputsDiffer.diff(this.inputs);
   }
 
-  private _updateChangedInputs(differ: KeyValueChangesAny) {
+  private updateChangedInputs(differ: KeyValueChangesAny) {
     this.lastChangedInputs.clear();
 
     const addRecordKeyToSet = (record: KeyValueChangeRecord<string, unknown>) =>
@@ -271,7 +273,7 @@ export class IoService implements OnDestroy {
   // TODO: Replace ComponentFactory once new API is created
   // @see https://github.com/angular/angular/issues/44926
   // eslint-disable-next-line deprecation/deprecation
-  private _resolveCompFactory(): ComponentFactory<unknown> | null {
+  private resolveCompFactory(): ComponentFactory<unknown> | null {
     try {
       try {
         return this.cfr.resolveComponentFactory(this.compRef.componentType);
@@ -287,23 +289,23 @@ export class IoService implements OnDestroy {
     }
   }
 
-  private _updateCompFactory() {
-    this.compFactory = this._resolveCompFactory();
+  private updateCompFactory() {
+    this.compFactory = this.resolveCompFactory();
   }
 
-  private _resolveOutputs(outputs: OutputsType): OutputsType {
-    this._updateOutputsEventContext();
+  private resolveOutputs(outputs: OutputsType): OutputsType {
+    this.updateOutputsEventContext();
 
-    outputs = this._processOutputs(outputs);
+    outputs = this.processOutputs(outputs);
 
     if (!this.compFactory) {
       return outputs;
     }
 
-    return this._remapIO(outputs, this.compFactory.outputs);
+    return this.remapIO(outputs, this.compFactory.outputs);
   }
 
-  private _updateOutputsEventContext() {
+  private updateOutputsEventContext() {
     this.outputsEventContext = undefined;
 
     if (this.eventContextProvider) {
@@ -321,7 +323,7 @@ export class IoService implements OnDestroy {
     }
   }
 
-  private _processOutputs(outputs: OutputsType): OutputsTypeProcessed {
+  private processOutputs(outputs: OutputsType): OutputsTypeProcessed {
     const processedOutputs: OutputsTypeProcessed = {};
 
     Object.keys(outputs).forEach((key) => {
@@ -331,14 +333,14 @@ export class IoService implements OnDestroy {
         processedOutputs[key] = outputExpr;
       } else {
         processedOutputs[key] =
-          outputExpr && this._processOutputArgs(outputExpr);
+          outputExpr && this.processOutputArgs(outputExpr);
       }
     });
 
     return processedOutputs;
   }
 
-  private _processOutputArgs(output: OutputWithArgs): EventHandler {
+  private processOutputArgs(output: OutputWithArgs): EventHandler {
     const args = 'args' in output ? output.args || [] : [this.eventArgument];
     let handler: AnyFunction = output.handler;
 
@@ -355,21 +357,21 @@ export class IoService implements OnDestroy {
       handler(...args.map((arg) => (arg === this.eventArgument ? event : arg)));
   }
 
-  private _remapIO<T extends Record<string, unknown>>(
+  private remapIO<T extends Record<string, unknown>>(
     io: T,
     mapping: IOMappingList,
   ): T {
     const newIO = {};
 
     Object.keys(io).forEach((key) => {
-      const newKey = this._findPropByTplInMapping(key, mapping) || key;
+      const newKey = this.findPropByTplInMapping(key, mapping) || key;
       newIO[newKey] = io[key];
     });
 
     return newIO as T;
   }
 
-  private _findPropByTplInMapping(
+  private findPropByTplInMapping(
     tplName: string,
     mapping: IOMappingList,
   ): string | null {
