@@ -87,7 +87,6 @@ export class IoService implements OnDestroy {
   private inputs: InputsType;
   private outputs: OutputsType;
   private outputsChanged: (outputs: OutputsType) => boolean = () => false;
-  private maybeNotifyInputChanges: (isFirstChange: boolean) => void = () => {};
 
   private get compRef() {
     return this.compInjector.componentRef;
