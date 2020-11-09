@@ -1,4 +1,4 @@
-import { Directive, DoCheck, Input, OnChanges } from '@angular/core';
+import { Directive, DoCheck, Input } from '@angular/core';
 
 import { InputsType, IoService, IoServiceProvider, OutputsType } from '../io';
 
@@ -9,7 +9,7 @@ import { InputsType, IoService, IoServiceProvider, OutputsType } from '../io';
     '[ndcDynamicInputs],[ndcDynamicOutputs],[ngComponentOutletNdcDynamicInputs],[ngComponentOutletNdcDynamicOutputs]',
   providers: [IoServiceProvider],
 })
-export class DynamicIoDirective implements OnChanges, DoCheck {
+export class DynamicIoDirective implements DoCheck {
   @Input()
   ndcDynamicInputs: InputsType;
   @Input()
@@ -29,11 +29,7 @@ export class DynamicIoDirective implements OnChanges, DoCheck {
 
   constructor(private ioService: IoService) {}
 
-  ngOnChanges() {
-    this.ioService.update(this.inputs, this.outputs);
-  }
-
   ngDoCheck() {
-    this.ioService.maybeUpdate();
+    this.ioService.update(this.inputs, this.outputs);
   }
 }

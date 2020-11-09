@@ -132,12 +132,9 @@ export class IoService implements OnDestroy {
     this.disconnectOutputs();
   }
 
-  /**
-   * Call when you know that inputs/outputs were changed
-   * or when setting them for the first time
-   */
   update(inputs: InputsType, outputs: OutputsType) {
     if (!this.compRef) {
+      this.disconnectOutputs();
       return;
     }
 
@@ -145,53 +142,19 @@ export class IoService implements OnDestroy {
 
     const compChanged = this.componentInstChanged;
 
-    if (compChanged || changes.inputsChanged) {
-      const inputsChanges = this.getInputsChanges();
-      if (inputsChanges) {
-        this.updateChangedInputs(inputsChanges);
-      }
+    const inputsChanges = this.getInputsChanges();
+    const outputsChanged = this.outputsChanged(this.outputs);
+
+    if (inputsChanges) {
+      this.updateChangedInputs(inputsChanges);
+    }
+
+    if (compChanged || inputsChanges) {
       this.updateInputs(compChanged || !this.lastChangedInputs.size);
     }
 
-    if (compChanged || changes.outputsChanged) {
+    if (compChanged || outputsChanged || changes.outputsChanged) {
       this.bindOutputs();
-    }
-  }
-
-  /**
-   * Call when you do not know if inputs/outputs changed
-   *
-   * Usually must be called from the `DoCheck` lifecycle hook
-   */
-  maybeUpdate() {
-    if (!this.compRef) {
-      this.disconnectOutputs();
-      return;
-    }
-
-    if (this.componentInstChanged) {
-      this.updateInputs(true);
-      this.bindOutputs();
-      return;
-    }
-
-    if (this.outputsChanged(this.outputs)) {
-      this.bindOutputs();
-    }
-
-    if (!this.inputs) {
-      return;
-    }
-
-    const inputsChanges = this.getInputsChanges();
-
-    if (inputsChanges) {
-      const isNotFirstChange = !!this.lastChangedInputs.size;
-      this.updateChangedInputs(inputsChanges);
-
-      if (isNotFirstChange) {
-        this.updateInputs();
-      }
     }
   }
 
