@@ -10,7 +10,7 @@
       "prefix": "ndc",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/ng-dynamic-component/tsconfig.lib.json",
             "project": "projects/ng-dynamic-component/ng-package.json"
