@@ -1,5 +1,15 @@
 # ng-dynamic-component - Changelog
 
+## [8.0.1-no-barrels.1](https://github.com/gund/ng-dynamic-component/compare/v8.0.0...v8.0.1-no-barrels.1) (2020-11-19)
+
+
+### Bug Fixes
+
+* **ci:** trigger publishing ([628fffc](https://github.com/gund/ng-dynamic-component/commit/628fffc059ef332fbe0827332929bbb3c2625c9a))
+* **imports:** remove barrel imports in modules ([c7349ab](https://github.com/gund/ng-dynamic-component/commit/c7349ab44bc76bf195504eefee4d6c0358603f49))
+* **lib:** remove barrel re-exports ([b5363b2](https://github.com/gund/ng-dynamic-component/commit/b5363b20838b8324aeb23cba8f1974b671fbea19))
+* **lib:** remove barrels from public API exports ([42465dd](https://github.com/gund/ng-dynamic-component/commit/42465dd997fc96e478ba4850cfede9aac3abe2ee))
+
 # [8.0.0](https://github.com/gund/ng-dynamic-component/compare/v7.0.3...v8.0.0) (2020-11-19)
 
 
