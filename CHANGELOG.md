@@ -1,5 +1,17 @@
 # ng-dynamic-component - Changelog
 
+# [8.0.0](https://github.com/gund/ng-dynamic-component/compare/v7.0.3...v8.0.0) (2020-11-19)
+
+
+### Features
+
+* **ng:** update to Angular v11 ([5e3ff21](https://github.com/gund/ng-dynamic-component/commit/5e3ff21267895d932dd2698428e8236d15315858))
+
+
+### BREAKING CHANGES
+
+* **ng:** Library requires Angular v11 as a peer dependency. No other public API changes.
+
 ## [7.0.3](https://github.com/gund/ng-dynamic-component/compare/v7.0.2...v7.0.3) (2020-11-02)
 
 
