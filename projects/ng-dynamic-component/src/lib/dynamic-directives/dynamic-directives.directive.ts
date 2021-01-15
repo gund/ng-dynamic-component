@@ -54,6 +54,7 @@ export interface DirectiveRef<T> {
 
 @Directive({
   selector: '[ndcDynamicDirectives],[ngComponentOutletNdcDynamicDirectives]',
+  providers: [IoFactoryService],
 })
 export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
   @Input()

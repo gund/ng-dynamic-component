@@ -74,6 +74,7 @@ export class IoService implements OnDestroy {
     private cfr: ComponentFactoryResolver,
     @Inject(EventArgumentToken)
     private eventArgument: string,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnDestroy(): void {
@@ -166,7 +167,6 @@ export class IoService implements OnDestroy {
     inputs = this._resolveInputs(inputs);
 
     Object.keys(inputs).forEach(p => (compInst[p] = inputs[p]));
-
     // Mark component for check to re-render with new inputs
     if (this.compCdr) {
       this.compCdr.markForCheck();
@@ -192,7 +192,10 @@ export class IoService implements OnDestroy {
       .forEach(p =>
         compInst[p]
           .pipe(takeUntil(this.outputsShouldDisconnect$))
-          .subscribe((event: any) => (outputs[p] as EventHandler)(event)),
+          .subscribe((event: any) => {
+            this.cdr.markForCheck();
+            return (outputs[p] as EventHandler)(event);
+          }),
       );
   }
 

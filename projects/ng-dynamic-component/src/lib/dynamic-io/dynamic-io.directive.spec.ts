@@ -1,5 +1,10 @@
 // tslint:disable: no-string-literal
-import { ChangeDetectorRef, SimpleChange, SimpleChanges } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  SimpleChange,
+  SimpleChanges,
+} from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { Observable, Subject } from 'rxjs';
@@ -591,6 +596,37 @@ describe('Directive: DynamicIo', () => {
 
       expect(outputHandler).toHaveBeenCalledTimes(1);
       expect(outputHandler).toHaveBeenCalledWith('data');
+    });
+  });
+
+  describe('outputs with OnPush', () => {
+    function testOnPush(withArgs: boolean) {
+      const template = `<span [class]="value"></span><component-injector [ndcDynamicOutputs]="outputs"></component-injector>`;
+      TestBed.overrideComponent(TestComponent, {
+        set: { template, changeDetection: ChangeDetectionStrategy.OnPush },
+      });
+      const fixture = TestBed.createComponent(TestComponent);
+      const injectorComp = getComponentInjectorFrom(fixture).component;
+      const injectedComp = injectorComp.component;
+
+      const eventHandler = (v: string) =>
+        ((fixture.componentInstance as any).value = v);
+      fixture.componentInstance['outputs'] = {
+        onEvent: withArgs ? { handler: eventHandler } : eventHandler,
+      };
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('.foo')).toBeFalsy();
+      injectedComp.onEvent.emit('foo');
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('.foo')).toBeTruthy();
+    }
+
+    it('should mark host component for check when calling event handler', () => {
+      testOnPush(false);
+    });
+
+    it('should mark host component for check when calling output with args', () => {
+      testOnPush(true);
     });
   });
 });
