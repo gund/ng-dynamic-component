@@ -1,5 +1,12 @@
 # ng-dynamic-component - Changelog
 
+## [8.0.1](https://github.com/gund/ng-dynamic-component/compare/v8.0.0...v8.0.1) (2021-01-16)
+
+
+### Bug Fixes
+
+* **io:** invoke markForCheck when output handler is called ([2a262d2](https://github.com/gund/ng-dynamic-component/commit/2a262d2d5f9e6dce760e8f927515e8ace6afab07)), closes [#430](https://github.com/gund/ng-dynamic-component/issues/430)
+
 # [8.0.0](https://github.com/gund/ng-dynamic-component/compare/v7.0.3...v8.0.0) (2020-11-19)
 
 
