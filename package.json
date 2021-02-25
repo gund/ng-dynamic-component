@@ -20,11 +20,11 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/common": "^11.0.1",
-    "@angular/compiler": "^11.0.1",
-    "@angular/core": "^11.0.1",
-    "@angular/platform-browser": "^11.0.1",
-    "@angular/platform-browser-dynamic": "^11.0.1",
+    "@angular/common": "^11.1.2",
+    "@angular/compiler": "^11.1.2",
+    "@angular/core": "^11.1.2",
+    "@angular/platform-browser": "^11.1.2",
+    "@angular/platform-browser-dynamic": "^11.1.2",
     "rxjs": "^6.6.0",
     "tslib": "^2.0.0",
     "zone.js": "^0.10.3"
