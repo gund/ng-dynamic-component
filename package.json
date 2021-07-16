@@ -19,13 +19,15 @@
     "semantic-release": "semantic-release"
   },
   "private": true,
-  "dependencies": {
-    "@angular/common": "^11.0.1",
-    "@angular/compiler": "^11.0.1",
-    "@angular/core": "^11.0.1",
-    "@angular/platform-browser": "^11.0.1",
-    "@angular/platform-browser-dynamic": "^11.0.1",
+  "peerDependencies": {
+    "@angular/common": "^12.0.1",
+    "@angular/compiler": "^12.0.1",
+    "@angular/core": "^12.0.1",
+    "@angular/platform-browser": "^12.0.1",
+    "@angular/platform-browser-dynamic": "^12.0.1",
     "rxjs": "^6.6.0",
+  },
+  "dependencies": {
     "tslib": "^2.0.0",
     "zone.js": "^0.10.3"
   },
