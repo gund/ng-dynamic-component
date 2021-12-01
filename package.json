@@ -75,7 +75,19 @@
   "commitlint": {
     "extends": [
       "@commitlint/config-conventional"
-    ]
+    ],
+    "rules": {
+      "body-max-line-length": [
+        1,
+        "always",
+        100
+      ],
+      "footer-max-line-length": [
+        1,
+        "always",
+        100
+      ]
+    }
   },
   "lint-staged": {
     "**/*.{ts,js,json,?css,html}": [
