@@ -1,5 +1,17 @@
 # ng-dynamic-component - Changelog
 
+# [10.0.0](https://github.com/gund/ng-dynamic-component/compare/v9.0.0...v10.0.0) (2021-12-01)
+
+
+### Features
+
+* **ng:** update to Angular v13 ([b74a0bb](https://github.com/gund/ng-dynamic-component/commit/b74a0bb8a70b0ac496d0d815f1606ee9095f8427))
+
+
+### BREAKING CHANGES
+
+* **ng:** Now library updated and compiled with Angular v13. No API changes.
+
 # [9.0.0](https://github.com/gund/ng-dynamic-component/compare/v8.0.1...v9.0.0) (2021-12-01)
 
 
