@@ -19,9 +19,21 @@
         "test": {
           "builder": "@angular-builders/jest:run",
           "options": {}
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/ng-dynamic-component/**/*.ts",
+              "projects/ng-dynamic-component/**/*.html"
+            ]
+          }
         }
       }
     }
   },
-  "defaultProject": "ng-dynamic-component"
+  "defaultProject": "ng-dynamic-component",
+  "cli": {
+    "defaultCollection": "@angular-eslint/schematics"
+  }
 }

@@ -1,4 +1,4 @@
-// tslint:disable: no-string-literal
+/* eslint-disable @typescript-eslint/dot-notation */
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,

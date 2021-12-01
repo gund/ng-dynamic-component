@@ -7,7 +7,7 @@ import {
 } from './token';
 
 @Directive({
-  // tslint:disable-next-line: directive-selector
+  // eslint-disable-next-line @angular-eslint/directive-selector
   selector: '[ngComponentOutlet]',
   exportAs: 'ndcComponentOutletInjector',
   providers: [
