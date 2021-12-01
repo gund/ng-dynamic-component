@@ -1,5 +1,25 @@
 # ng-dynamic-component - Changelog
 
+# [9.0.0](https://github.com/gund/ng-dynamic-component/compare/v8.0.1...v9.0.0) (2021-12-01)
+
+
+### Bug Fixes
+
+* **api:** remove deprecated APIs ([f7757de](https://github.com/gund/ng-dynamic-component/commit/f7757dec30e13fbca086eb8851cceb422baa106a))
+
+
+### Features
+
+* **ng:** update to Angular v12 ([fd6f953](https://github.com/gund/ng-dynamic-component/commit/fd6f95340db37d5763031319bc9e86c3c4b7d690)), closes [#454](https://github.com/gund/ng-dynamic-component/issues/454)
+
+
+### BREAKING CHANGES
+
+* **ng:** No API changes were introduced
+* **api:** Removed APIs:
+- Removed `ComponentInjector` - use `DynamicComponentInjector`
+- Removed `COMPONENT_INJECTOR` - use `DynamicComponentInjectorToken`
+
 ## [8.0.1](https://github.com/gund/ng-dynamic-component/compare/v8.0.0...v8.0.1) (2021-01-16)
 
 
