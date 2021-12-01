@@ -10,6 +10,8 @@
 * **lib:** remove barrel re-exports ([b5363b2](https://github.com/gund/ng-dynamic-component/commit/b5363b20838b8324aeb23cba8f1974b671fbea19))
 * **lib:** remove barrels from public API exports ([42465dd](https://github.com/gund/ng-dynamic-component/commit/42465dd997fc96e478ba4850cfede9aac3abe2ee))
 
+# [10.0.0](https://github.com/gund/ng-dynamic-component/compare/v9.0.0...v10.0.0) (2021-12-01)
+
 
 ### Features
 
