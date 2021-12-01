@@ -14,6 +14,7 @@
 
 | Angular | ng-dynamic-component | NPM package                   |
 | ------- | -------------------- | ----------------------------- |
+| 12.x.x  | 9.x.x                | `ng-dynamic-component@^9.0.0` |
 | 11.x.x  | 8.x.x                | `ng-dynamic-component@^8.0.0` |
 | 10.x.x  | 7.x.x                | `ng-dynamic-component@^7.0.0` |
 | 9.x.x   | 6.x.x                | `ng-dynamic-component@^6.0.0` |
@@ -32,7 +33,8 @@ $ npm install ng-dynamic-component --save
 
 #### Error message in the IDE
 
-If you have an error like __Can't bind to 'ndcDynamicInputs' since it isn't a known property of 'ndc-dynamic'__ in your IDE, but the project compiles just fine, you might want to try installing the no-barrels version instead.
+If you have an error like **Can't bind to 'ndcDynamicInputs' since it isn't a known property of 'ndc-dynamic'** in your IDE, but the project compiles just fine, you might want to try installing the no-barrels version instead.
+
 ```bash
 $ npm install --save ng-dynamic-component@no-barrels
 ```
