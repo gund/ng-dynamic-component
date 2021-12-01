@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, ComponentRef, Type, ViewChild } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import {
   InjectedComponent,
   TestComponent as TestComponentBase,
@@ -24,17 +23,19 @@ describe('ComponentOutletInjectorDirective', () => {
   let fixture: ComponentFixture<TestComponent>;
   let directive: ComponentOutletInjectorDirective;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      imports: [CommonModule, TestModule],
-      declarations: [ComponentOutletInjectorDirective, TestComponent],
-    }).compileComponents();
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        imports: [CommonModule, TestModule],
+        declarations: [ComponentOutletInjectorDirective, TestComponent],
+      }).compileComponents();
 
-    fixture = TestBed.createComponent(TestComponent);
-    fixture.componentInstance.comp = InjectedComponent;
-    fixture.detectChanges();
-    directive = fixture.componentInstance.directive;
-  }));
+      fixture = TestBed.createComponent(TestComponent);
+      fixture.componentInstance.comp = InjectedComponent;
+      fixture.detectChanges();
+      directive = fixture.componentInstance.directive;
+    }),
+  );
 
   it('should be bound to `[ngComponentOutlet]` directive', () => {
     expect(directive).toBeInstanceOf(ComponentOutletInjectorDirective);

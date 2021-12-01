@@ -1,8 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewChild } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-
 import {
   AnotherInjectedComponent,
   getByPredicate,
@@ -44,24 +43,26 @@ describe('DynamicAttributesDirective', () => {
       attrs: AttributesMap;
     }
 
-    beforeEach(async(() => {
-      TestBed.configureTestingModule({
-        imports: [CommonModule, TestModule],
-        declarations: [
-          DynamicAttributesDirective,
-          TestComponent,
-          ComponentOutletInjectorDirective,
-        ],
-        providers: [
-          {
-            provide: DynamicComponentInjectorToken,
-            useExisting: DynamicComponent,
-          },
-        ],
-      }).compileComponents();
+    beforeEach(
+      waitForAsync(() => {
+        TestBed.configureTestingModule({
+          imports: [CommonModule, TestModule],
+          declarations: [
+            DynamicAttributesDirective,
+            TestComponent,
+            ComponentOutletInjectorDirective,
+          ],
+          providers: [
+            {
+              provide: DynamicComponentInjectorToken,
+              useExisting: DynamicComponent,
+            },
+          ],
+        }).compileComponents();
 
-      fixture = TestBed.createComponent(TestComponent);
-    }));
+        fixture = TestBed.createComponent(TestComponent);
+      }),
+    );
 
     it('should set attrs on injected component', () => {
       const attrs = {
@@ -237,24 +238,26 @@ describe('DynamicAttributesDirective', () => {
       attrs: AttributesMap;
     }
 
-    beforeEach(async(() => {
-      TestBed.configureTestingModule({
-        imports: [CommonModule, TestModule],
-        declarations: [
-          DynamicAttributesDirective,
-          TestComponent,
-          ComponentOutletInjectorDirective,
-        ],
-        providers: [
-          {
-            provide: DynamicComponentInjectorToken,
-            useExisting: DynamicComponent,
-          },
-        ],
-      }).compileComponents();
+    beforeEach(
+      waitForAsync(() => {
+        TestBed.configureTestingModule({
+          imports: [CommonModule, TestModule],
+          declarations: [
+            DynamicAttributesDirective,
+            TestComponent,
+            ComponentOutletInjectorDirective,
+          ],
+          providers: [
+            {
+              provide: DynamicComponentInjectorToken,
+              useExisting: DynamicComponent,
+            },
+          ],
+        }).compileComponents();
 
-      fixture = TestBed.createComponent(TestComponent);
-    }));
+        fixture = TestBed.createComponent(TestComponent);
+      }),
+    );
 
     it('should set attributes on injected component', () => {
       const attrs = {
@@ -291,24 +294,26 @@ describe('DynamicAttributesDirective', () => {
       attrs: AttributesMap;
     }
 
-    beforeEach(async(() => {
-      TestBed.configureTestingModule({
-        imports: [CommonModule, TestModule],
-        declarations: [
-          DynamicComponent,
-          DynamicAttributesDirective,
-          TestComponent,
-        ],
-        providers: [
-          {
-            provide: DynamicComponentInjectorToken,
-            useExisting: DynamicComponent,
-          },
-        ],
-      }).compileComponents();
+    beforeEach(
+      waitForAsync(() => {
+        TestBed.configureTestingModule({
+          imports: [CommonModule, TestModule],
+          declarations: [
+            DynamicComponent,
+            DynamicAttributesDirective,
+            TestComponent,
+          ],
+          providers: [
+            {
+              provide: DynamicComponentInjectorToken,
+              useExisting: DynamicComponent,
+            },
+          ],
+        }).compileComponents();
 
-      fixture = TestBed.createComponent(TestComponent);
-    }));
+        fixture = TestBed.createComponent(TestComponent);
+      }),
+    );
 
     it('should set attributes on injected component', () => {
       const attrs = {
@@ -338,24 +343,26 @@ describe('DynamicAttributesDirective', () => {
       attrs: AttributesMap;
     }
 
-    beforeEach(async(() => {
-      TestBed.configureTestingModule({
-        imports: [CommonModule],
-        declarations: [
-          DynamicAttributesDirective,
-          TestComponent,
-          ComponentOutletInjectorDirective,
-        ],
-        providers: [
-          {
-            provide: DynamicComponentInjectorToken,
-            useExisting: DynamicComponent,
-          },
-        ],
-      }).compileComponents();
+    beforeEach(
+      waitForAsync(() => {
+        TestBed.configureTestingModule({
+          imports: [CommonModule],
+          declarations: [
+            DynamicAttributesDirective,
+            TestComponent,
+            ComponentOutletInjectorDirective,
+          ],
+          providers: [
+            {
+              provide: DynamicComponentInjectorToken,
+              useExisting: DynamicComponent,
+            },
+          ],
+        }).compileComponents();
 
-      fixture = TestBed.createComponent(TestComponent);
-    }));
+        fixture = TestBed.createComponent(TestComponent);
+      }),
+    );
 
     it('should not do anything', () => {
       fixture.componentInstance.attrs = { 'my-attr': 'val' };
