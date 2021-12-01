@@ -48,7 +48,7 @@ export interface DirectiveRef<T> {
   hostView: ViewRef;
   location: ElementRef;
   changeDetectorRef: ChangeDetectorRef;
-  // tslint:disable-next-line: ban-types
+  // eslint-disable-next-line @typescript-eslint/ban-types
   onDestroy: (callback: Function) => void;
 }
 
@@ -95,7 +95,7 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
 
   private get hostVcr(): ViewContainerRef {
     // NOTE: Accessing private APIs of Angular
-    // tslint:disable-next-line: no-string-literal
+    // eslint-disable-next-line @typescript-eslint/dot-notation
     return this.componentRef['_viewRef']['_viewContainerRef'];
   }
 

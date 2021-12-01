@@ -65,7 +65,6 @@ export class IoService implements OnDestroy {
   }
 
   private get compCdr(): ChangeDetectorRef {
-    // tslint:disable-next-line: deprecation
     return this.compRef ? this.compRef.injector.get(ChangeDetectorRef) : null;
   }
 

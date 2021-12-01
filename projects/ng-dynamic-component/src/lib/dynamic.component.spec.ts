@@ -20,7 +20,7 @@ import {
 } from '../test';
 import { DynamicComponent } from './dynamic.component';
 
-/* tslint:disable:no-unused-variable */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 const token = new InjectionToken<any>('TOKEN');
 const tokenValue = {};
@@ -218,7 +218,7 @@ describe('DynamicComponent', () => {
 });
 
 @Component({
-  // tslint:disable-next-line: component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'test',
   template: ``,
 })

@@ -21,17 +21,19 @@
           "options": {}
         },
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "tsConfig": [
-              "projects/ng-dynamic-component/tsconfig.lib.json",
-              "projects/ng-dynamic-component/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**"]
+            "lintFilePatterns": [
+              "projects/ng-dynamic-component/**/*.ts",
+              "projects/ng-dynamic-component/**/*.html"
+            ]
           }
         }
       }
     }
   },
-  "defaultProject": "ng-dynamic-component"
+  "defaultProject": "ng-dynamic-component",
+  "cli": {
+    "defaultCollection": "@angular-eslint/schematics"
+  }
 }

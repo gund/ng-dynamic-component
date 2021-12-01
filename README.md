@@ -12,18 +12,19 @@
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 [![Greenkeeper badge](https://badges.greenkeeper.io/gund/ng-dynamic-component.svg)](https://greenkeeper.io/)
 
-| Angular | ng-dynamic-component | NPM package                   |
-| ------- | -------------------- | ----------------------------- |
-| 12.x.x  | 9.x.x                | `ng-dynamic-component@^9.0.0` |
-| 11.x.x  | 8.x.x                | `ng-dynamic-component@^8.0.0` |
-| 10.x.x  | 7.x.x                | `ng-dynamic-component@^7.0.0` |
-| 9.x.x   | 6.x.x                | `ng-dynamic-component@^6.0.0` |
-| 8.x.x   | 5.x.x                | `ng-dynamic-component@^5.0.0` |
-| 7.x.x   | 4.x.x                | `ng-dynamic-component@^4.0.0` |
-| 6.x.x   | 3.x.x                | `ng-dynamic-component@^3.0.0` |
-| 5.x.x   | 2.x.x                | `ng-dynamic-component@^2.0.0` |
-| 4.x.x   | 1.x.x                | `ng-dynamic-component@^1.0.0` |
-| 2.x.x   | 0.x.x                | `ng-dynamic-component@^0.0.0` |
+| Angular | ng-dynamic-component | NPM package                    |
+| ------- | -------------------- | ------------------------------ |
+| 13.x.x  | 10.x.x               | `ng-dynamic-component@^10.0.0` |
+| 12.x.x  | 9.x.x                | `ng-dynamic-component@^9.0.0`  |
+| 11.x.x  | 8.x.x                | `ng-dynamic-component@^8.0.0`  |
+| 10.x.x  | 7.x.x                | `ng-dynamic-component@^7.0.0`  |
+| 9.x.x   | 6.x.x                | `ng-dynamic-component@^6.0.0`  |
+| 8.x.x   | 5.x.x                | `ng-dynamic-component@^5.0.0`  |
+| 7.x.x   | 4.x.x                | `ng-dynamic-component@^4.0.0`  |
+| 6.x.x   | 3.x.x                | `ng-dynamic-component@^3.0.0`  |
+| 5.x.x   | 2.x.x                | `ng-dynamic-component@^2.0.0`  |
+| 4.x.x   | 1.x.x                | `ng-dynamic-component@^1.0.0`  |
+| 2.x.x   | 0.x.x                | `ng-dynamic-component@^0.0.0`  |
 
 ## Installation
 
