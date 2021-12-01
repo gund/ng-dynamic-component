@@ -22,9 +22,10 @@ import {
 const getInjectedComponentFrom = getByPredicate<InjectedComponent>(
   By.directive(InjectedComponent),
 );
-const getAnotherInjectedComponentFrom = getByPredicate<
-  AnotherInjectedComponent
->(By.directive(AnotherInjectedComponent));
+const getAnotherInjectedComponentFrom =
+  getByPredicate<AnotherInjectedComponent>(
+    By.directive(AnotherInjectedComponent),
+  );
 
 describe('DynamicAttributesDirective', () => {
   describe('with `ngComponentOutlet`', () => {
@@ -143,7 +144,7 @@ describe('DynamicAttributesDirective', () => {
       fixture.detectChanges();
 
       // Angular renderer sets removed attrs to null
-      Object.keys(attrs).forEach(k => (attrs[k] = null));
+      Object.keys(attrs).forEach((k) => (attrs[k] = null));
       expect(injectedElem.attributes).toEqual(attrs);
     });
 
@@ -216,8 +217,8 @@ describe('DynamicAttributesDirective', () => {
 
       fixture.detectChanges();
 
-      const injectedElem = getAnotherInjectedComponentFrom(fixture)
-        .componentElem;
+      const injectedElem =
+        getAnotherInjectedComponentFrom(fixture).componentElem;
 
       expect(injectedElem.attributes).toMatchObject(attrs);
     });

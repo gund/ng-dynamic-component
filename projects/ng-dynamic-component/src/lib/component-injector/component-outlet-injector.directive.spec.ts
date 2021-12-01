@@ -9,9 +9,7 @@ import {
 import { ComponentOutletInjectorDirective } from './component-outlet-injector.directive';
 
 @Component({
-  template: `
-    <ng-container *ngComponentOutlet="comp"></ng-container>
-  `,
+  template: ` <ng-container *ngComponentOutlet="comp"></ng-container> `,
 })
 class TestComponent extends TestComponentBase {
   @ViewChild(ComponentOutletInjectorDirective, { static: false })

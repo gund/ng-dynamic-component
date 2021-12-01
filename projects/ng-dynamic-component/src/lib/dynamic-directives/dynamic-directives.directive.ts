@@ -161,7 +161,7 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
   }
 
   private updateDirectives() {
-    this.directives.forEach(dir => this.updateDirective(dir));
+    this.directives.forEach((dir) => this.updateDirective(dir));
   }
 
   private updateDirective(dirDef: DynamicDirectiveDef<any>) {
@@ -198,7 +198,7 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
   }
 
   private destroyAllDirectives() {
-    this.dirRef.forEach(dir => this.destroyDirRef(dir));
+    this.dirRef.forEach((dir) => this.destroyDirRef(dir));
     this.dirRef.clear();
     this.dirIo.clear();
   }

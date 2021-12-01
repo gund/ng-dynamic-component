@@ -24,5 +24,5 @@ export function getCtorParamTypes(
  */
 export function extractNgParamTypes(type: Type<any>): any[] | undefined {
   // NOTE: Accessing private APIs of Angular
-  return (type as any)?.ctorParameters?.()?.map(param => param.type);
+  return (type as any)?.ctorParameters?.()?.map((param) => param.type);
 }

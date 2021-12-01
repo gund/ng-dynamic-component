@@ -405,7 +405,7 @@ describe('Directive: DynamicIo', () => {
     it('should unbind outputs when component destroys', () => {
       const tearDownFn = jest.fn();
 
-      injectedComp.onEvent = new Observable(_ => tearDownFn) as any;
+      injectedComp.onEvent = new Observable((_) => tearDownFn) as any;
 
       fixture.detectChanges();
 
