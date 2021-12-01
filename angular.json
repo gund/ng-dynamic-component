@@ -19,16 +19,6 @@
         "test": {
           "builder": "@angular-builders/jest:run",
           "options": {}
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/ng-dynamic-component/tsconfig.lib.json",
-              "projects/ng-dynamic-component/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**"]
-          }
         }
       }
     }

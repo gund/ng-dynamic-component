@@ -68,7 +68,7 @@ describe('DynamicAttributesDirective', () => {
     it('should set attrs on injected component', () => {
       const attrs = {
         'attr-one': 'val-1',
-        attrTwo: 'val-two',
+        'attr-two': 'val-two',
       };
       fixture.componentInstance.attrs = attrs;
 
@@ -96,7 +96,7 @@ describe('DynamicAttributesDirective', () => {
 
       const attrs = {
         'attr-one': 'val-1',
-        attrTwo: 'val-two',
+        'attr-two': 'val-two',
       };
       fixture.componentInstance.attrs = attrs;
 
@@ -108,7 +108,7 @@ describe('DynamicAttributesDirective', () => {
     it('should replace attrs if new object set', () => {
       const attrs = {
         'attr-one': 'val-1',
-        attrTwo: 'val-two',
+        'attr-two': 'val-two',
       };
       fixture.componentInstance.attrs = attrs;
       fixture.detectChanges();
@@ -130,7 +130,7 @@ describe('DynamicAttributesDirective', () => {
     it('should unset attrs if set to null/undefined', () => {
       const attrs = {
         'attr-one': 'val-1',
-        attrTwo: 'val-two',
+        'attr-two': 'val-two',
       };
       fixture.componentInstance.attrs = attrs;
       fixture.detectChanges();
@@ -143,15 +143,13 @@ describe('DynamicAttributesDirective', () => {
 
       fixture.detectChanges();
 
-      // Angular renderer sets removed attrs to null
-      Object.keys(attrs).forEach((k) => (attrs[k] = null));
-      expect(injectedElem.attributes).toEqual(attrs);
+      expect(injectedElem.attributes).toEqual({});
     });
 
     it('should add new attr if added to object', () => {
       const attrs = {
         'attr-one': 'val-1',
-        attrTwo: 'val-two',
+        'attr-two': 'val-two',
       } as any;
       fixture.componentInstance.attrs = attrs;
       fixture.detectChanges();
@@ -169,7 +167,7 @@ describe('DynamicAttributesDirective', () => {
     it('should remove attr if removed from object', () => {
       const attrs = {
         'attr-one': 'val-1',
-        attrTwo: 'val-two',
+        'attr-two': 'val-two',
       };
       fixture.componentInstance.attrs = attrs;
       fixture.detectChanges();
@@ -178,18 +176,16 @@ describe('DynamicAttributesDirective', () => {
 
       expect(injectedElem.attributes).toEqual(attrs);
 
-      delete attrs.attrTwo;
+      delete attrs['attr-two'];
       fixture.detectChanges();
 
-      // Angular renderer sets removed attrs to null
-      attrs.attrTwo = null;
       expect(injectedElem.attributes).toEqual(attrs);
     });
 
     it('should update attr if updated in object', () => {
       const attrs = {
         'attr-one': 'val-1',
-        attrTwo: 'val-two',
+        'attr-two': 'val-two',
       };
       fixture.componentInstance.attrs = attrs;
       fixture.detectChanges();
@@ -198,7 +194,7 @@ describe('DynamicAttributesDirective', () => {
 
       expect(injectedElem.attributes).toEqual(attrs);
 
-      attrs.attrTwo = 'new';
+      attrs['attr-two'] = 'new';
       fixture.detectChanges();
 
       expect(injectedElem.attributes).toEqual(attrs);
@@ -207,7 +203,7 @@ describe('DynamicAttributesDirective', () => {
     it('should reassign attrs when new component injected', () => {
       const attrs = {
         'attr-one': 'val-1',
-        attrTwo: 'val-two',
+        'attr-two': 'val-two',
       };
       fixture.componentInstance.attrs = attrs;
 
@@ -263,7 +259,7 @@ describe('DynamicAttributesDirective', () => {
     it('should set attributes on injected component', () => {
       const attrs = {
         'attr-one': 'val-1',
-        attrTwo: 'val-two',
+        'attr-two': 'val-two',
       };
       fixture.componentInstance.attrs = attrs;
 
@@ -319,7 +315,7 @@ describe('DynamicAttributesDirective', () => {
     it('should set attributes on injected component', () => {
       const attrs = {
         'attr-one': 'val-1',
-        attrTwo: 'val-two',
+        'attr-two': 'val-two',
       };
       fixture.componentInstance.attrs = attrs;
 
