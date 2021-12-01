@@ -16,7 +16,8 @@ import {
 import { IoService } from '../io/io.service';
 import { InputsType, OutputsType } from '../io/types';
 
-// tslint:disable-next-line: no-conflicting-lifecycle
+/* eslint-disable @angular-eslint/no-conflicting-lifecycle */
+
 @Directive({
   selector:
     '[ndcDynamicInputs],[ndcDynamicOutputs],[ngComponentOutletNdcDynamicInputs],[ngComponentOutletNdcDynamicOutputs]',

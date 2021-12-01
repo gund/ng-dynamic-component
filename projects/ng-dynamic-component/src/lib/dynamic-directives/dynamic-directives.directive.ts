@@ -50,12 +50,13 @@ export interface DirectiveRef<T> {
   hostView: ViewRef;
   location: ElementRef;
   changeDetectorRef: ChangeDetectorRef;
-  // tslint:disable-next-line: ban-types
+  // eslint-disable-next-line @typescript-eslint/ban-types
   onDestroy: (callback: Function) => void;
 }
 
 @Directive({
   selector: '[ndcDynamicDirectives],[ngComponentOutletNdcDynamicDirectives]',
+  providers: [IoFactoryService],
 })
 export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
   @Input()
@@ -96,7 +97,7 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
 
   private get hostVcr(): ViewContainerRef {
     // NOTE: Accessing private APIs of Angular
-    // tslint:disable-next-line: no-string-literal
+    // eslint-disable-next-line @typescript-eslint/dot-notation
     return this.componentRef['_viewRef']['_viewContainerRef'];
   }
 
@@ -162,7 +163,7 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
   }
 
   private updateDirectives() {
-    this.directives.forEach(dir => this.updateDirective(dir));
+    this.directives.forEach((dir) => this.updateDirective(dir));
   }
 
   private updateDirective(dirDef: DynamicDirectiveDef<any>) {
@@ -199,7 +200,7 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
   }
 
   private destroyAllDirectives() {
-    this.dirRef.forEach(dir => this.destroyDirRef(dir));
+    this.dirRef.forEach((dir) => this.destroyDirRef(dir));
     this.dirRef.clear();
     this.dirIo.clear();
   }

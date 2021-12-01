@@ -65,7 +65,6 @@ export class IoService implements OnDestroy {
   }
 
   private get compCdr(): ChangeDetectorRef {
-    // tslint:disable-next-line: deprecation
     return this.compRef ? this.compRef.injector.get(ChangeDetectorRef) : null;
   }
 
@@ -74,6 +73,7 @@ export class IoService implements OnDestroy {
     private cfr: ComponentFactoryResolver,
     @Inject(EventArgumentToken)
     private eventArgument: string,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnDestroy(): void {
@@ -89,7 +89,7 @@ export class IoService implements OnDestroy {
 
     if (options.trackOutputChanges) {
       const outputsDiffer = this.differs.find({}).create();
-      this.outputsChanged = outputs => !!outputsDiffer.diff(outputs);
+      this.outputsChanged = (outputs) => !!outputsDiffer.diff(outputs);
     }
   }
 
@@ -165,8 +165,7 @@ export class IoService implements OnDestroy {
 
     inputs = this._resolveInputs(inputs);
 
-    Object.keys(inputs).forEach(p => (compInst[p] = inputs[p]));
-
+    Object.keys(inputs).forEach((p) => (compInst[p] = inputs[p]));
     // Mark component for check to re-render with new inputs
     if (this.compCdr) {
       this.compCdr.markForCheck();
@@ -188,11 +187,14 @@ export class IoService implements OnDestroy {
     outputs = this._resolveOutputs(outputs);
 
     Object.keys(outputs)
-      .filter(p => compInst[p])
-      .forEach(p =>
+      .filter((p) => compInst[p])
+      .forEach((p) =>
         compInst[p]
           .pipe(takeUntil(this.outputsShouldDisconnect$))
-          .subscribe((event: any) => (outputs[p] as EventHandler)(event)),
+          .subscribe((event: any) => {
+            this.cdr.markForCheck();
+            return (outputs[p] as EventHandler)(event);
+          }),
       );
   }
 
@@ -229,7 +231,7 @@ export class IoService implements OnDestroy {
     const inputs = this.inputs;
 
     Object.keys(inputs).forEach(
-      prop => (changes[prop] = createNewChange(inputs[prop])),
+      (prop) => (changes[prop] = createNewChange(inputs[prop])),
     );
 
     return this._resolveChanges(changes);
@@ -239,11 +241,11 @@ export class IoService implements OnDestroy {
     const changes: SimpleChanges = {};
 
     differ.forEachAddedItem(
-      record => (changes[record.key] = createNewChange(record.currentValue)),
+      (record) => (changes[record.key] = createNewChange(record.currentValue)),
     );
 
     differ.forEachChangedItem(
-      record =>
+      (record) =>
         (changes[record.key] = createChange(
           record.currentValue,
           record.previousValue,
@@ -294,7 +296,7 @@ export class IoService implements OnDestroy {
   private _processOutputs(outputs: OutputsType): OutputsTypeProcessed {
     const processedOutputs: OutputsTypeProcessed = {};
 
-    Object.keys(outputs).forEach(key => {
+    Object.keys(outputs).forEach((key) => {
       const outputExpr = outputs[key];
 
       if (typeof outputExpr === 'function') {
@@ -312,8 +314,8 @@ export class IoService implements OnDestroy {
     const { handler } = output;
     const args = 'args' in output ? output.args || [] : [this.eventArgument];
 
-    return event =>
-      handler(...args.map(arg => (arg === this.eventArgument ? event : arg)));
+    return (event) =>
+      handler(...args.map((arg) => (arg === this.eventArgument ? event : arg)));
   }
 
   private _resolveChanges(changes: SimpleChanges): SimpleChanges {
@@ -330,7 +332,7 @@ export class IoService implements OnDestroy {
   ): T {
     const newIO = {};
 
-    Object.keys(io).forEach(key => {
+    Object.keys(io).forEach((key) => {
       const newKey = this._findPropByTplInMapping(key, mapping) || key;
       newIO[newKey] = io[key];
     });

@@ -102,11 +102,11 @@ export class DynamicAttributesDirective implements DoCheck {
       return;
     }
 
-    Object.keys(actions.set).forEach(key =>
+    Object.keys(actions.set).forEach((key) =>
       this.setAttribute(key, actions.set[key]),
     );
 
-    actions.remove.forEach(key => this.removeAttribute(key));
+    actions.remove.forEach((key) => this.removeAttribute(key));
   }
 
   private _changesToAttrActions(
@@ -117,9 +117,11 @@ export class DynamicAttributesDirective implements DoCheck {
       remove: [],
     };
 
-    changes.forEachAddedItem(r => (attrActions.set[r.key] = r.currentValue));
-    changes.forEachChangedItem(r => (attrActions.set[r.key] = r.currentValue));
-    changes.forEachRemovedItem(r => attrActions.remove.push(r.key));
+    changes.forEachAddedItem((r) => (attrActions.set[r.key] = r.currentValue));
+    changes.forEachChangedItem(
+      (r) => (attrActions.set[r.key] = r.currentValue),
+    );
+    changes.forEachRemovedItem((r) => attrActions.remove.push(r.key));
 
     return attrActions;
   }

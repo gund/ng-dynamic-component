@@ -15,7 +15,7 @@ describe('Util', () => {
     });
 
     it('should return `undefined` for constructor not processed by NGC', () => {
-      // tslint:disable-next-line: component-selector
+      // eslint-disable-next-line @angular-eslint/component-selector
       @Component({ selector: 'test', template: '' })
       class TestComponent {}
 

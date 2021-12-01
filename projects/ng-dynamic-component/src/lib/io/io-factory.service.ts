@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   ComponentFactoryResolver,
   Inject,
   Injectable,
@@ -8,16 +9,17 @@ import {
 import { EventArgumentToken } from './event-argument';
 import { IoService } from './io.service';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class IoFactoryService {
   constructor(
     private differs: KeyValueDiffers,
     private cfr: ComponentFactoryResolver,
     @Inject(EventArgumentToken)
     private eventArgument: string,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   create() {
-    return new IoService(this.differs, this.cfr, this.eventArgument);
+    return new IoService(this.differs, this.cfr, this.eventArgument, this.cdr);
   }
 }

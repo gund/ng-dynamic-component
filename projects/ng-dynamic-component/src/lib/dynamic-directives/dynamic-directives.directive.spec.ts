@@ -1,5 +1,5 @@
-// tslint:disable: no-string-literal
-// tslint:disable: directive-selector
+/* eslint-disable @typescript-eslint/dot-notation */
+/* eslint-disable @angular-eslint/directive-selector */
 import { CommonModule, NgClass } from '@angular/common';
 import {
   AfterContentChecked,
@@ -50,7 +50,8 @@ class MockDirective
     AfterViewInit,
     AfterViewChecked,
     AfterContentInit,
-    AfterContentChecked {
+    AfterContentChecked
+{
   static INSTANCES = new Set<MockDirective>();
   @Input()
   set in(val: any) {
@@ -60,7 +61,7 @@ class MockDirective
   get in(): any {
     return this._in;
   }
-  // tslint:disable-next-line: variable-name
+  // eslint-disable-next-line @typescript-eslint/naming-convention, no-underscore-dangle, id-blacklist, id-match
   private _in: any;
   @Input()
   in2: any;
@@ -254,7 +255,8 @@ describe('Directive: DynamicDirectives', () => {
         By.directive(ComponentInjectorComponent),
       );
       expect(compInjectorElem).toBeTruthy();
-      const compInjector = compInjectorElem.componentInstance as ComponentInjectorComponent;
+      const compInjector =
+        compInjectorElem.componentInstance as ComponentInjectorComponent;
       compInjector.component = null;
 
       fixture.detectChanges();
@@ -267,7 +269,8 @@ describe('Directive: DynamicDirectives', () => {
         By.directive(ComponentInjectorComponent),
       );
       expect(compInjectorElem).toBeTruthy();
-      const compInjector = compInjectorElem.componentInstance as ComponentInjectorComponent;
+      const compInjector =
+        compInjectorElem.componentInstance as ComponentInjectorComponent;
 
       hostComp.dirs = [dynamicDirectiveDef(MockDirective)];
 
@@ -290,7 +293,8 @@ describe('Directive: DynamicDirectives', () => {
         By.directive(ComponentInjectorComponent),
       );
       expect(compInjectorElem).toBeTruthy();
-      const compInjector = compInjectorElem.componentInstance as ComponentInjectorComponent;
+      const compInjector =
+        compInjectorElem.componentInstance as ComponentInjectorComponent;
 
       hostComp.dirs = [dynamicDirectiveDef(MockDirective)];
 

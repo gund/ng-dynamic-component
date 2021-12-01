@@ -5,15 +5,14 @@ import {
   Injector,
   NO_ERRORS_SCHEMA,
   QueryList,
+  StaticProvider,
   TemplateRef,
   Type,
   ViewChildren,
   ViewContainerRef,
-  StaticProvider,
 } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-
 import {
   AnotherInjectedComponent,
   InjectedComponent,
@@ -21,7 +20,7 @@ import {
 } from '../test';
 import { DynamicComponent } from './dynamic.component';
 
-/* tslint:disable:no-unused-variable */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 const token = new InjectionToken<any>('TOKEN');
 const tokenValue = {};
@@ -35,16 +34,18 @@ describe('DynamicComponent', () => {
   let fixture: ComponentFixture<TestComponent>;
   let createComp = true;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      imports: [TestModule],
-      declarations: [TestComponent, DynamicComponent],
-    }).overrideComponent(TestComponent, { set: { template: testTemplate } });
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        imports: [TestModule],
+        declarations: [TestComponent, DynamicComponent],
+      }).overrideComponent(TestComponent, { set: { template: testTemplate } });
 
-    if (createComp) {
-      fixture = TestBed.createComponent(TestComponent) as any;
-    }
-  }));
+      if (createComp) {
+        fixture = TestBed.createComponent(TestComponent) as any;
+      }
+    }),
+  );
 
   it('should do nothing when [ndcDynamicComponent] not provided', () => {
     fixture.componentInstance.component = null;
@@ -65,7 +66,7 @@ describe('DynamicComponent', () => {
     expect(fixture.debugElement.children.length).toBe(2);
     expect(injectedElem).not.toBeNull();
     expect(injectedElem.componentInstance).toEqual(
-      jasmine.any(InjectedComponent),
+      expect.any(InjectedComponent),
     );
   });
 
@@ -101,7 +102,7 @@ describe('DynamicComponent', () => {
     expect(fixture.debugElement.children.length).toBe(2);
     expect(injectedElem).not.toBeNull();
     expect(injectedElem.componentInstance).toEqual(
-      jasmine.any(InjectedComponent),
+      expect.any(InjectedComponent),
     );
 
     fixture.componentInstance.component = AnotherInjectedComponent;
@@ -114,7 +115,7 @@ describe('DynamicComponent', () => {
     expect(fixture.debugElement.children.length).toBe(2);
     expect(anotherInjectedElem).not.toBeNull();
     expect(anotherInjectedElem.componentInstance).toEqual(
-      jasmine.any(AnotherInjectedComponent),
+      expect.any(AnotherInjectedComponent),
     );
   });
 
@@ -217,7 +218,7 @@ describe('DynamicComponent', () => {
 });
 
 @Component({
-  // tslint:disable-next-line: component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'test',
   template: ``,
 })
