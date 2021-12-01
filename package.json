@@ -13,8 +13,9 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "coverage:check": "istanbul check-coverage --functions 75 --lines 75 --branches 75 --statements 75 coverage/**/coverage*.json",
-    "format": "prettier --write \"projects/**/src/**/*.{ts,js,json,?css,html}\"",
-    "format:check": "prettier --check \"projects/**/src/**/*.{ts,js,json,?css,html}\"",
+    "format": "npm run prettier -- --write",
+    "format:check": "npm run prettier -- --check",
+    "prettier": "prettier \"**/*.{ts,js,json,?css,html}\"",
     "pack": "copyfiles LICENSE README.md CODE_OF_CONDUCT.md CHANGELOG.md dist/ng-dynamic-component",
     "semantic-release": "semantic-release",
     "prepare": "husky install"
