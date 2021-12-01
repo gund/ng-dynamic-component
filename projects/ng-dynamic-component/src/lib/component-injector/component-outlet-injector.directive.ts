@@ -18,7 +18,8 @@ import {
   ],
 })
 export class ComponentOutletInjectorDirective
-  implements DynamicComponentInjector {
+  implements DynamicComponentInjector
+{
   get componentRef(): ComponentRef<any> {
     // NOTE: Accessing private APIs of Angular
     return (this.componentOutlet as any)._componentRef;

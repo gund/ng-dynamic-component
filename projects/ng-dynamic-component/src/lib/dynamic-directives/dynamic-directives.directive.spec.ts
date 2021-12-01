@@ -50,7 +50,8 @@ class MockDirective
     AfterViewInit,
     AfterViewChecked,
     AfterContentInit,
-    AfterContentChecked {
+    AfterContentChecked
+{
   static INSTANCES = new Set<MockDirective>();
   @Input()
   set in(val: any) {
@@ -254,7 +255,8 @@ describe('Directive: DynamicDirectives', () => {
         By.directive(ComponentInjectorComponent),
       );
       expect(compInjectorElem).toBeTruthy();
-      const compInjector = compInjectorElem.componentInstance as ComponentInjectorComponent;
+      const compInjector =
+        compInjectorElem.componentInstance as ComponentInjectorComponent;
       compInjector.component = null;
 
       fixture.detectChanges();
@@ -267,7 +269,8 @@ describe('Directive: DynamicDirectives', () => {
         By.directive(ComponentInjectorComponent),
       );
       expect(compInjectorElem).toBeTruthy();
-      const compInjector = compInjectorElem.componentInstance as ComponentInjectorComponent;
+      const compInjector =
+        compInjectorElem.componentInstance as ComponentInjectorComponent;
 
       hostComp.dirs = [dynamicDirectiveDef(MockDirective)];
 
@@ -290,7 +293,8 @@ describe('Directive: DynamicDirectives', () => {
         By.directive(ComponentInjectorComponent),
       );
       expect(compInjectorElem).toBeTruthy();
-      const compInjector = compInjectorElem.componentInstance as ComponentInjectorComponent;
+      const compInjector =
+        compInjectorElem.componentInstance as ComponentInjectorComponent;
 
       hostComp.dirs = [dynamicDirectiveDef(MockDirective)];
 

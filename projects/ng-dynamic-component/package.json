@@ -18,8 +18,8 @@
     "life-cycle"
   ],
   "peerDependencies": {
-    "@angular/common": "^11.0.0",
-    "@angular/core": "^11.0.0",
+    "@angular/common": "^12.0.0",
+    "@angular/core": "^12.0.0",
     "rxjs": "^6.0.0"
   },
   "dependencies": {
