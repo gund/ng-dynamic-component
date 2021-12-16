@@ -47,117 +47,201 @@ describe('DynamicComponent', () => {
     }),
   );
 
-  it('should do nothing when [ndcDynamicComponent] not provided', () => {
-    fixture.componentInstance.component = null;
-    fixture.detectChanges();
+  describe('@Input(ndcDynamicComponent)', () => {
+    it('should do nothing when input is not provided', () => {
+      fixture.componentInstance.component = null;
+      fixture.detectChanges();
 
-    // Only ndc-dynamic rendered
-    expect(fixture.debugElement.children.length).toBe(1);
-  });
-
-  it('should render component from [ndcDynamicComponent]', () => {
-    fixture.componentInstance.component = InjectedComponent;
-    fixture.detectChanges();
-
-    const injectedElem = fixture.debugElement.query(
-      By.directive(InjectedComponent),
-    );
-
-    expect(fixture.debugElement.children.length).toBe(2);
-    expect(injectedElem).not.toBeNull();
-    expect(injectedElem.componentInstance).toEqual(
-      expect.any(InjectedComponent),
-    );
-  });
-
-  it('should emit event when component created', () => {
-    fixture.componentInstance.component = InjectedComponent;
-    fixture.detectChanges();
-
-    expect(fixture.componentInstance.comp.instance).toBeInstanceOf(
-      InjectedComponent,
-    );
-  });
-
-  it('should clear view if [ndcDynamicComponent] becomes null', () => {
-    fixture.componentInstance.component = InjectedComponent;
-    fixture.detectChanges();
-
-    expect(fixture.debugElement.children.length).toBe(2);
-
-    fixture.componentInstance.component = null;
-    fixture.detectChanges();
-
-    expect(fixture.debugElement.children.length).toBe(1);
-  });
-
-  it('should change component if [ndcDynamicComponent] updates', () => {
-    fixture.componentInstance.component = InjectedComponent;
-    fixture.detectChanges();
-
-    const injectedElem = fixture.debugElement.query(
-      By.directive(InjectedComponent),
-    );
-
-    expect(fixture.debugElement.children.length).toBe(2);
-    expect(injectedElem).not.toBeNull();
-    expect(injectedElem.componentInstance).toEqual(
-      expect.any(InjectedComponent),
-    );
-
-    fixture.componentInstance.component = AnotherInjectedComponent;
-    fixture.detectChanges();
-
-    const anotherInjectedElem = fixture.debugElement.query(
-      By.directive(AnotherInjectedComponent),
-    );
-
-    expect(fixture.debugElement.children.length).toBe(2);
-    expect(anotherInjectedElem).not.toBeNull();
-    expect(anotherInjectedElem.componentInstance).toEqual(
-      expect.any(AnotherInjectedComponent),
-    );
-  });
-
-  it('should keep component if [ndcDynamicComponent] not changed', () => {
-    fixture.componentInstance.component = InjectedComponent;
-    fixture.detectChanges();
-
-    expect(fixture.debugElement.children.length).toBe(2);
-
-    fixture.componentInstance.providers = [];
-    fixture.detectChanges();
-
-    expect(fixture.debugElement.children.length).toBe(2);
-  });
-
-  it('should use [ndcDynamicInjector] if provided', () => {
-    fixture.componentInstance.component = InjectedComponent;
-    fixture.componentInstance.injector = Injector.create({
-      providers: [{ provide: token, useValue: tokenValue }],
-      parent: fixture.componentRef.injector,
+      // Only ndc-dynamic rendered
+      expect(fixture.debugElement.children.length).toBe(1);
     });
-    fixture.detectChanges();
 
-    const injectedElem = fixture.debugElement.query(
-      By.directive(InjectedComponent),
-    );
+    it('should render component from input', () => {
+      fixture.componentInstance.component = InjectedComponent;
+      fixture.detectChanges();
 
-    expect(injectedElem.injector.get(token)).toBe(tokenValue);
+      const injectedElem = fixture.debugElement.query(
+        By.directive(InjectedComponent),
+      );
+
+      expect(fixture.debugElement.children.length).toBe(2);
+      expect(injectedElem).not.toBeNull();
+      expect(injectedElem.componentInstance).toEqual(
+        expect.any(InjectedComponent),
+      );
+    });
+
+    it('should emit event (ndcDynamicCreated) when component created', () => {
+      fixture.componentInstance.component = InjectedComponent;
+      fixture.detectChanges();
+
+      expect(fixture.componentInstance.comp.instance).toBeInstanceOf(
+        InjectedComponent,
+      );
+    });
+
+    it('should clear view if input becomes null', () => {
+      fixture.componentInstance.component = InjectedComponent;
+      fixture.detectChanges();
+
+      expect(fixture.debugElement.children.length).toBe(2);
+
+      fixture.componentInstance.component = null;
+      fixture.detectChanges();
+
+      expect(fixture.debugElement.children.length).toBe(1);
+    });
+
+    it('should change component if input updated', () => {
+      fixture.componentInstance.component = InjectedComponent;
+      fixture.detectChanges();
+
+      const injectedElem = fixture.debugElement.query(
+        By.directive(InjectedComponent),
+      );
+
+      expect(fixture.debugElement.children.length).toBe(2);
+      expect(injectedElem).not.toBeNull();
+      expect(injectedElem.componentInstance).toEqual(
+        expect.any(InjectedComponent),
+      );
+
+      fixture.componentInstance.component = AnotherInjectedComponent;
+      fixture.detectChanges();
+
+      const anotherInjectedElem = fixture.debugElement.query(
+        By.directive(AnotherInjectedComponent),
+      );
+
+      expect(fixture.debugElement.children.length).toBe(2);
+      expect(anotherInjectedElem).not.toBeNull();
+      expect(anotherInjectedElem.componentInstance).toEqual(
+        expect.any(AnotherInjectedComponent),
+      );
+    });
+
+    it('should keep component if input not changed', () => {
+      fixture.componentInstance.component = InjectedComponent;
+      fixture.detectChanges();
+
+      expect(fixture.debugElement.children.length).toBe(2);
+
+      const injectedElem = fixture.debugElement.query(
+        By.directive(InjectedComponent),
+      );
+
+      fixture.componentInstance.component = InjectedComponent;
+      fixture.detectChanges();
+
+      expect(fixture.debugElement.children.length).toBe(2);
+
+      const injectedElem2 = fixture.debugElement.query(
+        By.directive(InjectedComponent),
+      );
+
+      expect(injectedElem.componentInstance).toBe(
+        injectedElem2.componentInstance,
+      );
+    });
   });
 
-  it('should use [ndcDynamicProviders] if provided', () => {
-    fixture.componentInstance.component = InjectedComponent;
-    fixture.componentInstance.providers = [
-      { provide: token, useValue: tokenValue },
-    ];
-    fixture.detectChanges();
+  describe('@Input(ndcDynamicInjector)', () => {
+    it('should use input if provided for injector', () => {
+      fixture.componentInstance.component = InjectedComponent;
+      fixture.componentInstance.injector = Injector.create({
+        providers: [{ provide: token, useValue: tokenValue }],
+        parent: fixture.componentRef.injector,
+      });
+      fixture.detectChanges();
 
-    const injectedElem = fixture.debugElement.query(
-      By.directive(InjectedComponent),
-    );
+      const injectedElem = fixture.debugElement.query(
+        By.directive(InjectedComponent),
+      );
 
-    expect(injectedElem.injector.get(token)).toBe(tokenValue);
+      expect(injectedElem.injector.get(token)).toBe(tokenValue);
+    });
+
+    it('should change component if input updated', () => {
+      const anotherToken = new InjectionToken<any>('AnotherToken');
+      const anotherTokenValue = {};
+
+      fixture.componentInstance.component = InjectedComponent;
+      fixture.componentInstance.injector = Injector.create({
+        providers: [{ provide: token, useValue: tokenValue }],
+        parent: fixture.componentRef.injector,
+      });
+      fixture.detectChanges();
+
+      expect(fixture.debugElement.children.length).toBe(2);
+
+      const injectedElem = fixture.debugElement.query(
+        By.directive(InjectedComponent),
+      );
+
+      fixture.componentInstance.injector = Injector.create({
+        providers: [{ provide: anotherToken, useValue: anotherTokenValue }],
+        parent: fixture.componentRef.injector,
+      });
+      fixture.detectChanges();
+
+      expect(fixture.debugElement.children.length).toBe(2);
+
+      const injectedElem2 = fixture.debugElement.query(
+        By.directive(InjectedComponent),
+      );
+
+      expect(injectedElem.componentInstance).not.toBe(
+        injectedElem2.componentInstance,
+      );
+    });
+  });
+
+  describe('@Input(ndcDynamicProviders)', () => {
+    it('should use input if provided for injector', () => {
+      fixture.componentInstance.component = InjectedComponent;
+      fixture.componentInstance.providers = [
+        { provide: token, useValue: tokenValue },
+      ];
+      fixture.detectChanges();
+
+      const injectedElem = fixture.debugElement.query(
+        By.directive(InjectedComponent),
+      );
+
+      expect(injectedElem.injector.get(token)).toBe(tokenValue);
+    });
+
+    it('should change component if input updated', () => {
+      const anotherToken = new InjectionToken<any>('AnotherToken');
+      const anotherTokenValue = {};
+
+      fixture.componentInstance.component = InjectedComponent;
+      fixture.componentInstance.providers = [
+        { provide: token, useValue: tokenValue },
+      ];
+      fixture.detectChanges();
+
+      expect(fixture.debugElement.children.length).toBe(2);
+
+      const injectedElem = fixture.debugElement.query(
+        By.directive(InjectedComponent),
+      );
+
+      fixture.componentInstance.providers = [
+        { provide: anotherToken, useValue: anotherTokenValue },
+      ];
+      fixture.detectChanges();
+
+      expect(fixture.debugElement.children.length).toBe(2);
+
+      const injectedElem2 = fixture.debugElement.query(
+        By.directive(InjectedComponent),
+      );
+
+      expect(injectedElem.componentInstance).not.toBe(
+        injectedElem2.componentInstance,
+      );
+    });
   });
 
   it('should use both [ndcDynamicInjector] and [ndcDynamicProviders] if provided', () => {
@@ -182,14 +266,17 @@ describe('DynamicComponent', () => {
     expect(injectedElem.injector.get(anotherToken)).toEqual(anotherTokenValue);
   });
 
-  describe('projectable nodes', () => {
+  describe('@Input(ndcDynamicContent)', () => {
     beforeAll(() => (createComp = false));
     afterAll(() => (createComp = true));
 
-    it('should be rendered if [ndcDynamicContent] provided', () => {
+    beforeEach(() => {
       TestBed.overrideComponent(TestComponent, {
         set: {
-          template: `<ng-template>projected text</ng-template>${testTemplate}`,
+          template: `
+          <ng-template>projected text1</ng-template>
+          <ng-template>projected text2</ng-template>
+          ${testTemplate}`,
         },
       })
         .overrideComponent(InjectedComponent, {
@@ -197,9 +284,11 @@ describe('DynamicComponent', () => {
         })
         .configureTestingModule({ schemas: [NO_ERRORS_SCHEMA] });
 
-      fixture = TestBed.createComponent(TestComponent) as any;
+      fixture = TestBed.createComponent(TestComponent);
       fixture.detectChanges();
+    });
 
+    it('should render projectable nodes if input provided', () => {
       fixture.componentInstance.component = InjectedComponent;
       fixture.componentInstance.content = [
         fixture.componentInstance.vcRef.createEmbeddedView(
@@ -212,7 +301,43 @@ describe('DynamicComponent', () => {
         By.directive(InjectedComponent),
       );
 
-      expect(injectedElem.nativeElement.textContent).toBe('projected text');
+      expect(injectedElem.nativeElement.textContent).toBe('projected text1');
+    });
+
+    it('should change component if input updated', () => {
+      fixture.componentInstance.component = InjectedComponent;
+      fixture.componentInstance.content = [
+        fixture.componentInstance.vcRef.createEmbeddedView(
+          fixture.componentInstance.tplRefs.first,
+        ).rootNodes,
+      ];
+      fixture.detectChanges();
+
+      expect(fixture.debugElement.children.length).toBe(2);
+
+      const injectedElem = fixture.debugElement.query(
+        By.directive(InjectedComponent),
+      );
+
+      expect(injectedElem.nativeElement.textContent).toBe('projected text1');
+
+      fixture.componentInstance.content = [
+        fixture.componentInstance.vcRef.createEmbeddedView(
+          fixture.componentInstance.tplRefs.last,
+        ).rootNodes,
+      ];
+      fixture.detectChanges();
+
+      expect(fixture.debugElement.children.length).toBe(2);
+
+      const injectedElem2 = fixture.debugElement.query(
+        By.directive(InjectedComponent),
+      );
+
+      expect(injectedElem2.nativeElement.textContent).toBe('projected text2');
+      expect(injectedElem.componentInstance).not.toBe(
+        injectedElem2.componentInstance,
+      );
     });
   });
 });

@@ -26,24 +26,35 @@ import {
 export class DynamicComponent<C = any>
   implements OnChanges, DynamicComponentInjector
 {
+  private static UpdateOnInputs: (keyof DynamicComponent)[] = [
+    'ndcDynamicComponent',
+    'ndcDynamicInjector',
+    'ndcDynamicProviders',
+    'ndcDynamicContent',
+  ];
+
   @Input()
-  ndcDynamicComponent: Type<C>;
+  ndcDynamicComponent?: Type<C> | null;
   @Input()
-  ndcDynamicInjector: Injector;
+  ndcDynamicInjector?: Injector | null;
   @Input()
-  ndcDynamicProviders: StaticProvider[];
+  ndcDynamicProviders?: StaticProvider[] | null;
   @Input()
-  ndcDynamicContent: any[][];
+  ndcDynamicContent?: any[][] | null;
 
   @Output()
   ndcDynamicCreated: EventEmitter<ComponentRef<C>> = new EventEmitter();
 
-  componentRef: ComponentRef<C> | null;
+  componentRef: ComponentRef<C> | null = null;
 
   constructor(private vcr: ViewContainerRef) {}
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.ndcDynamicComponent) {
+    if (
+      DynamicComponent.UpdateOnInputs.some((input) =>
+        changes.hasOwnProperty(input),
+      )
+    ) {
       this.createDynamicComponent();
     }
   }
