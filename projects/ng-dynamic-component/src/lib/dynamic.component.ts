@@ -1,6 +1,5 @@
 import {
   Component,
-  ComponentFactoryResolver,
   ComponentRef,
   EventEmitter,
   Injector,
@@ -12,7 +11,6 @@ import {
   Type,
   ViewContainerRef,
 } from '@angular/core';
-
 import {
   DynamicComponentInjector,
   DynamicComponentInjectorToken,
@@ -25,9 +23,11 @@ import {
     { provide: DynamicComponentInjectorToken, useExisting: DynamicComponent },
   ],
 })
-export class DynamicComponent implements OnChanges, DynamicComponentInjector {
+export class DynamicComponent<C = any>
+  implements OnChanges, DynamicComponentInjector
+{
   @Input()
-  ndcDynamicComponent: Type<any>;
+  ndcDynamicComponent: Type<C>;
   @Input()
   ndcDynamicInjector: Injector;
   @Input()
@@ -36,14 +36,11 @@ export class DynamicComponent implements OnChanges, DynamicComponentInjector {
   ndcDynamicContent: any[][];
 
   @Output()
-  ndcDynamicCreated: EventEmitter<ComponentRef<any>> = new EventEmitter();
+  ndcDynamicCreated: EventEmitter<ComponentRef<C>> = new EventEmitter();
 
-  componentRef: ComponentRef<any> | null;
+  componentRef: ComponentRef<C> | null;
 
-  constructor(
-    private vcr: ViewContainerRef,
-    private cfr: ComponentFactoryResolver,
-  ) {}
+  constructor(private vcr: ViewContainerRef) {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.ndcDynamicComponent) {
@@ -56,12 +53,11 @@ export class DynamicComponent implements OnChanges, DynamicComponentInjector {
     this.componentRef = null;
 
     if (this.ndcDynamicComponent) {
-      this.componentRef = this.vcr.createComponent(
-        this.cfr.resolveComponentFactory(this.ndcDynamicComponent),
-        0,
-        this._resolveInjector(),
-        this.ndcDynamicContent,
-      );
+      this.componentRef = this.vcr.createComponent(this.ndcDynamicComponent, {
+        index: 0,
+        injector: this._resolveInjector(),
+        projectableNodes: this.ndcDynamicContent,
+      });
       this.ndcDynamicCreated.emit(this.componentRef);
     }
   }
