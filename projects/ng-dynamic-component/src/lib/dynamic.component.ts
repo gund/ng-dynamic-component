@@ -1,6 +1,5 @@
 import {
   Component,
-  ComponentFactoryResolver,
   ComponentRef,
   EventEmitter,
   Injector,
@@ -12,7 +11,6 @@ import {
   Type,
   ViewContainerRef,
 } from '@angular/core';
-
 import {
   DynamicComponentInjector,
   DynamicComponentInjectorToken,
@@ -25,28 +23,38 @@ import {
     { provide: DynamicComponentInjectorToken, useExisting: DynamicComponent },
   ],
 })
-export class DynamicComponent implements OnChanges, DynamicComponentInjector {
+export class DynamicComponent<C = any>
+  implements OnChanges, DynamicComponentInjector
+{
+  private static UpdateOnInputs: (keyof DynamicComponent)[] = [
+    'ndcDynamicComponent',
+    'ndcDynamicInjector',
+    'ndcDynamicProviders',
+    'ndcDynamicContent',
+  ];
+
   @Input()
-  ndcDynamicComponent: Type<any>;
+  ndcDynamicComponent?: Type<C> | null;
   @Input()
-  ndcDynamicInjector: Injector;
+  ndcDynamicInjector?: Injector | null;
   @Input()
-  ndcDynamicProviders: StaticProvider[];
+  ndcDynamicProviders?: StaticProvider[] | null;
   @Input()
-  ndcDynamicContent: any[][];
+  ndcDynamicContent?: any[][] | null;
 
   @Output()
-  ndcDynamicCreated: EventEmitter<ComponentRef<any>> = new EventEmitter();
+  ndcDynamicCreated: EventEmitter<ComponentRef<C>> = new EventEmitter();
 
-  componentRef: ComponentRef<any> | null;
+  componentRef: ComponentRef<C> | null = null;
 
-  constructor(
-    private vcr: ViewContainerRef,
-    private cfr: ComponentFactoryResolver,
-  ) {}
+  constructor(private vcr: ViewContainerRef) {}
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.ndcDynamicComponent) {
+    if (
+      DynamicComponent.UpdateOnInputs.some((input) =>
+        changes.hasOwnProperty(input),
+      )
+    ) {
       this.createDynamicComponent();
     }
   }
@@ -56,12 +64,11 @@ export class DynamicComponent implements OnChanges, DynamicComponentInjector {
     this.componentRef = null;
 
     if (this.ndcDynamicComponent) {
-      this.componentRef = this.vcr.createComponent(
-        this.cfr.resolveComponentFactory(this.ndcDynamicComponent),
-        0,
-        this._resolveInjector(),
-        this.ndcDynamicContent,
-      );
+      this.componentRef = this.vcr.createComponent(this.ndcDynamicComponent, {
+        index: 0,
+        injector: this._resolveInjector(),
+        projectableNodes: this.ndcDynamicContent,
+      });
       this.ndcDynamicCreated.emit(this.componentRef);
     }
   }
