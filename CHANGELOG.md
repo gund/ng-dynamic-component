@@ -1,5 +1,18 @@
 # ng-dynamic-component - Changelog
 
+# [10.1.0](https://github.com/gund/ng-dynamic-component/compare/v10.0.0...v10.1.0) (2021-12-17)
+
+
+### Bug Fixes
+
+* **components:** re-create dynamic component when other inputs are changed ([ea127ba](https://github.com/gund/ng-dynamic-component/commit/ea127ba55c992d6c63506a3fd3117ccff0363b75))
+* **deps:** add RxJs v7 to supported peer dependencies range ([c6700fb](https://github.com/gund/ng-dynamic-component/commit/c6700fb097e6fe588c872c1abe6a48cefa44c597)), closes [#467](https://github.com/gund/ng-dynamic-component/issues/467)
+
+
+### Features
+
+* **component:** add support for component generic ([fe8bb5d](https://github.com/gund/ng-dynamic-component/commit/fe8bb5db1a4c0caffd323259e88ea9cc8b2328bb))
+
 ## [10.0.1-no-barrels.1](https://github.com/gund/ng-dynamic-component/compare/v10.0.0...v10.0.1-no-barrels.1) (2021-12-01)
 
 

@@ -1,6 +1,10 @@
 {
   "root": true,
   "ignorePatterns": ["projects/**/*"],
+  "plugins": ["deprecation"],
+  "rules": {
+    "deprecation/deprecation": "warn"
+  },
   "overrides": [
     {
       "files": ["*.ts"],
