@@ -1,5 +1,12 @@
 # ng-dynamic-component - Changelog
 
+# [10.2.0-next.1](https://github.com/gund/ng-dynamic-component/compare/v10.1.0...v10.2.0-next.1) (2022-06-15)
+
+
+### Features
+
+* **ng:** add support for Angular v14+ ([451f04e](https://github.com/gund/ng-dynamic-component/commit/451f04ec7862e3c597f8c90379cbb437e631d376)), closes [#469](https://github.com/gund/ng-dynamic-component/issues/469)
+
 # [10.1.0](https://github.com/gund/ng-dynamic-component/compare/v10.0.0...v10.1.0) (2021-12-17)
 
 
