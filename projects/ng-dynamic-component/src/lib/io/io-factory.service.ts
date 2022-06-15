@@ -13,6 +13,9 @@ import { IoService } from './io.service';
 export class IoFactoryService {
   constructor(
     private differs: KeyValueDiffers,
+    // TODO: Replace ComponentFactoryResolver once new API is created
+    // @see https://github.com/angular/angular/issues/44926
+    // eslint-disable-next-line deprecation/deprecation
     private cfr: ComponentFactoryResolver,
     @Inject(EventArgumentToken)
     private eventArgument: string,
