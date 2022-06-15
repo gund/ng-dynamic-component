@@ -49,10 +49,5 @@ export class InjectedBoundComponent {
     AnotherInjectedComponent,
     InjectedBoundComponent,
   ],
-  entryComponents: [
-    InjectedComponent,
-    AnotherInjectedComponent,
-    InjectedBoundComponent,
-  ],
 })
 export class TestModule {}

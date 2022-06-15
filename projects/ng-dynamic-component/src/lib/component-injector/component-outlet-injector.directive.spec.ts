@@ -21,19 +21,17 @@ describe('ComponentOutletInjectorDirective', () => {
   let fixture: ComponentFixture<TestComponent>;
   let directive: ComponentOutletInjectorDirective;
 
-  beforeEach(
-    waitForAsync(() => {
-      TestBed.configureTestingModule({
-        imports: [CommonModule, TestModule],
-        declarations: [ComponentOutletInjectorDirective, TestComponent],
-      }).compileComponents();
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      imports: [CommonModule, TestModule],
+      declarations: [ComponentOutletInjectorDirective, TestComponent],
+    }).compileComponents();
 
-      fixture = TestBed.createComponent(TestComponent);
-      fixture.componentInstance.comp = InjectedComponent;
-      fixture.detectChanges();
-      directive = fixture.componentInstance.directive;
-    }),
-  );
+    fixture = TestBed.createComponent(TestComponent);
+    fixture.componentInstance.comp = InjectedComponent;
+    fixture.detectChanges();
+    directive = fixture.componentInstance.directive;
+  }));
 
   it('should be bound to `[ngComponentOutlet]` directive', () => {
     expect(directive).toBeInstanceOf(ComponentOutletInjectorDirective);

@@ -34,18 +34,16 @@ describe('DynamicComponent', () => {
   let fixture: ComponentFixture<TestComponent>;
   let createComp = true;
 
-  beforeEach(
-    waitForAsync(() => {
-      TestBed.configureTestingModule({
-        imports: [TestModule],
-        declarations: [TestComponent, DynamicComponent],
-      }).overrideComponent(TestComponent, { set: { template: testTemplate } });
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      imports: [TestModule],
+      declarations: [TestComponent, DynamicComponent],
+    }).overrideComponent(TestComponent, { set: { template: testTemplate } });
 
-      if (createComp) {
-        fixture = TestBed.createComponent(TestComponent) as any;
-      }
-    }),
-  );
+    if (createComp) {
+      fixture = TestBed.createComponent(TestComponent) as any;
+    }
+  }));
 
   describe('@Input(ndcDynamicComponent)', () => {
     it('should do nothing when input is not provided', () => {
