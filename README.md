@@ -14,7 +14,7 @@
 
 ## Compatibility with Angular
 
-Library supports Angular `v12+` since version `v10.2.1`.
+Library supports Angular `v12+` since version `v10.2.x`.
 
 <details>
   <summary>For a more detailed history see table below:</summary>
@@ -23,7 +23,7 @@ Library supports Angular `v12+` since version `v10.2.1`.
 | ------- | -------------------- | ------------------------------ |
 | 14.x.x  | 10.2.x               | `ng-dynamic-component@^10.2.0` |
 | 13.x.x  | 10.x.x               | `ng-dynamic-component@^10.0.0` |
-| 12.x.x  | 10.2.1 or 9.x.x      | `ng-dynamic-component@^10.2.1` |
+| 12.x.x  | 10.2.x or 9.x.x      | `ng-dynamic-component@^10.2.0` |
 | 11.x.x  | 8.x.x                | `ng-dynamic-component@^8.0.0`  |
 | 10.x.x  | 7.x.x                | `ng-dynamic-component@^7.0.0`  |
 | 9.x.x   | 6.x.x                | `ng-dynamic-component@^6.0.0`  |
