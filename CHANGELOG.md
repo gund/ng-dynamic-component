@@ -1,5 +1,12 @@
 # ng-dynamic-component - Changelog
 
+# [10.2.0-next.2](https://github.com/gund/ng-dynamic-component/compare/v10.2.0-next.1...v10.2.0-next.2) (2022-06-16)
+
+
+### Bug Fixes
+
+* **component:** add compatibility with Angular v12 to component rendering ([18c3922](https://github.com/gund/ng-dynamic-component/commit/18c3922e1ddf6b884411eaff1f821143e526a1aa)), closes [#472](https://github.com/gund/ng-dynamic-component/issues/472)
+
 # [10.2.0-next.1](https://github.com/gund/ng-dynamic-component/compare/v10.1.0...v10.2.0-next.1) (2022-06-15)
 
 
