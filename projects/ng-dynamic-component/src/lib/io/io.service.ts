@@ -39,6 +39,9 @@ export class IoService implements OnDestroy {
   private lastComponentInst: any = null;
   private lastInputChanges: SimpleChanges;
   private inputsDiffer = this.differs.find({}).create();
+  // TODO: Replace ComponentFactory once new API is created
+  // @see https://github.com/angular/angular/issues/44926
+  // eslint-disable-next-line deprecation/deprecation
   private compFactory: ComponentFactory<any> | null = null;
   private outputsShouldDisconnect$ = new Subject<void>();
 
@@ -70,6 +73,9 @@ export class IoService implements OnDestroy {
 
   constructor(
     private differs: KeyValueDiffers,
+    // TODO: Replace ComponentFactoryResolver once new API is created
+    // @see https://github.com/angular/angular/issues/44926
+    // eslint-disable-next-line deprecation/deprecation
     private cfr: ComponentFactoryResolver,
     @Inject(EventArgumentToken)
     private eventArgument: string,
@@ -255,6 +261,9 @@ export class IoService implements OnDestroy {
     return this._resolveChanges(changes);
   }
 
+  // TODO: Replace ComponentFactory once new API is created
+  // @see https://github.com/angular/angular/issues/44926
+  // eslint-disable-next-line deprecation/deprecation
   private _resolveCompFactory(): ComponentFactory<any> | null {
     try {
       try {
