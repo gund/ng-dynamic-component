@@ -1,5 +1,12 @@
 # ng-dynamic-component - Changelog
 
+# [10.2.0-next.3](https://github.com/gund/ng-dynamic-component/compare/v10.2.0-next.2...v10.2.0-next.3) (2022-06-16)
+
+
+### Reverts
+
+* Revert "docs(readme): update compat table" ([b317a3e](https://github.com/gund/ng-dynamic-component/commit/b317a3e2841833683ffc28d963be090531aadf3e))
+
 # [10.2.0-next.2](https://github.com/gund/ng-dynamic-component/compare/v10.2.0-next.1...v10.2.0-next.2) (2022-06-16)
 
 
