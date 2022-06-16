@@ -1,5 +1,6 @@
 import {
   Component,
+  ComponentFactoryResolver,
   ComponentRef,
   EventEmitter,
   Injector,
@@ -15,6 +16,7 @@ import {
   DynamicComponentInjector,
   DynamicComponentInjectorToken,
 } from './component-injector';
+import { NgVersion } from './ng-version';
 
 @Component({
   selector: 'ndc-dynamic',
@@ -47,7 +49,12 @@ export class DynamicComponent<C = any>
 
   componentRef: ComponentRef<C> | null = null;
 
-  constructor(private vcr: ViewContainerRef) {}
+  private _createComponent =
+    this.ngVersion.major === '12'
+      ? () => this._v12vcrCreateComponent()
+      : () => this._vcrCreateComponent();
+
+  constructor(private vcr: ViewContainerRef, private ngVersion: NgVersion) {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (
@@ -64,11 +71,7 @@ export class DynamicComponent<C = any>
     this.componentRef = null;
 
     if (this.ndcDynamicComponent) {
-      this.componentRef = this.vcr.createComponent(this.ndcDynamicComponent, {
-        index: 0,
-        injector: this._resolveInjector(),
-        projectableNodes: this.ndcDynamicContent,
-      });
+      this.componentRef = this._createComponent();
       this.ndcDynamicCreated.emit(this.componentRef);
     }
   }
@@ -85,4 +88,26 @@ export class DynamicComponent<C = any>
 
     return injector;
   }
+
+  private _vcrCreateComponent() {
+    return this.vcr.createComponent(this.ndcDynamicComponent, {
+      index: 0,
+      injector: this._resolveInjector(),
+      projectableNodes: this.ndcDynamicContent,
+    });
+  }
+
+  // TODO: Remove compat code once Angular drops ComponentFactory APIs
+  /* eslint-disable deprecation/deprecation */
+  private _v12vcrCreateComponent() {
+    const cfr = this.vcr.injector.get(ComponentFactoryResolver);
+
+    return this.vcr.createComponent(
+      cfr.resolveComponentFactory(this.ndcDynamicComponent),
+      0,
+      this._resolveInjector(),
+      this.ndcDynamicContent,
+    );
+  }
+  /* eslint-enable deprecation/deprecation */
 }
