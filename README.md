@@ -12,10 +12,18 @@
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 [![Greenkeeper badge](https://badges.greenkeeper.io/gund/ng-dynamic-component.svg)](https://greenkeeper.io/)
 
+## Compatibility with Angular
+
+Library supports Angular `v12+` since version `v10.2.x`.
+
+<details>
+  <summary>For a more detailed history see table below:</summary>
+
 | Angular | ng-dynamic-component | NPM package                    |
 | ------- | -------------------- | ------------------------------ |
+| 14.x.x  | 10.2.x               | `ng-dynamic-component@^10.2.0` |
 | 13.x.x  | 10.x.x               | `ng-dynamic-component@^10.0.0` |
-| 12.x.x  | 9.x.x                | `ng-dynamic-component@^9.0.0`  |
+| 12.x.x  | 10.2.x or 9.x.x      | `ng-dynamic-component@^10.2.0` |
 | 11.x.x  | 8.x.x                | `ng-dynamic-component@^8.0.0`  |
 | 10.x.x  | 7.x.x                | `ng-dynamic-component@^7.0.0`  |
 | 9.x.x   | 6.x.x                | `ng-dynamic-component@^6.0.0`  |
@@ -25,6 +33,8 @@
 | 5.x.x   | 2.x.x                | `ng-dynamic-component@^2.0.0`  |
 | 4.x.x   | 1.x.x                | `ng-dynamic-component@^1.0.0`  |
 | 2.x.x   | 0.x.x                | `ng-dynamic-component@^0.0.0`  |
+
+</details>
 
 ## Installation
 
@@ -61,9 +71,7 @@ and bind from your component class type of component to render:
 ```ts
 @Component({
   selector: 'my-component',
-  template: `
-    <ndc-dynamic [ndcDynamicComponent]="component"></ndc-dynamic>
-  `,
+  template: ` <ndc-dynamic [ndcDynamicComponent]="component"></ndc-dynamic> `,
 })
 class MyComponent {
   component = Math.random() > 0.5 ? MyDynamicComponent1 : MyDynamicComponent2;
@@ -144,7 +152,7 @@ class MyComponent {
     something: () => 'can be really complex',
   };
   outputs = {
-    onSomething: type => alert(type),
+    onSomething: (type) => alert(type),
   };
 }
 
@@ -314,7 +322,7 @@ import { dynamicDirectiveDef } from 'ng-dynamic-component';
 class MyComponent {
   component = MyDynamicComponent1;
   directiveInputs = { prop1: 'value' };
-  directiveOutputs = { output1: evt => this.doSomeStuff(evt) };
+  directiveOutputs = { output1: (evt) => this.doSomeStuff(evt) };
   dirs = [
     dynamicDirectiveDef(
       MyDirective,
