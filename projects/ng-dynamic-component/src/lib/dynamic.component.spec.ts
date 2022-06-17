@@ -1,6 +1,5 @@
 import {
   Component,
-  ComponentFactoryResolver,
   ComponentRef,
   InjectionToken,
   Injector,
@@ -20,7 +19,6 @@ import {
   TestModule,
 } from '../test';
 import { DynamicComponent } from './dynamic.component';
-import { NgVersion } from './ng-version';
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
@@ -60,7 +58,15 @@ describe('DynamicComponent', () => {
       fixture.componentInstance.component = InjectedComponent;
       fixture.detectChanges();
 
-      expectComponentRendered(InjectedComponent);
+      const injectedElem = fixture.debugElement.query(
+        By.directive(InjectedComponent),
+      );
+
+      expect(fixture.debugElement.children.length).toBe(2);
+      expect(injectedElem).not.toBeNull();
+      expect(injectedElem.componentInstance).toEqual(
+        expect.any(InjectedComponent),
+      );
     });
 
     it('should emit event (ndcDynamicCreated) when component created', () => {
@@ -88,12 +94,28 @@ describe('DynamicComponent', () => {
       fixture.componentInstance.component = InjectedComponent;
       fixture.detectChanges();
 
-      expectComponentRendered(InjectedComponent);
+      const injectedElem = fixture.debugElement.query(
+        By.directive(InjectedComponent),
+      );
+
+      expect(fixture.debugElement.children.length).toBe(2);
+      expect(injectedElem).not.toBeNull();
+      expect(injectedElem.componentInstance).toEqual(
+        expect.any(InjectedComponent),
+      );
 
       fixture.componentInstance.component = AnotherInjectedComponent;
       fixture.detectChanges();
 
-      expectComponentRendered(AnotherInjectedComponent);
+      const anotherInjectedElem = fixture.debugElement.query(
+        By.directive(AnotherInjectedComponent),
+      );
+
+      expect(fixture.debugElement.children.length).toBe(2);
+      expect(anotherInjectedElem).not.toBeNull();
+      expect(anotherInjectedElem.componentInstance).toEqual(
+        expect.any(AnotherInjectedComponent),
+      );
     });
 
     it('should keep component if input not changed', () => {
@@ -316,82 +338,6 @@ describe('DynamicComponent', () => {
       );
     });
   });
-
-  describe('Angular v12 compat', () => {
-    beforeAll(() => (createComp = false));
-    afterAll(() => (createComp = true));
-
-    it('should render component using FactoryResolver with Angular v12', () => {
-      TestBed.configureTestingModule({
-        providers: [{ provide: NgVersion, useValue: new NgVersion('12.3.4') }],
-      });
-      fixture = TestBed.createComponent(TestComponent);
-
-      const cfrResolveComponentFactory = getCfrResolveComponentFactoryMock();
-
-      expect(cfrResolveComponentFactory).not.toHaveBeenCalled();
-
-      fixture.componentInstance.component = InjectedComponent;
-      fixture.detectChanges();
-
-      expectComponentRendered(InjectedComponent);
-      expect(cfrResolveComponentFactory).toHaveBeenCalledWith(
-        InjectedComponent,
-      );
-    });
-
-    it('should render component without FactoryResolver with Angular v13', () => {
-      TestBed.configureTestingModule({
-        providers: [{ provide: NgVersion, useValue: new NgVersion('13.3.4') }],
-      });
-      fixture = TestBed.createComponent(TestComponent);
-
-      const cfrResolveComponentFactory = getCfrResolveComponentFactoryMock();
-
-      expect(cfrResolveComponentFactory).not.toHaveBeenCalled();
-
-      fixture.componentInstance.component = InjectedComponent;
-      fixture.detectChanges();
-
-      expectComponentRendered(InjectedComponent);
-      expect(cfrResolveComponentFactory).not.toHaveBeenCalled();
-    });
-
-    it('should render component without FactoryResolver with Angular v14', () => {
-      TestBed.configureTestingModule({
-        providers: [{ provide: NgVersion, useValue: new NgVersion('14.3.4') }],
-      });
-      fixture = TestBed.createComponent(TestComponent);
-
-      const cfrResolveComponentFactory = getCfrResolveComponentFactoryMock();
-
-      expect(cfrResolveComponentFactory).not.toHaveBeenCalled();
-
-      fixture.componentInstance.component = InjectedComponent;
-      fixture.detectChanges();
-
-      expectComponentRendered(InjectedComponent);
-      expect(cfrResolveComponentFactory).not.toHaveBeenCalled();
-    });
-  });
-
-  function expectComponentRendered(compType: Type<any>) {
-    const injectedElem = fixture.debugElement.query(By.directive(compType));
-
-    expect(fixture.debugElement.children.length).toBe(2);
-    expect(injectedElem).not.toBeNull();
-    expect(injectedElem.componentInstance).toEqual(expect.any(compType));
-  }
-
-  function getCfrResolveComponentFactoryMock() {
-    const componentElement = fixture.debugElement.query(
-      By.directive(DynamicComponent),
-    );
-    // TODO: Remove compat code once Angular drops ComponentFactory APIs
-    // eslint-disable-next-line deprecation/deprecation
-    const cfr = componentElement.injector.get(ComponentFactoryResolver);
-    return jest.spyOn(cfr, 'resolveComponentFactory');
-  }
 });
 
 @Component({
