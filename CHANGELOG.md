@@ -1,5 +1,17 @@
 # ng-dynamic-component - Changelog
 
+## [10.2.1](https://github.com/gund/ng-dynamic-component/compare/v10.2.0...v10.2.1) (2022-06-17)
+
+
+### Bug Fixes
+
+* **deps:** update peer deps to allow Angular v13+ ([969aef9](https://github.com/gund/ng-dynamic-component/commit/969aef95a293ff98869199d5ca4760ec08b1f4b7))
+
+
+### Reverts
+
+* Revert "fix(component): add compatibility with Angular v12 to component rendering" ([21de6fd](https://github.com/gund/ng-dynamic-component/commit/21de6fd53379555eb416a2b0669cde72acbe43d6))
+
 # [10.2.0](https://github.com/gund/ng-dynamic-component/compare/v10.1.0...v10.2.0) (2022-06-16)
 
 
