@@ -178,7 +178,7 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
     }
 
     const instance = this.createDirective(dirDef.type);
-    const dir = {
+    const directiveRef: DirectiveRef<any> = {
       instance,
       type: dirDef.type,
       injector: this.hostInjector,
@@ -189,12 +189,12 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
       onDestroy: this.componentRef.onDestroy,
     };
 
-    this.initDirIO(dir, dirDef.inputs, dirDef.outputs);
+    this.initDirIO(directiveRef, dirDef);
     this.callInitHooks(instance);
 
-    this.dirRef.set(dir.type, dir);
+    this.dirRef.set(directiveRef.type, directiveRef);
 
-    return dir;
+    return directiveRef;
   }
 
   private destroyAllDirectives() {
@@ -209,17 +209,23 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
     this.dirIo.delete(dirDef.type);
   }
 
-  private initDirIO(dir: DirectiveRef<any>, inputs?: any, outputs?: any) {
+  private initDirIO(
+    dirRef: DirectiveRef<any>,
+    dirDef: DynamicDirectiveDef<any>,
+  ) {
     const io = this.ioFactoryService.create();
     io.init(
-      { componentRef: this.dirToCompDef(dir) },
+      { componentRef: this.dirToCompDef(dirRef, dirDef) },
       { trackOutputChanges: true },
     );
-    io.update(inputs, outputs, !!inputs, !!outputs);
-    this.dirIo.set(dir.type, io);
+    io.update(dirDef.inputs, dirDef.outputs, !!dirDef.inputs, !!dirDef.outputs);
+    this.dirIo.set(dirRef.type, io);
   }
 
-  private dirToCompDef(dir: DirectiveRef<any>): ComponentRef<any> {
+  private dirToCompDef(
+    dir: DirectiveRef<any>,
+    dirDef: DynamicDirectiveDef<any>,
+  ): ComponentRef<any> {
     return {
       changeDetectorRef: this.componentRef.changeDetectorRef,
       hostView: this.componentRef.hostView,
@@ -229,6 +235,11 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
       injector: this.componentRef.injector,
       instance: dir.instance,
       componentType: dir.type,
+      setInput: (name, value) => {
+        dirDef.inputs = dirDef.inputs ?? {};
+        dirDef.inputs[name] = value;
+        this.updateDirective(dirDef);
+      },
     };
   }
 
