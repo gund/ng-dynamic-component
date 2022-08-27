@@ -1,5 +1,12 @@
 # ng-dynamic-component - Changelog
 
+## [10.3.1](https://github.com/gund/ng-dynamic-component/compare/v10.3.0...v10.3.1) (2022-08-27)
+
+
+### Bug Fixes
+
+* **lib:** specify minimum version of Angular v14.1.3 ([a5fe899](https://github.com/gund/ng-dynamic-component/commit/a5fe8998686721879f0c35de1df8df0eaf22f7bd))
+
 # [10.3.0](https://github.com/gund/ng-dynamic-component/compare/v10.2.1...v10.3.0) (2022-08-27)
 
 
