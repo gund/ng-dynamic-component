@@ -1,6 +1,6 @@
 /* eslint-disable @angular-eslint/component-selector */
 /* eslint-disable @angular-eslint/directive-selector */
-import { NgClass } from '@angular/common';
+import { CommonModule, NgClass } from '@angular/common';
 import {
   AfterContentChecked,
   AfterContentInit,
@@ -20,10 +20,10 @@ import {
   Type,
   ViewContainerRef,
 } from '@angular/core';
-import { By } from '@angular/platform-browser';
 
 import { TestFixture, TestSetup } from '../../test';
 import { ComponentOutletInjectorDirective } from '../component-injector';
+import { DynamicComponent as NdcDynamicComponent } from '../dynamic.component';
 import { IoFactoryService } from '../io';
 import {
   DirectiveRef,
@@ -625,20 +625,67 @@ describe('Directive: DynamicDirectives', () => {
     });
   });
 
-  describe('example: NgClass', () => {
-    it('should apply classes', async () => {
+  describe('integration', () => {
+    it('should apply NgClass', async () => {
       const directives = [
         dynamicDirectiveDef(NgClass, { ngClass: 'cls1 cls2' }),
       ];
 
-      const fixture = await testSetup.redner({ props: { directives } });
+      const fixture = await testSetup.redner({
+        props: { directives },
+        ngModule: { imports: [CommonModule] },
+      });
 
-      const dynamicComp = fixture.fixture.debugElement.query(
-        By.directive(DynamicComponent),
-      );
+      const dynamicElem = fixture.getComponentElement(DynamicComponent);
 
-      expect(dynamicComp).toBeTruthy();
-      expect(dynamicComp.classes).toEqual({ cls1: true, cls2: true });
+      expect(dynamicElem).toBeTruthy();
+      expect(dynamicElem.classes).toEqual({ cls1: true, cls2: true });
+    });
+
+    it('should work with `ngComponentOutlet` * syntax', async () => {
+      const directives = [
+        dynamicDirectiveDef(NgClass, { ngClass: 'cls1 cls2' }),
+      ];
+
+      const fixture = await testSetup.redner({
+        props: { directives },
+        template: `
+          <ng-container
+            *ngComponentOutlet="component; ndcDynamicDirectives: directives"
+          ></ng-container>
+        `,
+        ngModule: { imports: [CommonModule] },
+      });
+
+      const dynamicElem = fixture.getComponentElement(DynamicComponent);
+
+      expect(dynamicElem).toBeTruthy();
+      expect(dynamicElem.classes).toEqual({ cls1: true, cls2: true });
+    });
+
+    it('should work with `ndc-dynamic`', async () => {
+      const directives = [
+        dynamicDirectiveDef(NgClass, { ngClass: 'cls1 cls2' }),
+      ];
+
+      const fixture = await testSetup.redner({
+        props: { directives },
+        template: `
+          <ndc-dynamic
+            [ndcDynamicComponent]="component"
+            [ndcDynamicDirectives]="directives"
+          ></ndc-dynamic>
+        `,
+        ngModule: {
+          imports: [CommonModule],
+          declarations: [NdcDynamicComponent],
+        },
+      });
+
+      const dynamicElem = fixture.getComponentElement(DynamicComponent);
+
+      expect(dynamicElem).toBeTruthy();
+      expect(dynamicElem.classes).toEqual({ cls1: true, cls2: true });
     });
   });
 });

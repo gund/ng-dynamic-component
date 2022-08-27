@@ -18,6 +18,7 @@ import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { TestFixture, TestSetup } from '../../test';
 import { ComponentOutletInjectorDirective } from '../component-injector';
+import { DynamicComponent as NdcDynamicComponent } from '../dynamic.component';
 import { EventArgumentToken, InputsType, OutputsType } from '../io';
 import { DynamicIoDirective } from './dynamic-io.directive';
 
@@ -559,6 +560,52 @@ describe('Directive: DynamicIo', () => {
 
       expect(outputs.output).toHaveBeenCalledTimes(1);
       expect(outputs.output).toHaveBeenCalledWith('val1', 'from-template');
+    });
+  });
+
+  describe('integration', () => {
+    it('should work with `ngComponentOutlet` * syntax', async () => {
+      const inputs = { input1: 'val1', input2: 'val2', input3Renamed: 'val3' };
+
+      const fixture = await testSetup.redner({
+        props: { inputs },
+        template: `
+          <ng-container
+            *ngComponentOutlet="component; ndcDynamicInputs: inputs"
+          ></ng-container>
+      `,
+      });
+
+      expect(fixture.getDynamicComponent()).toEqual(
+        expect.objectContaining({
+          input1: 'val1',
+          input2: 'val2',
+          input3: 'val3',
+        }),
+      );
+    });
+
+    it('should work with `ndc-dynamic`', async () => {
+      const inputs = { input1: 'val1', input2: 'val2', input3Renamed: 'val3' };
+
+      const fixture = await testSetup.redner({
+        props: { inputs },
+        template: `
+          <ndc-dynamic
+            [ndcDynamicComponent]="component"
+            [ndcDynamicInputs]="inputs"
+          ></ndc-dynamic>
+      `,
+        ngModule: { declarations: [NdcDynamicComponent] },
+      });
+
+      expect(fixture.getDynamicComponent()).toEqual(
+        expect.objectContaining({
+          input1: 'val1',
+          input2: 'val2',
+          input3: 'val3',
+        }),
+      );
     });
   });
 });
