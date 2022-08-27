@@ -1,14 +1,6 @@
-import { KeyValueChangeRecord, SimpleChange, Type } from '@angular/core';
+import { KeyValueChangeRecord, Type } from '@angular/core';
 
 export type KeyValueChangeRecordAny = KeyValueChangeRecord<any, any>;
-
-export function createNewChange(val: any): SimpleChange {
-  return new SimpleChange(undefined, val, true);
-}
-
-export function createChange(val: any, prevVal: any): SimpleChange {
-  return new SimpleChange(prevVal, val, false);
-}
 
 export function noop(): void {}
 

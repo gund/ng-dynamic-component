@@ -52,15 +52,22 @@ export interface DirectiveRef<T> {
   onDestroy: (callback: Function) => void;
 }
 
+/**
+ * @experimental Dynamic directives is an experimental API that may not work as expected.
+ *
+ * NOTE: There is a known issue with OnChanges hook not beign triggered on dynamic directives
+ * since this part of functionality has been removed from the core as Angular now
+ * supports this out of the box for dynamic components.
+ */
 @Directive({
   selector: '[ndcDynamicDirectives],[ngComponentOutletNdcDynamicDirectives]',
   providers: [IoFactoryService],
 })
 export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
   @Input()
-  ndcDynamicDirectives: DynamicDirectiveDef<any>[];
+  ndcDynamicDirectives?: DynamicDirectiveDef<any>[];
   @Input()
-  ngComponentOutletNdcDynamicDirectives: DynamicDirectiveDef<any>[];
+  ngComponentOutletNdcDynamicDirectives?: DynamicDirectiveDef<any>[];
 
   @Output()
   ndcDynamicDirectivesCreated = new EventEmitter<DirectiveRef<any>[]>();
@@ -161,7 +168,7 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
   }
 
   private updateDirectives() {
-    this.directives.forEach((dir) => this.updateDirective(dir));
+    this.directives?.forEach((dir) => this.updateDirective(dir));
   }
 
   private updateDirective(dirDef: DynamicDirectiveDef<any>) {
@@ -214,16 +221,16 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
     dirDef: DynamicDirectiveDef<any>,
   ) {
     const io = this.ioFactoryService.create();
+    this.dirIo.set(dirRef.type, io);
     io.init(
       { componentRef: this.dirToCompDef(dirRef, dirDef) },
       { trackOutputChanges: true },
     );
     io.update(dirDef.inputs, dirDef.outputs, !!dirDef.inputs, !!dirDef.outputs);
-    this.dirIo.set(dirRef.type, io);
   }
 
   private dirToCompDef(
-    dir: DirectiveRef<any>,
+    dirRef: DirectiveRef<any>,
     dirDef: DynamicDirectiveDef<any>,
   ): ComponentRef<any> {
     return {
@@ -233,13 +240,9 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
       destroy: this.componentRef.destroy,
       onDestroy: this.componentRef.onDestroy,
       injector: this.componentRef.injector,
-      instance: dir.instance,
-      componentType: dir.type,
-      setInput: (name, value) => {
-        dirDef.inputs = dirDef.inputs ?? {};
-        dirDef.inputs[name] = value;
-        this.updateDirective(dirDef);
-      },
+      instance: dirRef.instance,
+      componentType: dirRef.type,
+      setInput: (name, value) => (dirRef.instance[name] = value),
     };
   }
 
