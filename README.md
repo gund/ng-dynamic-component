@@ -278,8 +278,13 @@ class MyComponent {
 
 **Since v3.1.0** you can now declaratively set directives, via `ndcDynamicDirectives`.
 
-**NOTE**: In dynamic directives queries like `@ContentChild` and host decorators like `@HostBinding`
-will not work due to involved complexity required to handle it (but PRs are welcome!).
+> **NOTE**:
+> There is a known issue with OnChanges hook not beign triggered on dynamic directives
+> since this part of functionality has been removed from the core as Angular now
+> supports this out of the box for dynamic components.
+>
+> In dynamic directives queries like `@ContentChild` and host decorators like `@HostBinding`
+> will not work due to involved complexity required to implement it (but PRs are welcome!).
 
 Import module `DynamicDirectivesModule` and then in template:
 
