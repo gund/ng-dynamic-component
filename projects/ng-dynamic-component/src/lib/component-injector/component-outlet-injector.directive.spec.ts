@@ -1,47 +1,50 @@
-import { CommonModule } from '@angular/common';
+/* eslint-disable @angular-eslint/component-selector */
 import { Component, ComponentRef, Type, ViewChild } from '@angular/core';
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import {
-  InjectedComponent,
-  TestComponent as TestComponentBase,
-  TestModule,
-} from '../../test';
+import { TestSetup } from '../../test';
 import { ComponentOutletInjectorDirective } from './component-outlet-injector.directive';
 
-@Component({
-  template: ` <ng-container *ngComponentOutlet="comp"></ng-container> `,
-})
-class TestComponent extends TestComponentBase {
-  @ViewChild(ComponentOutletInjectorDirective, { static: false })
-  directive: ComponentOutletInjectorDirective;
-  comp: Type<any>;
-}
-
 describe('ComponentOutletInjectorDirective', () => {
-  let fixture: ComponentFixture<TestComponent>;
-  let directive: ComponentOutletInjectorDirective;
+  @Component({ selector: 'dynamic', template: '' })
+  class DynamicComponent {}
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      imports: [CommonModule, TestModule],
-      declarations: [ComponentOutletInjectorDirective, TestComponent],
-    }).compileComponents();
+  @Component({
+    selector: 'host',
+    template: `<ng-container *ngComponentOutlet="component"></ng-container>`,
+  })
+  class HostComponent {
+    @ViewChild(ComponentOutletInjectorDirective, { static: false })
+    directive: ComponentOutletInjectorDirective;
+    component: Type<any>;
+  }
 
-    fixture = TestBed.createComponent(TestComponent);
-    fixture.componentInstance.comp = InjectedComponent;
-    fixture.detectChanges();
-    directive = fixture.componentInstance.directive;
-  }));
+  const testSetup = new TestSetup(HostComponent, {
+    props: { component: DynamicComponent },
+    ngModule: {
+      declarations: [ComponentOutletInjectorDirective, DynamicComponent],
+    },
+  });
 
-  it('should be bound to `[ngComponentOutlet]` directive', () => {
+  it('should be bound to `[ngComponentOutlet]` directive', async () => {
+    const fixture = await testSetup.redner();
+
+    const directive = fixture.getHost().directive;
+
     expect(directive).toBeInstanceOf(ComponentOutletInjectorDirective);
   });
 
-  it('should return injected `componentRef` in `componentRef` prop', () => {
+  it('should return injected `ComponentRef` in `componentRef` prop', async () => {
+    const fixture = await testSetup.redner();
+
+    const directive = fixture.getHost().directive;
+
     expect(directive.componentRef).toBeInstanceOf(ComponentRef);
   });
 
-  it('should hold instance of injected component in `componentRef`', () => {
-    expect(directive.componentRef.instance).toBeInstanceOf(InjectedComponent);
+  it('should hold instance of injected component in `componentRef`', async () => {
+    const fixture = await testSetup.redner();
+
+    const directive = fixture.getHost().directive;
+
+    expect(directive.componentRef.instance).toBeInstanceOf(DynamicComponent);
   });
 });

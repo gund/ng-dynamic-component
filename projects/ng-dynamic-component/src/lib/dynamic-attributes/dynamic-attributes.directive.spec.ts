@@ -1,399 +1,257 @@
-import { CommonModule } from '@angular/common';
-import { Component, ViewChild } from '@angular/core';
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import {
-  AnotherInjectedComponent,
-  getByPredicate,
-  InjectedComponent,
-  TestComponent as TestComponentBase,
-  TestModule,
-} from '../../test';
-import {
-  ComponentOutletInjectorDirective,
-  DynamicComponentInjectorToken,
-} from '../component-injector';
-import { DynamicComponent } from '../dynamic.component';
+/* eslint-disable @angular-eslint/component-selector */
+import { Component, Type } from '@angular/core';
+import { TestFixture, TestSetup } from '../../test';
+import { ComponentOutletInjectorDirective } from '../component-injector';
+import { DynamicComponent as NdcDynamicComponent } from '../dynamic.component';
 import {
   AttributesMap,
   DynamicAttributesDirective,
 } from './dynamic-attributes.directive';
 
-const getInjectedComponentFrom = getByPredicate<InjectedComponent>(
-  By.directive(InjectedComponent),
-);
-const getAnotherInjectedComponentFrom =
-  getByPredicate<AnotherInjectedComponent>(
-    By.directive(AnotherInjectedComponent),
-  );
-
 describe('DynamicAttributesDirective', () => {
-  describe('with `ngComponentOutlet`', () => {
-    let fixture: ComponentFixture<TestComponent>;
+  @Component({ selector: 'dynamic', template: `` })
+  class DynamicComponent {}
 
-    @Component({
-      template: `
-        <ng-container
-          [ngComponentOutlet]="comp"
-          [ndcDynamicAttributes]="attrs"
-        ></ng-container>
-      `,
-    })
-    class TestComponent extends TestComponentBase {
-      comp = InjectedComponent;
-      attrs: AttributesMap;
+  @Component({
+    selector: 'host',
+    template: `
+      <ng-container
+        [ngComponentOutlet]="component"
+        [ndcDynamicAttributes]="attrs"
+      ></ng-container>
+    `,
+  })
+  class HostComponent {
+    component: Type<any>;
+    attrs: AttributesMap;
+  }
+
+  class DynamicTestFixture<THost> extends TestFixture<THost> {
+    getDynamicElem() {
+      return this.getComponentElement(DynamicComponent);
     }
+  }
 
-    beforeEach(waitForAsync(() => {
-      TestBed.configureTestingModule({
-        imports: [CommonModule, TestModule],
-        declarations: [
-          DynamicAttributesDirective,
-          TestComponent,
-          ComponentOutletInjectorDirective,
-        ],
-        providers: [
-          {
-            provide: DynamicComponentInjectorToken,
-            useExisting: DynamicComponent,
-          },
-        ],
-      }).compileComponents();
+  const testSetup = new TestSetup(HostComponent, {
+    props: { component: DynamicComponent },
+    ngModule: {
+      declarations: [
+        DynamicAttributesDirective,
+        ComponentOutletInjectorDirective,
+      ],
+    },
+    fixtureCtor: DynamicTestFixture,
+  });
 
-      fixture = TestBed.createComponent(TestComponent);
-    }));
+  it('should set attrs on injected component', async () => {
+    const attrs = { 'attr-one': 'val-1', 'attr-two': 'val-two' };
 
-    it('should set attrs on injected component', () => {
-      const attrs = {
-        'attr-one': 'val-1',
-        'attr-two': 'val-two',
-      };
-      fixture.componentInstance.attrs = attrs;
+    const fixture = await testSetup.redner({ props: { attrs } });
 
-      fixture.detectChanges();
-
-      const injectedElem = getInjectedComponentFrom(fixture).componentElem;
-
-      expect(injectedElem.attributes).toMatchObject(attrs);
-    });
-
-    it('should not do anything if attrs are not defined', () => {
-      fixture.detectChanges();
-
-      const injectedElem = getInjectedComponentFrom(fixture).componentElem;
-
-      expect(injectedElem.attributes).toEqual({});
-    });
-
-    it('should set attrs if they were not set initially', () => {
-      fixture.detectChanges();
-
-      const injectedElem = getInjectedComponentFrom(fixture).componentElem;
-
-      expect(injectedElem.attributes).toEqual({});
-
-      const attrs = {
-        'attr-one': 'val-1',
-        'attr-two': 'val-two',
-      };
-      fixture.componentInstance.attrs = attrs;
-
-      fixture.detectChanges();
-
-      expect(injectedElem.attributes).toMatchObject(attrs);
-    });
-
-    it('should replace attrs if new object set', () => {
-      const attrs = {
-        'attr-one': 'val-1',
-        'attr-two': 'val-two',
-      };
-      fixture.componentInstance.attrs = attrs;
-      fixture.detectChanges();
-
-      const injectedElem = getInjectedComponentFrom(fixture).componentElem;
-
-      expect(injectedElem.attributes).toEqual(attrs);
-
-      const attrs2 = {
-        val3: 'new',
-      };
-      fixture.componentInstance.attrs = attrs2;
-
-      fixture.detectChanges();
-
-      expect(injectedElem.attributes).toMatchObject(attrs2);
-    });
-
-    it('should unset attrs if set to null/undefined', () => {
-      const attrs = {
-        'attr-one': 'val-1',
-        'attr-two': 'val-two',
-      };
-      fixture.componentInstance.attrs = attrs;
-      fixture.detectChanges();
-
-      const injectedElem = getInjectedComponentFrom(fixture).componentElem;
-
-      expect(injectedElem.attributes).toEqual(attrs);
-
-      fixture.componentInstance.attrs = null;
-
-      fixture.detectChanges();
-
-      expect(injectedElem.attributes).toEqual({});
-    });
-
-    it('should add new attr if added to object', () => {
-      const attrs = {
-        'attr-one': 'val-1',
-        'attr-two': 'val-two',
-      } as any;
-      fixture.componentInstance.attrs = attrs;
-      fixture.detectChanges();
-
-      const injectedElem = getInjectedComponentFrom(fixture).componentElem;
-
-      expect(injectedElem.attributes).toEqual(attrs);
-
-      attrs.val3 = 'new';
-      fixture.detectChanges();
-
-      expect(injectedElem.attributes).toEqual(attrs);
-    });
-
-    it('should remove attr if removed from object', () => {
-      const attrs = {
-        'attr-one': 'val-1',
-        'attr-two': 'val-two',
-      };
-      fixture.componentInstance.attrs = attrs;
-      fixture.detectChanges();
-
-      const injectedElem = getInjectedComponentFrom(fixture).componentElem;
-
-      expect(injectedElem.attributes).toEqual(attrs);
-
-      delete attrs['attr-two'];
-      fixture.detectChanges();
-
-      expect(injectedElem.attributes).toEqual(attrs);
-    });
-
-    it('should update attr if updated in object', () => {
-      const attrs = {
-        'attr-one': 'val-1',
-        'attr-two': 'val-two',
-      };
-      fixture.componentInstance.attrs = attrs;
-      fixture.detectChanges();
-
-      const injectedElem = getInjectedComponentFrom(fixture).componentElem;
-
-      expect(injectedElem.attributes).toEqual(attrs);
-
-      attrs['attr-two'] = 'new';
-      fixture.detectChanges();
-
-      expect(injectedElem.attributes).toEqual(attrs);
-    });
-
-    it('should reassign attrs when new component injected', () => {
-      const attrs = {
-        'attr-one': 'val-1',
-        'attr-two': 'val-two',
-      };
-      fixture.componentInstance.attrs = attrs;
-
-      fixture.detectChanges();
-
-      fixture.componentInstance.comp = AnotherInjectedComponent;
-
-      fixture.detectChanges();
-
-      const injectedElem =
-        getAnotherInjectedComponentFrom(fixture).componentElem;
-
-      expect(injectedElem.attributes).toMatchObject(attrs);
+    expect(fixture.getDynamicElem().attributes).toMatchObject({
+      'attr-one': 'val-1',
+      'attr-two': 'val-two',
     });
   });
 
-  describe('with `ngComponentOutlet` * syntax', () => {
-    let fixture: ComponentFixture<TestComponent>;
+  it('should not do anything if attrs are not defined', async () => {
+    const fixture = await testSetup.redner({ props: { attrs: null } });
 
-    @Component({
-      template: `
-        <ng-container
-          *ngComponentOutlet="comp; ndcDynamicAttributes: attrs"
-        ></ng-container>
-      `,
-    })
-    class TestComponent extends TestComponentBase {
-      comp = InjectedComponent;
-      attrs: AttributesMap;
-    }
+    expect(fixture.getDynamicElem().attributes).toMatchObject({});
+  });
 
-    beforeEach(waitForAsync(() => {
-      TestBed.configureTestingModule({
-        imports: [CommonModule, TestModule],
-        declarations: [
-          DynamicAttributesDirective,
-          TestComponent,
-          ComponentOutletInjectorDirective,
-        ],
-        providers: [
-          {
-            provide: DynamicComponentInjectorToken,
-            useExisting: DynamicComponent,
-          },
-        ],
-      }).compileComponents();
+  it('should set attrs if they were not set initially', async () => {
+    const fixture = await testSetup.redner({ props: { attrs: null } });
 
-      fixture = TestBed.createComponent(TestComponent);
-    }));
+    expect(fixture.getDynamicElem().attributes).toMatchObject({});
 
-    it('should set attributes on injected component', () => {
-      const attrs = {
-        'attr-one': 'val-1',
-        'attr-two': 'val-two',
-      };
-      fixture.componentInstance.attrs = attrs;
+    const attrs = { 'attr-one': 'val-1', 'attr-two': 'val-two' };
 
-      fixture.detectChanges();
+    fixture.setHostProps({ attrs });
 
-      const injectedElem = getInjectedComponentFrom(fixture).componentElem;
-
-      expect(injectedElem.attributes).toMatchObject(attrs);
+    expect(fixture.getDynamicElem().attributes).toMatchObject({
+      'attr-one': 'val-1',
+      'attr-two': 'val-two',
     });
   });
 
-  describe('with `ndc-dynamic`', () => {
-    let fixture: ComponentFixture<TestComponent>;
+  it('should replace attrs if new object set', async () => {
+    const attrs = { 'attr-one': 'val-1', 'attr-two': 'val-two' };
 
-    @Component({
-      // eslint-disable-next-line @angular-eslint/component-selector
-      selector: 'host-comp',
-      template: `
-        <ndc-dynamic
-          [ndcDynamicComponent]="comp"
-          [ndcDynamicAttributes]="attrs"
-        ></ndc-dynamic>
-      `,
-    })
-    class TestComponent {
-      @ViewChild(DynamicComponent, { static: false })
-      dynamicComp: DynamicComponent;
-      comp = InjectedComponent;
-      attrs: AttributesMap;
-    }
+    const fixture = await testSetup.redner({ props: { attrs } });
 
-    beforeEach(waitForAsync(() => {
-      TestBed.configureTestingModule({
-        imports: [CommonModule, TestModule],
-        declarations: [
-          DynamicComponent,
-          DynamicAttributesDirective,
-          TestComponent,
-        ],
-        providers: [
-          {
-            provide: DynamicComponentInjectorToken,
-            useExisting: DynamicComponent,
-          },
-        ],
-      }).compileComponents();
+    expect(fixture.getDynamicElem().attributes).toMatchObject({
+      'attr-one': 'val-1',
+      'attr-two': 'val-two',
+    });
 
-      fixture = TestBed.createComponent(TestComponent);
-    }));
+    const attrs2 = { 'attr-trhee': 'val3' };
 
-    it('should set attributes on injected component', () => {
-      const attrs = {
-        'attr-one': 'val-1',
-        'attr-two': 'val-two',
-      };
-      fixture.componentInstance.attrs = attrs;
+    fixture.setHostProps({ attrs: attrs2 });
 
-      fixture.detectChanges();
-
-      const injectedElem = getInjectedComponentFrom(fixture).componentElem;
-
-      expect(injectedElem.attributes).toMatchObject(attrs);
+    expect(fixture.getDynamicElem().attributes).toMatchObject({
+      'attr-trhee': 'val3',
     });
   });
 
-  describe('without dynamic component', () => {
-    let fixture: ComponentFixture<TestComponent>;
+  it('should unset attrs if set to null/undefined', async () => {
+    const attrs = { 'attr-one': 'val-1', 'attr-two': 'val-two' };
 
-    @Component({
-      template: `
-        <div [ngComponentOutlet]="comp" [ndcDynamicAttributes]="attrs"></div>
-      `,
-    })
-    class TestComponent extends TestComponentBase {
-      comp: any;
-      attrs: AttributesMap;
-    }
+    const fixture = await testSetup.redner({ props: { attrs } });
 
-    beforeEach(waitForAsync(() => {
-      TestBed.configureTestingModule({
-        imports: [CommonModule],
-        declarations: [
-          DynamicAttributesDirective,
-          TestComponent,
-          ComponentOutletInjectorDirective,
-        ],
-        providers: [
-          {
-            provide: DynamicComponentInjectorToken,
-            useExisting: DynamicComponent,
-          },
-        ],
-      }).compileComponents();
-
-      fixture = TestBed.createComponent(TestComponent);
-    }));
-
-    it('should not do anything', () => {
-      fixture.componentInstance.attrs = { 'my-attr': 'val' };
-
-      expect(() => fixture.detectChanges()).not.toThrow();
+    expect(fixture.getDynamicElem().attributes).toMatchObject({
+      'attr-one': 'val-1',
+      'attr-two': 'val-two',
     });
 
-    describe('setAttribute() method', () => {
-      it('should not do anything', () => {
-        fixture.detectChanges();
+    fixture.setHostProps({ attrs: null });
 
-        const dynamicElem = fixture.debugElement.query(
-          By.directive(DynamicAttributesDirective),
-        );
+    expect(fixture.getDynamicElem().attributes).toMatchObject({});
+  });
 
-        expect(dynamicElem).toBeTruthy();
+  it('should add new attr if added to object', async () => {
+    const attrs = { 'attr-one': 'val-1', 'attr-two': 'val-two' };
 
-        const dynamicAttrDir = dynamicElem.injector.get(
-          DynamicAttributesDirective,
-        );
+    const fixture = await testSetup.redner({ props: { attrs } });
 
-        expect(() =>
-          dynamicAttrDir.setAttribute('my-att', 'val'),
-        ).not.toThrow();
+    expect(fixture.getDynamicElem().attributes).toMatchObject({
+      'attr-one': 'val-1',
+      'attr-two': 'val-two',
+    });
+
+    attrs['attr-three'] = 'val-three';
+
+    fixture.detectChanges();
+
+    expect(fixture.getDynamicElem().attributes).toMatchObject({
+      'attr-one': 'val-1',
+      'attr-two': 'val-two',
+      'attr-three': 'val-three',
+    });
+  });
+
+  it('should remove attr if removed from object', async () => {
+    const attrs = { 'attr-one': 'val-1', 'attr-two': 'val-two' };
+
+    const fixture = await testSetup.redner({ props: { attrs } });
+
+    expect(fixture.getDynamicElem().attributes).toMatchObject({
+      'attr-one': 'val-1',
+      'attr-two': 'val-two',
+    });
+
+    delete attrs['attr-one'];
+
+    fixture.detectChanges();
+
+    expect(fixture.getDynamicElem().attributes).toMatchObject({
+      'attr-two': 'val-two',
+    });
+  });
+
+  it('should update attr if updated in object', async () => {
+    const attrs = { 'attr-one': 'val-1', 'attr-two': 'val-two' };
+
+    const fixture = await testSetup.redner({ props: { attrs } });
+
+    expect(fixture.getDynamicElem().attributes).toMatchObject({
+      'attr-one': 'val-1',
+      'attr-two': 'val-two',
+    });
+
+    attrs['attr-two'] = 'new-val';
+
+    fixture.detectChanges();
+
+    expect(fixture.getDynamicElem().attributes).toMatchObject({
+      'attr-one': 'val-1',
+      'attr-two': 'new-val',
+    });
+  });
+
+  it('should reassign attrs when new component injected', async () => {
+    @Component({ selector: 'dynamic2', template: `` })
+    class Dynamic2Component {}
+
+    const attrs = { 'attr-one': 'val-1', 'attr-two': 'val-two' };
+
+    const fixture = await testSetup.redner({
+      props: { attrs },
+      ngModule: { declarations: [Dynamic2Component] },
+    });
+
+    expect(fixture.getDynamicElem().attributes).toMatchObject({
+      'attr-one': 'val-1',
+      'attr-two': 'val-two',
+    });
+
+    fixture.setHostProps({ component: Dynamic2Component });
+
+    expect(
+      fixture.getComponentElement(Dynamic2Component).attributes,
+    ).toMatchObject({
+      'attr-one': 'val-1',
+      'attr-two': 'val-two',
+    });
+  });
+
+  it('should do nothing without injected component', async () => {
+    const attrs = { 'attr-one': 'val-1', 'attr-two': 'val-two' };
+
+    await expect(
+      testSetup.redner({ props: { attrs, component: null } }),
+    ).resolves.not.toThrow();
+  });
+
+  it('should do nothing when injected component removed', async () => {
+    const attrs = { 'attr-one': 'val-1', 'attr-two': 'val-two' };
+
+    const fixture = await testSetup.redner({ props: { attrs } });
+
+    expect(fixture.getDynamicElem().attributes).toMatchObject({
+      'attr-one': 'val-1',
+      'attr-two': 'val-two',
+    });
+
+    expect(() => fixture.setHostProps({ component: null })).not.toThrow();
+  });
+
+  describe('integration', () => {
+    it('should work with `ngComponentOutlet` * syntax', async () => {
+      const attrs = { 'attr-one': 'val-1', 'attr-two': 'val-two' };
+
+      const fixture = await testSetup.redner({
+        props: { attrs },
+        template: `
+          <ng-container
+            *ngComponentOutlet="component; ndcDynamicAttributes: attrs"
+          ></ng-container>
+      `,
+      });
+
+      expect(fixture.getDynamicElem().attributes).toMatchObject({
+        'attr-one': 'val-1',
+        'attr-two': 'val-two',
       });
     });
 
-    describe('removeAttribute() method', () => {
-      it('should not do anything', () => {
-        fixture.detectChanges();
+    it('should work with `ndc-dynamic`', async () => {
+      const attrs = { 'attr-one': 'val-1', 'attr-two': 'val-two' };
 
-        const dynamicElem = fixture.debugElement.query(
-          By.directive(DynamicAttributesDirective),
-        );
+      const fixture = await testSetup.redner({
+        props: { attrs },
+        template: `
+          <ndc-dynamic
+            [ndcDynamicComponent]="component"
+            [ndcDynamicAttributes]="attrs"
+          ></ndc-dynamic>
+      `,
+        ngModule: { declarations: [NdcDynamicComponent] },
+      });
 
-        expect(dynamicElem).toBeTruthy();
-
-        const dynamicAttrDir = dynamicElem.injector.get(
-          DynamicAttributesDirective,
-        );
-
-        expect(() => dynamicAttrDir.removeAttribute('my-att')).not.toThrow();
+      expect(fixture.getDynamicElem().attributes).toMatchObject({
+        'attr-one': 'val-1',
+        'attr-two': 'val-two',
       });
     });
   });
