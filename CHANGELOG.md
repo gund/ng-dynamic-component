@@ -1,5 +1,13 @@
 # ng-dynamic-component - Changelog
 
+# [10.3.0](https://github.com/gund/ng-dynamic-component/compare/v10.2.1...v10.3.0) (2022-08-27)
+
+
+### Features
+
+* **lib:** use new ComponentRef API to set inputs on components ([7cc48a6](https://github.com/gund/ng-dynamic-component/commit/7cc48a6e6241cf6f281ee7316397dee4691b6ba3))
+* **ng:** update to latest Angular v14 ([64d82cc](https://github.com/gund/ng-dynamic-component/commit/64d82cc8949ba8405620535c956842385c3262f5))
+
 ## [10.2.1](https://github.com/gund/ng-dynamic-component/compare/v10.2.0...v10.2.1) (2022-06-17)
 
 
