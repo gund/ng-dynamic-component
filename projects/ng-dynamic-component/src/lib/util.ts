@@ -1,6 +1,4 @@
-import { OnChanges, OnDestroy, Type } from '@angular/core';
-
-export function noop(): void {}
+import { OnDestroy, Type } from '@angular/core';
 
 /**
  * Extract type arguments from Angular Directive/Component
@@ -14,8 +12,4 @@ export function extractNgParamTypes(
 
 export function isOnDestroy(obj: unknown): obj is OnDestroy {
   return obj && typeof (obj as OnDestroy).ngOnDestroy === 'function';
-}
-
-export function isOnChanges(obj: unknown): obj is OnChanges {
-  return obj && typeof (obj as OnChanges).ngOnChanges === 'function';
 }
