@@ -1,5 +1,25 @@
 # ng-dynamic-component - Changelog
 
+# [10.4.0](https://github.com/gund/ng-dynamic-component/compare/v10.3.1...v10.4.0) (2022-08-28)
+
+
+### Bug Fixes
+
+* **io:** simplify IoService to have just one method for updates ([21b0e20](https://github.com/gund/ng-dynamic-component/commit/21b0e205ec3e8a31f8e81025cc157dc13ca40d24))
+* **lib:** make sure all inputs chanegs are sent to new component ([25e4d34](https://github.com/gund/ng-dynamic-component/commit/25e4d34218ec545709b57340c3004351bfcf0574))
+
+
+### Features
+
+* **api:** expose WindowRef and ReflectRef services as public api ([c634e20](https://github.com/gund/ng-dynamic-component/commit/c634e20219beb5770e9c8e1d2631895835c037d1))
+* **outputs:** allow to specify context for output handlers via Tokens ([9a03765](https://github.com/gund/ng-dynamic-component/commit/9a037653a5051d2682e5cf7b09c52453f64e0977))
+
+
+### Performance Improvements
+
+* **io:** check if component has OnChanges hook once ([88f187f](https://github.com/gund/ng-dynamic-component/commit/88f187f3146dc121313ab6f33d7881d32a4b039c))
+* **io:** do not detect any changes when there is no component ([8e7dbce](https://github.com/gund/ng-dynamic-component/commit/8e7dbce6232b8e4ce157e755d2fa7ad41fa62e96))
+
 ## [10.3.1](https://github.com/gund/ng-dynamic-component/compare/v10.3.0...v10.3.1) (2022-08-27)
 
 
