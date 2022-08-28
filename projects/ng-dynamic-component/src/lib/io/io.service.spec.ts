@@ -1,6 +1,7 @@
-import { ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectorRef, Injector } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
+import { DynamicComponentInjectorToken } from '../component-injector/token';
 import { IoService } from './io.service';
 
 describe('Service: Io', () => {
@@ -8,17 +9,40 @@ describe('Service: Io', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [IoService, { provide: ChangeDetectorRef, useValue: {} }],
+      providers: [
+        IoService,
+        {
+          provide: DynamicComponentInjectorToken,
+          useValue: 'component-injector-mock',
+        },
+        {
+          provide: ChangeDetectorRef,
+          useValue: 'ChangeDetectorRefMock',
+        },
+      ],
     });
     service = TestBed.inject(IoService);
   });
 
-  it('should throw if init was not called', () => {
-    expect(() => service.maybeUpdate()).toThrow();
-  });
+  describe('provider', () => {
+    it('should create new instance in injector', () => {
+      const rootInjector = TestBed.inject(Injector);
 
-  it('should throw if `ComponentInjector` is set to null', () => {
-    service.init(null);
-    expect(() => service.maybeUpdate()).toThrow();
+      const injectorWithoutProvider = Injector.create({
+        name: 'WithoutProvider',
+        parent: rootInjector,
+        providers: [],
+      });
+
+      const injectorWithProvider = Injector.create({
+        name: 'WithProvider',
+        parent: rootInjector,
+        providers: [{ provide: IoService, useClass: IoService }],
+      });
+
+      expect(injectorWithoutProvider.get(IoService)).toBe(service);
+      expect(injectorWithProvider.get(IoService)).not.toBe(service);
+      expect(injectorWithProvider.get(IoService)).toBeInstanceOf(IoService);
+    });
   });
 });

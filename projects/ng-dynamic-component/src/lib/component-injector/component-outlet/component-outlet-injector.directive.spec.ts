@@ -1,6 +1,6 @@
 /* eslint-disable @angular-eslint/component-selector */
 import { Component, ComponentRef, Type, ViewChild } from '@angular/core';
-import { TestSetup } from '../../test';
+import { TestSetup } from '../../../test';
 import { ComponentOutletInjectorDirective } from './component-outlet-injector.directive';
 
 describe('ComponentOutletInjectorDirective', () => {

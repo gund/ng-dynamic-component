@@ -23,7 +23,7 @@ import {
     { provide: DynamicComponentInjectorToken, useExisting: DynamicComponent },
   ],
 })
-export class DynamicComponent<C = any>
+export class DynamicComponent<C = unknown>
   implements OnChanges, DynamicComponentInjector
 {
   private static UpdateOnInputs: (keyof DynamicComponent)[] = [
@@ -43,7 +43,7 @@ export class DynamicComponent<C = any>
   ndcDynamicContent?: any[][] | null;
 
   @Output()
-  ndcDynamicCreated: EventEmitter<ComponentRef<C>> = new EventEmitter();
+  ndcDynamicCreated = new EventEmitter<ComponentRef<C>>();
 
   componentRef: ComponentRef<C> | null = null;
 

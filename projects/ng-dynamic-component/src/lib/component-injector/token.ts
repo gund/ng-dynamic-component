@@ -1,7 +1,7 @@
 import { ComponentRef, InjectionToken } from '@angular/core';
 
 export interface DynamicComponentInjector {
-  componentRef: ComponentRef<any> | null;
+  componentRef: ComponentRef<unknown> | null;
 }
 
 export const DynamicComponentInjectorToken =

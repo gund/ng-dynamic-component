@@ -17,9 +17,13 @@ import {
 import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { TestFixture, TestSetup } from '../../test';
-import { ComponentOutletInjectorDirective } from '../component-injector';
+import { ComponentOutletInjectorModule } from '../component-injector';
 import { DynamicComponent as NdcDynamicComponent } from '../dynamic.component';
-import { EventArgumentToken, InputsType, OutputsType } from '../io';
+import { InputsType, IoEventArgumentToken, OutputsType } from '../io';
+import {
+  IoEventContextProviderToken,
+  IoEventContextToken,
+} from '../io/event-context';
 import { DynamicIoDirective } from './dynamic-io.directive';
 
 describe('Directive: DynamicIo', () => {
@@ -77,12 +81,8 @@ describe('Directive: DynamicIo', () => {
   const testSetup = new TestSetup(HostComponent, {
     props: { component: DynamicComponent },
     ngModule: {
-      imports: [CommonModule],
-      declarations: [
-        DynamicComponent,
-        DynamicIoDirective,
-        ComponentOutletInjectorDirective,
-      ],
+      imports: [CommonModule, ComponentOutletInjectorModule],
+      declarations: [DynamicComponent, DynamicIoDirective],
     },
     fixtureCtor: DynamicTestFixture,
   });
@@ -205,6 +205,29 @@ describe('Directive: DynamicIo', () => {
       });
     });
 
+    it('should trigger `ngOnChanges` life-cycle hook if inputs and component updated', async () => {
+      @Component({ selector: 'dynamic2', template: '' })
+      class Dynamic2Component extends DynamicComponent {}
+
+      const inputs = { input1: 'val1', input2: 'val2' };
+
+      const fixture = await testSetup.redner({
+        props: { inputs },
+        ngModule: { declarations: [Dynamic2Component] },
+      });
+
+      inputs.input1 = 'new-val1';
+      fixture.setHostProps({ component: Dynamic2Component });
+
+      const component = fixture.getComponent(Dynamic2Component);
+
+      expect(component.ngOnChangesSpy).toHaveBeenCalledTimes(1);
+      expect(component.ngOnChangesSpy).toHaveBeenCalledWith({
+        input1: new SimpleChange(undefined, 'new-val1', true),
+        input2: new SimpleChange(undefined, 'val2', true),
+      });
+    });
+
     it('should render inputs with Default strategy', async () => {
       const inputs = { input1: 'val1', input2: 'val2', input3Renamed: 'val3' };
 
@@ -292,36 +315,6 @@ describe('Directive: DynamicIo', () => {
       await expect(
         testSetup.redner({ props: { inputs, component: null } }),
       ).resolves.not.toThrow();
-    });
-
-    it('should call `ngOnChanges` once when inputs and component updated', async () => {
-      @Component({ selector: 'dynamic2', template: '' })
-      class Dynamic2Component implements OnChanges {
-        @Input() input1: any;
-        @Input() input2: any;
-        ngOnChangesSpy = jest.fn();
-        ngOnChanges(changes: SimpleChanges): void {
-          this.ngOnChangesSpy(changes);
-        }
-      }
-
-      const inputs = { input1: 'val1', input2: 'val2' };
-
-      const fixture = await testSetup.redner({
-        props: { inputs },
-        ngModule: { declarations: [Dynamic2Component] },
-      });
-
-      inputs.input1 = 'new-val1';
-      fixture.setHostProps({ component: Dynamic2Component });
-
-      const component = fixture.getComponent(Dynamic2Component);
-
-      expect(component.ngOnChangesSpy).toHaveBeenCalledTimes(1);
-      expect(component.ngOnChangesSpy).toHaveBeenCalledWith({
-        input1: new SimpleChange(undefined, 'new-val1', true),
-        input2: new SimpleChange(undefined, 'val2', true),
-      });
     });
   });
 
@@ -550,7 +543,77 @@ describe('Directive: DynamicIo', () => {
           ></ng-container>
         `,
         ngModule: {
-          providers: [{ provide: EventArgumentToken, useValue: '$e' }],
+          providers: [{ provide: IoEventArgumentToken, useValue: '$e' }],
+        },
+      });
+
+      fixture.setHostProps({ tplVar: 'from-template' });
+
+      fixture.getDynamicComponent().output1.emit('val1');
+
+      expect(outputs.output).toHaveBeenCalledTimes(1);
+      expect(outputs.output).toHaveBeenCalledWith('val1', 'from-template');
+    });
+
+    it('should bind outputs with custom global context', async () => {
+      const customEventContext = { customEventContext: 'global' };
+      const outputs = {
+        output: jest.fn().mockImplementation(function () {
+          // Use non-strict equal due to a bug in Jest
+          // that clones `this` object and destroys original ref
+          expect(this).toEqual(customEventContext);
+        }),
+      };
+
+      const fixture = await testSetup.redner<{ tplVar: any }>({
+        props: { outputs },
+        template: `
+          <ng-container [ngComponentOutlet]="component"
+            [ndcDynamicOutputs]="{ output1: { handler: outputs.output, args: ['$event', tplVar] } }"
+          ></ng-container>
+        `,
+        ngModule: {
+          providers: [
+            { provide: IoEventContextToken, useValue: customEventContext },
+          ],
+        },
+      });
+
+      fixture.setHostProps({ tplVar: 'from-template' });
+
+      fixture.getDynamicComponent().output1.emit('val1');
+
+      expect(outputs.output).toHaveBeenCalledTimes(1);
+      expect(outputs.output).toHaveBeenCalledWith('val1', 'from-template');
+    });
+
+    it('should bind outputs with custom local context', async () => {
+      const customEventContext = { customEventContext: 'local' };
+      const outputs = {
+        output: jest.fn().mockImplementation(function () {
+          // Use non-strict equal due to a bug in Jest
+          // that clones `this` object and destroys original ref
+          expect(this).toEqual(customEventContext);
+        }),
+      };
+
+      const fixture = await testSetup.redner<{ tplVar: any }>({
+        props: { outputs },
+        template: `
+          <ng-container [ngComponentOutlet]="component"
+            [ndcDynamicOutputs]="{ output1: { handler: outputs.output, args: ['$event', tplVar] } }"
+          ></ng-container>
+        `,
+        ngModule: {
+          providers: [
+            {
+              provide: IoEventContextProviderToken,
+              useValue: {
+                provide: IoEventContextToken,
+                useValue: customEventContext,
+              },
+            },
+          ],
         },
       });
 
@@ -573,7 +636,7 @@ describe('Directive: DynamicIo', () => {
           <ng-container
             *ngComponentOutlet="component; ndcDynamicInputs: inputs"
           ></ng-container>
-      `,
+        `,
       });
 
       expect(fixture.getDynamicComponent()).toEqual(
@@ -595,7 +658,7 @@ describe('Directive: DynamicIo', () => {
             [ndcDynamicComponent]="component"
             [ndcDynamicInputs]="inputs"
           ></ndc-dynamic>
-      `,
+        `,
         ngModule: { declarations: [NdcDynamicComponent] },
       });
 

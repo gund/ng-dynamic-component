@@ -1,5 +1,5 @@
 export interface InputsType {
-  [k: string]: any;
+  [k: string]: unknown;
 }
 export interface OutputsType {
   [k: string]: OutputExpression | undefined;
@@ -7,11 +7,11 @@ export interface OutputsType {
 
 export interface OutputWithArgs {
   handler: AnyFunction;
-  args?: any[];
+  args?: unknown[];
 }
 
 export type OutputExpression = EventHandler | OutputWithArgs;
 
-export type EventHandler<T = any> = (event: T) => any;
+export type EventHandler<T = unknown> = (event: T) => unknown;
 
-export type AnyFunction = (...args: any[]) => any;
+export type AnyFunction = (...args: unknown[]) => unknown;
