@@ -203,7 +203,7 @@ _HINT:_ You can override event literal by providing
 
 #### Output Handler Context
 
-**Since v7.1.0**
+**Since v10.4.0**
 
 You can specify the context (`this`) that will be used when calling
 the output handlers by providing either:

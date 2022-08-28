@@ -1,8 +1,8 @@
-import { Injector } from '@angular/core';
+import { ChangeDetectorRef, Injector } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
 import { DynamicComponentInjectorToken } from '../component-injector/token';
-import { IoService, IoServiceProvider } from './io.service';
+import { IoService } from './io.service';
 
 describe('Service: Io', () => {
   let service: IoService;
@@ -15,13 +15,13 @@ describe('Service: Io', () => {
           provide: DynamicComponentInjectorToken,
           useValue: 'component-injector-mock',
         },
+        {
+          provide: ChangeDetectorRef,
+          useValue: 'ChangeDetectorRefMock',
+        },
       ],
     });
     service = TestBed.inject(IoService);
-  });
-
-  it('should be instantiated', () => {
-    expect(service).toBeInstanceOf(IoService);
   });
 
   describe('provider', () => {
@@ -37,7 +37,7 @@ describe('Service: Io', () => {
       const injectorWithProvider = Injector.create({
         name: 'WithProvider',
         parent: rootInjector,
-        providers: [IoServiceProvider],
+        providers: [{ provide: IoService, useClass: IoService }],
       });
 
       expect(injectorWithoutProvider.get(IoService)).toBe(service);

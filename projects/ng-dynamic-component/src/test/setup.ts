@@ -36,10 +36,12 @@ export class TestSetup<THost, TFixture extends TestFixture<THost>> {
     THostEx = {},
     TFixtureEx extends TestFixture<THost & THostEx> = TFixture &
       TestFixture<THost & THostEx>,
-  >(config?: TestSetupConfig<THost, TFixture>): Promise<TFixtureEx> {
-    this.configureModule(config);
+  >(
+    config?: TestSetupConfig<THost & THostEx, TFixtureEx>,
+  ): Promise<TFixtureEx> {
+    this.configureModule(config as any);
 
-    const options = this.mergeConfig(config);
+    const options = this.mergeConfig(config as any);
 
     if (options.hostOverrides !== undefined) {
       TestBed.overrideComponent(this.hostComponent, options.hostOverrides);

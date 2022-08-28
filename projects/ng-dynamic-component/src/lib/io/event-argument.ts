@@ -13,6 +13,6 @@ export const IoEventArgumentToken = new InjectionToken<string>(
 );
 
 /**
- * @deprecated Since v7.1.0 - Use {@link IoEventArgumentToken} instead!
+ * @deprecated Since v10.4.0 - Use {@link IoEventArgumentToken} instead!
  */
 export const EventArgumentToken = IoEventArgumentToken;

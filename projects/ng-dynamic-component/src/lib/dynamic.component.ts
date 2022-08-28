@@ -40,10 +40,10 @@ export class DynamicComponent<C = unknown>
   @Input()
   ndcDynamicProviders?: StaticProvider[] | null;
   @Input()
-  ndcDynamicContent?: unknown[][] | null;
+  ndcDynamicContent?: any[][] | null;
 
   @Output()
-  ndcDynamicCreated = new EventEmitter<EventEmitter<ComponentRef<C>>>();
+  ndcDynamicCreated = new EventEmitter<ComponentRef<C>>();
 
   componentRef: ComponentRef<C> | null = null;
 

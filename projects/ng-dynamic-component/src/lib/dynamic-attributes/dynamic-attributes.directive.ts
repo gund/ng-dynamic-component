@@ -2,7 +2,6 @@ import {
   Directive,
   DoCheck,
   Inject,
-  Injector,
   Input,
   KeyValueChanges,
   KeyValueDiffers,
@@ -45,17 +44,17 @@ export class DynamicAttributesDirective implements DoCheck {
     );
   }
 
-  private get _nativeElement() {
+  private get nativeElement() {
     return this.componentInjector.componentRef?.location.nativeElement;
   }
 
-  private get _compType() {
+  private get compType() {
     return this.componentInjector.componentRef?.componentType;
   }
 
-  private get _isCompChanged() {
-    if (this.lastCompType !== this._compType) {
-      this.lastCompType = this._compType;
+  private get isCompChanged() {
+    if (this.lastCompType !== this.compType) {
+      this.lastCompType = this.compType;
       return true;
     }
     return false;
@@ -64,40 +63,38 @@ export class DynamicAttributesDirective implements DoCheck {
   constructor(
     private renderer: Renderer2,
     private differs: KeyValueDiffers,
-    private injector: Injector,
     @Inject(DynamicComponentInjectorToken)
     @Optional()
     private componentInjector?: DynamicComponentInjector,
   ) {}
 
   ngDoCheck(): void {
-    const isCompChanged = this._isCompChanged;
+    const isCompChanged = this.isCompChanged;
     const changes = this.attrsDiffer.diff(this._attributes);
 
     if (changes) {
-      this.lastAttrActions = this._changesToAttrActions(changes);
+      this.lastAttrActions = this.changesToAttrActions(changes);
     }
 
     if (changes || (isCompChanged && this.lastAttrActions)) {
-      this._updateAttributes(this.lastAttrActions);
+      this.updateAttributes(this.lastAttrActions);
     }
   }
 
   setAttribute(name: string, value: string, namespace?: string) {
-    if (this._nativeElement) {
-      this.renderer.setAttribute(this._nativeElement, name, value, namespace);
+    if (this.nativeElement) {
+      this.renderer.setAttribute(this.nativeElement, name, value, namespace);
     }
   }
 
   removeAttribute(name: string, namespace?: string) {
-    if (this._nativeElement) {
-      this.renderer.removeAttribute(this._nativeElement, name, namespace);
+    if (this.nativeElement) {
+      this.renderer.removeAttribute(this.nativeElement, name, namespace);
     }
   }
 
-  private _updateAttributes(actions: AttributeActions) {
-    // ? Early exit if no dynamic component
-    if (!this._compType) {
+  private updateAttributes(actions: AttributeActions) {
+    if (!this.compType) {
       return;
     }
 
@@ -108,7 +105,7 @@ export class DynamicAttributesDirective implements DoCheck {
     actions.remove.forEach((key) => this.removeAttribute(key));
   }
 
-  private _changesToAttrActions(
+  private changesToAttrActions(
     changes: KeyValueChanges<string, string>,
   ): AttributeActions {
     const attrActions: AttributeActions = {

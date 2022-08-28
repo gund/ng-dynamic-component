@@ -4,7 +4,7 @@ import {
   DynamicComponentInjector,
   DynamicComponentInjectorToken,
 } from '../component-injector';
-import { IoService, IoServiceOptions, IoServiceProvider } from './io.service';
+import { IoService, IoServiceOptions } from './io.service';
 
 export interface IoFactoryServiceOptions {
   injector?: Injector;
@@ -22,7 +22,7 @@ export class IoFactoryService {
       name: 'IoInjector',
       parent: ioOptions?.injector ?? this.injector,
       providers: [
-        IoServiceProvider,
+        { provide: IoService, useClass: IoService },
         { provide: DynamicComponentInjectorToken, useValue: componentInjector },
         ioOptions
           ? { provide: IoServiceOptions, useValue: ioOptions }

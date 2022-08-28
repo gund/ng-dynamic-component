@@ -2,14 +2,12 @@ import {
   ChangeDetectorRef,
   ComponentFactory,
   ComponentFactoryResolver,
-  forwardRef,
   Inject,
   Injectable,
   Injector,
   KeyValueChangeRecord,
   KeyValueChanges,
   KeyValueDiffers,
-  OnChanges,
   OnDestroy,
   Optional,
   StaticProvider,
@@ -27,13 +25,7 @@ import {
   IoEventContextProviderToken,
   IoEventContextToken,
 } from './event-context';
-import {
-  AnyFunction,
-  EventHandler,
-  InputsType,
-  OutputsType,
-  OutputWithArgs,
-} from './types';
+import { EventHandler, InputsType, OutputsType, OutputWithArgs } from './types';
 
 interface IOMapInfo {
   propName: string;
@@ -52,25 +44,6 @@ interface OutputsTypeProcessed extends OutputsType {
 export class IoServiceOptions {
   trackOutputChanges = false;
 }
-
-/**
- * A provider for the {@link IoService}
- * Use it instead of manually providing a service directly
- */
-export const IoServiceProvider: StaticProvider = {
-  provide: forwardRef(() => IoService),
-  useClass: forwardRef(() => IoService),
-  deps: [
-    Injector,
-    KeyValueDiffers,
-    ComponentFactoryResolver,
-    IoServiceOptions,
-    DynamicComponentInjectorToken,
-    IoEventArgumentToken,
-    ChangeDetectorRef,
-    [new Optional(), IoEventContextProviderToken],
-  ],
-};
 
 @Injectable()
 export class IoService implements OnDestroy {
@@ -132,6 +105,11 @@ export class IoService implements OnDestroy {
     this.disconnectOutputs();
   }
 
+  /**
+   * Call update whenever inputs/outputs may or did change.
+   *
+   * It will detect both new and mutated changes.
+   */
   update(inputs: InputsType, outputs: OutputsType) {
     if (!this.compRef) {
       this.disconnectOutputs();
@@ -142,7 +120,7 @@ export class IoService implements OnDestroy {
 
     const compChanged = this.componentInstChanged;
 
-    const inputsChanges = this.getInputsChanges();
+    const inputsChanges = this.getInputsChanges(compChanged);
     const outputsChanged = this.outputsChanged(this.outputs);
 
     if (inputsChanges) {
@@ -217,7 +195,11 @@ export class IoService implements OnDestroy {
     this.outputsShouldDisconnect$.next();
   }
 
-  private getInputsChanges(): KeyValueChangesAny {
+  private getInputsChanges(isCompChanged: boolean): KeyValueChangesAny {
+    if (isCompChanged) {
+      this.inputsDiffer.diff(null);
+    }
+
     return this.inputsDiffer.diff(this.inputs);
   }
 
@@ -268,8 +250,6 @@ export class IoService implements OnDestroy {
   }
 
   private updateOutputsEventContext() {
-    this.outputsEventContext = undefined;
-
     if (this.eventContextProvider) {
       // Resolve custom context from local provider
       const eventContextInjector = Injector.create({
@@ -290,33 +270,43 @@ export class IoService implements OnDestroy {
 
     Object.keys(outputs).forEach((key) => {
       const outputExpr = outputs[key];
+      let outputHandler: EventHandler<unknown>;
 
       if (typeof outputExpr === 'function') {
-        processedOutputs[key] = outputExpr;
+        outputHandler = outputExpr;
       } else {
-        processedOutputs[key] =
-          outputExpr && this.processOutputArgs(outputExpr);
+        outputHandler = outputExpr && this.processOutputArgs(outputExpr);
       }
+
+      if (this.outputsEventContext) {
+        outputHandler = outputHandler.bind(this.outputsEventContext);
+      }
+
+      processedOutputs[key] = outputHandler;
     });
 
     return processedOutputs;
   }
 
   private processOutputArgs(output: OutputWithArgs): EventHandler {
-    const args = 'args' in output ? output.args || [] : [this.eventArgument];
-    let handler: AnyFunction = output.handler;
+    const eventArgument = this.eventArgument;
+    const args = 'args' in output ? output.args || [] : [eventArgument];
+    const eventIdx = args.indexOf(eventArgument);
+    const handler = output.handler;
 
-    if (this.outputsEventContext) {
-      handler = handler.bind(this.outputsEventContext);
+    // When there is no event argument - use just arguments
+    if (eventIdx === -1) {
+      return function () {
+        return handler.apply(this, args);
+      };
     }
 
-    // When no arguments specified - ignore arguments
-    if (args.length === 0) {
-      return () => handler();
-    }
+    return function (event) {
+      const argsWithEvent = [...args];
+      argsWithEvent[eventIdx] = event;
 
-    return (event) =>
-      handler(...args.map((arg) => (arg === this.eventArgument ? event : arg)));
+      return handler.apply(this, argsWithEvent);
+    };
   }
 
   private remapIO<T extends Record<string, unknown>>(
