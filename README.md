@@ -39,14 +39,6 @@
 $ npm install ng-dynamic-component --save
 ```
 
-#### Error message in the IDE
-
-If you have an error like **Can't bind to 'ndcDynamicInputs' since it isn't a known property of 'ndc-dynamic'** in your IDE, but the project compiles just fine, you might want to try installing the no-barrels version instead.
-
-```bash
-$ npm install --save ng-dynamic-component@no-barrels
-```
-
 ## Usage
 
 ### DynamicComponent
