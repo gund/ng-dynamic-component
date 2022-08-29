@@ -13,8 +13,8 @@ describe('ComponentOutletInjectorDirective', () => {
   })
   class HostComponent {
     @ViewChild(ComponentOutletInjectorDirective, { static: false })
-    directive: ComponentOutletInjectorDirective;
-    component: Type<any>;
+    directive?: ComponentOutletInjectorDirective;
+    component?: Type<any>;
   }
 
   const testSetup = new TestSetup(HostComponent, {
@@ -37,7 +37,7 @@ describe('ComponentOutletInjectorDirective', () => {
 
     const directive = fixture.getHost().directive;
 
-    expect(directive.componentRef).toBeInstanceOf(ComponentRef);
+    expect(directive?.componentRef).toBeInstanceOf(ComponentRef);
   });
 
   it('should hold instance of injected component in `componentRef`', async () => {
@@ -45,6 +45,6 @@ describe('ComponentOutletInjectorDirective', () => {
 
     const directive = fixture.getHost().directive;
 
-    expect(directive.componentRef.instance).toBeInstanceOf(DynamicComponent);
+    expect(directive?.componentRef.instance).toBeInstanceOf(DynamicComponent);
   });
 });

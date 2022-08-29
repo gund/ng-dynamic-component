@@ -7,13 +7,15 @@
     "declaration": false,
     "downlevelIteration": true,
     "experimentalDecorators": true,
-    "module": "esnext",
-    "moduleResolution": "node",
     "importHelpers": true,
-    "target": "es2020",
-    "typeRoots": ["node_modules/@types"],
-    "types": ["jest"],
-    "lib": ["es2018", "dom"],
+    "noEmitHelpers": true,
+    "strict": true,
+    "useDefineForClassFields": false,
+    "moduleResolution": "node",
+    "module": "esnext",
+    "target": "esnext",
+    "types": ["jest", "node"],
+    "lib": ["esnext", "dom"],
     "paths": {
       "ng-dynamic-component": [
         "projects/ng-dynamic-component/src/public-api.ts"
@@ -22,7 +24,13 @@
     }
   },
   "angularCompilerOptions": {
+    "annotateForClosureCompiler": true,
+    "compilationMode": "partial",
+    "skipTemplateCodegen": true,
+    "strictMetadataEmit": true,
+    "strictTemplates": true,
     "fullTemplateTypeCheck": true,
-    "strictInjectionParameters": true
+    "strictInjectionParameters": true,
+    "enableResourceInlining": true
   }
 }

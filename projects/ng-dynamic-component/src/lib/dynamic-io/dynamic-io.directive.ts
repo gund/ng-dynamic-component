@@ -11,9 +11,9 @@ import { InputsType, IoService, OutputsType } from '../io';
 })
 export class DynamicIoDirective implements DoCheck {
   @Input()
-  ndcDynamicInputs: InputsType;
+  ndcDynamicInputs?: InputsType | null;
   @Input()
-  ndcDynamicOutputs: OutputsType;
+  ndcDynamicOutputs?: OutputsType | null;
 
   constructor(private ioService: IoService) {}
 

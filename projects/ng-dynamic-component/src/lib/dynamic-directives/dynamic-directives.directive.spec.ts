@@ -45,8 +45,8 @@ describe('Directive: DynamicDirectives', () => {
     ></ng-container>`,
   })
   class HostComponent {
-    component: Type<any>;
-    directives: DynamicDirectiveDef<any>[];
+    component?: Type<any> | null;
+    directives?: DynamicDirectiveDef<any>[] | null;
     onCreated = jest.fn();
   }
 
@@ -77,7 +77,7 @@ describe('Directive: DynamicDirectives', () => {
     out = new EventEmitter<any>();
     @Output()
     out2 = new EventEmitter<any>();
-    hooksOrder = [];
+    hooksOrder: string[] = [];
     ngAfterContentChecked = jest
       .fn()
       .mockImplementation(this.logHook('ngAfterContentChecked'));
@@ -174,8 +174,9 @@ describe('Directive: DynamicDirectives', () => {
 
       const fixture = await testSetup.redner({ props: { directives } });
 
-      const dir = fixture.getFirstDirective();
+      const dir = fixture.getFirstDirective()!;
 
+      expect(dir).toBeDefined();
       expect(dir.ngOnInit).toHaveBeenCalledTimes(1);
       expect(dir.ngAfterContentInit).toHaveBeenCalledTimes(1);
       expect(dir.ngAfterContentChecked).toHaveBeenCalledTimes(1);
@@ -200,8 +201,9 @@ describe('Directive: DynamicDirectives', () => {
 
       const fixture = await testSetup.redner({ props: { directives } });
 
-      const dir = fixture.getFirstDirective();
+      const dir = fixture.getFirstDirective()!;
 
+      expect(dir).toBeDefined();
       expect(dir.hooksOrder).toEqual([
         'inputSet:true',
         'ngOnChanges',
@@ -291,11 +293,12 @@ describe('Directive: DynamicDirectives', () => {
 
       expect(MockDirective.INSTANCES.size).toBe(1);
 
-      const dir = fixture.getFirstDirective();
+      const dir = fixture.getFirstDirective()!;
 
       fixture.setHostProps({ component: null });
 
       expect(MockDirective.INSTANCES.size).toBe(0);
+      expect(dir).toBeDefined();
       expect(dir.ngOnDestroy).toHaveBeenCalledTimes(1);
     });
 
@@ -546,8 +549,8 @@ describe('Directive: DynamicDirectives', () => {
       const callback1 = jest.fn();
       const callback2 = jest.fn();
       const directives = [
-        dynamicDirectiveDef(MockDirective, null, { out: callback1 }),
-        dynamicDirectiveDef(Mock2Directive, null, { out: callback2 }),
+        dynamicDirectiveDef(MockDirective, undefined, { out: callback1 }),
+        dynamicDirectiveDef(Mock2Directive, undefined, { out: callback2 }),
       ];
 
       const fixture = await testSetup.redner({ props: { directives } });
@@ -566,13 +569,15 @@ describe('Directive: DynamicDirectives', () => {
     it('should be connected when changed and disconnected from old', async () => {
       const callback = jest.fn();
       const outputs = { out: callback };
-      const directives = [dynamicDirectiveDef(MockDirective, null, outputs)];
+      const directives = [
+        dynamicDirectiveDef(MockDirective, undefined, outputs),
+      ];
 
       const fixture = await testSetup.redner({ props: { directives } });
 
       expect(MockDirective.INSTANCES.size).toBe(1);
 
-      const dir = fixture.getFirstDirective();
+      const dir = fixture.getFirstDirective()!;
 
       const callback2 = jest.fn();
       outputs.out = callback2;
@@ -588,15 +593,17 @@ describe('Directive: DynamicDirectives', () => {
     it('should disconnect when removed', async () => {
       const callback = jest.fn();
       const outputs = { out: callback };
-      const directives = [dynamicDirectiveDef(MockDirective, null, outputs)];
+      const directives = [
+        dynamicDirectiveDef(MockDirective, undefined, outputs),
+      ];
 
       const fixture = await testSetup.redner({ props: { directives } });
 
       expect(MockDirective.INSTANCES.size).toBe(1);
 
-      const dir = fixture.getFirstDirective();
+      const dir = fixture.getFirstDirective()!;
 
-      outputs.out = null;
+      outputs.out = null!;
 
       fixture.detectChanges();
 
@@ -608,14 +615,14 @@ describe('Directive: DynamicDirectives', () => {
     it('should disconnect when host component destroyed', async () => {
       const callback = jest.fn();
       const directives = [
-        dynamicDirectiveDef(MockDirective, null, { out: callback }),
+        dynamicDirectiveDef(MockDirective, undefined, { out: callback }),
       ];
 
       const fixture = await testSetup.redner({ props: { directives } });
 
       expect(MockDirective.INSTANCES.size).toBe(1);
 
-      const dir = fixture.getFirstDirective();
+      const dir = fixture.getFirstDirective()!;
 
       fixture.setHostProps({ component: null });
 
@@ -636,7 +643,7 @@ describe('Directive: DynamicDirectives', () => {
         ngModule: { imports: [CommonModule] },
       });
 
-      const dynamicElem = fixture.getComponentElement(DynamicComponent);
+      const dynamicElem = fixture.getComponentElement(DynamicComponent)!;
 
       expect(dynamicElem).toBeTruthy();
       expect(dynamicElem.classes).toEqual({ cls1: true, cls2: true });
@@ -657,7 +664,7 @@ describe('Directive: DynamicDirectives', () => {
         ngModule: { imports: [CommonModule] },
       });
 
-      const dynamicElem = fixture.getComponentElement(DynamicComponent);
+      const dynamicElem = fixture.getComponentElement(DynamicComponent)!;
 
       expect(dynamicElem).toBeTruthy();
       expect(dynamicElem.classes).toEqual({ cls1: true, cls2: true });
@@ -682,7 +689,7 @@ describe('Directive: DynamicDirectives', () => {
         },
       });
 
-      const dynamicElem = fixture.getComponentElement(DynamicComponent);
+      const dynamicElem = fixture.getComponentElement(DynamicComponent)!;
 
       expect(dynamicElem).toBeTruthy();
       expect(dynamicElem.classes).toEqual({ cls1: true, cls2: true });

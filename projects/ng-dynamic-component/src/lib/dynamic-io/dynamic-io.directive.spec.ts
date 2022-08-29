@@ -61,20 +61,20 @@ describe('Directive: DynamicIo', () => {
     ></ng-container>`,
   })
   class HostComponent {
-    component: Type<any>;
-    inputs: InputsType;
-    outputs: OutputsType;
+    component?: Type<any> | null;
+    inputs?: InputsType | null;
+    outputs?: OutputsType | null;
   }
 
   class DynamicTestFixture<THost> extends TestFixture<THost> {
     getDynamicComponent() {
-      return this.getComponent(DynamicComponent);
+      return this.getComponent(DynamicComponent)!;
     }
     getDynamicElement() {
-      return this.getComponentElement(DynamicComponent);
+      return this.getComponentElement(DynamicComponent)!;
     }
     getDynamicParagraphs() {
-      return this.getDynamicElement().queryAll(By.css('p'));
+      return this.getDynamicElement()?.queryAll(By.css('p'))!;
     }
   }
 
@@ -196,7 +196,7 @@ describe('Directive: DynamicIo', () => {
 
       fixture.setHostProps({ component: Dynamic2Component });
 
-      const component = fixture.getComponent(Dynamic2Component);
+      const component = fixture.getComponent(Dynamic2Component)!;
 
       expect(component.ngOnChangesSpy).toHaveBeenCalledTimes(1);
       expect(component.ngOnChangesSpy).toHaveBeenCalledWith({
@@ -219,7 +219,7 @@ describe('Directive: DynamicIo', () => {
       inputs.input1 = 'new-val1';
       fixture.setHostProps({ component: Dynamic2Component });
 
-      const component = fixture.getComponent(Dynamic2Component);
+      const component = fixture.getComponent(Dynamic2Component)!;
 
       expect(component.ngOnChangesSpy).toHaveBeenCalledTimes(1);
       expect(component.ngOnChangesSpy).toHaveBeenCalledWith({
@@ -558,7 +558,7 @@ describe('Directive: DynamicIo', () => {
     it('should bind outputs with custom global context', async () => {
       const customEventContext = { customEventContext: 'global' };
       const outputs = {
-        output: jest.fn().mockImplementation(function () {
+        output: jest.fn().mockImplementation(function (this: unknown) {
           // Use non-strict equal due to a bug in Jest
           // that clones `this` object and destroys original ref
           expect(this).toEqual(customEventContext);
@@ -590,7 +590,7 @@ describe('Directive: DynamicIo', () => {
     it('should bind outputs with custom local context', async () => {
       const customEventContext = { customEventContext: 'local' };
       const outputs = {
-        output: jest.fn().mockImplementation(function () {
+        output: jest.fn().mockImplementation(function (this: unknown) {
           // Use non-strict equal due to a bug in Jest
           // that clones `this` object and destroys original ref
           expect(this).toEqual(customEventContext);

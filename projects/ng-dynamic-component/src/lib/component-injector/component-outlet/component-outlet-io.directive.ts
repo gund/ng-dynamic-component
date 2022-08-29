@@ -11,9 +11,9 @@ import { InputsType, IoService, OutputsType } from '../../io';
 })
 export class ComponentOutletIoDirective implements DoCheck {
   @Input()
-  ngComponentOutletNdcDynamicInputs: InputsType;
+  ngComponentOutletNdcDynamicInputs?: InputsType | null;
   @Input()
-  ngComponentOutletNdcDynamicOutputs: OutputsType;
+  ngComponentOutletNdcDynamicOutputs?: OutputsType | null;
 
   constructor(private ioService: IoService) {}
 

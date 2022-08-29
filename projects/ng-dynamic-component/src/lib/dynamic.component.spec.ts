@@ -25,22 +25,22 @@ describe('DynamicComponent', () => {
     ></ndc-dynamic>`,
   })
   class HostComponent {
-    component: Type<any>;
-    injector: Injector;
-    providers: StaticProvider[];
-    content: any[][];
+    component?: Type<any> | null;
+    injector?: Injector;
+    providers?: StaticProvider[];
+    content?: Node[][];
     createdComponent = jest.fn();
   }
 
   class InjectedTestFixture<THost> extends TestFixture<THost> {
     getInjectedComponent() {
-      return this.getComponent(InjectedComponent);
+      return this.getComponent(InjectedComponent)!;
     }
     getInjectedElem() {
-      return this.getComponentElement(InjectedComponent);
+      return this.getComponentElement(InjectedComponent)!;
     }
     getInjectedInjector() {
-      return this.getInjectedElem().injector;
+      return this.getInjectedElem()?.injector;
     }
     getInjectedText(): string | null {
       return this.getInjectedElem()?.nativeElement?.textContent;

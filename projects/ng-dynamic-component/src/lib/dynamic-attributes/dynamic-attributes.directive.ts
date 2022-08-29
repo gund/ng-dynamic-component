@@ -30,26 +30,28 @@ interface AttributeActions {
 })
 export class DynamicAttributesDirective implements DoCheck {
   @Input()
-  ndcDynamicAttributes: AttributesMap;
+  ndcDynamicAttributes?: AttributesMap | null;
   @Input()
-  ngComponentOutletNdcDynamicAttributes: AttributesMap;
+  ngComponentOutletNdcDynamicAttributes?: AttributesMap | null;
 
   private attrsDiffer = this.differs.find({}).create<string, string>();
-  private lastCompType: Type<unknown>;
-  private lastAttrActions: AttributeActions;
+  private lastCompType?: Type<unknown>;
+  private lastAttrActions?: AttributeActions;
 
   private get _attributes() {
     return (
-      this.ndcDynamicAttributes || this.ngComponentOutletNdcDynamicAttributes
+      this.ndcDynamicAttributes ||
+      this.ngComponentOutletNdcDynamicAttributes ||
+      {}
     );
   }
 
   private get nativeElement() {
-    return this.componentInjector.componentRef?.location.nativeElement;
+    return this.componentInjector?.componentRef?.location.nativeElement;
   }
 
   private get compType() {
-    return this.componentInjector.componentRef?.componentType;
+    return this.componentInjector?.componentRef?.componentType;
   }
 
   private get isCompChanged() {
@@ -93,8 +95,8 @@ export class DynamicAttributesDirective implements DoCheck {
     }
   }
 
-  private updateAttributes(actions: AttributeActions) {
-    if (!this.compType) {
+  private updateAttributes(actions?: AttributeActions) {
+    if (!this.compType || !actions) {
       return;
     }
 
@@ -113,9 +115,9 @@ export class DynamicAttributesDirective implements DoCheck {
       remove: [],
     };
 
-    changes.forEachAddedItem((r) => (attrActions.set[r.key] = r.currentValue));
+    changes.forEachAddedItem((r) => (attrActions.set[r.key] = r.currentValue!));
     changes.forEachChangedItem(
-      (r) => (attrActions.set[r.key] = r.currentValue),
+      (r) => (attrActions.set[r.key] = r.currentValue!),
     );
     changes.forEachRemovedItem((r) => attrActions.remove.push(r.key));
 

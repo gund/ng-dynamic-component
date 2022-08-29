@@ -162,7 +162,7 @@ export class TestFixture<THost> {
       component === this.hostComponentType
         ? this.getHost()
         : this.getComponent(component);
-    Object.assign(instance, props);
+    Object.assign(instance!, props);
     return this;
   }
 }
