@@ -1,4 +1,4 @@
-import { Injectable, Injector } from '@angular/core';
+import { Injectable, Injector, StaticProvider } from '@angular/core';
 
 import {
   DynamicComponentInjector,
@@ -18,16 +18,19 @@ export class IoFactoryService {
     componentInjector: DynamicComponentInjector,
     ioOptions?: IoServiceOptions & IoFactoryServiceOptions,
   ) {
+    const providers: StaticProvider[] = [
+      { provide: IoService, useClass: IoService },
+      { provide: DynamicComponentInjectorToken, useValue: componentInjector },
+    ];
+
+    if (ioOptions) {
+      providers.push({ provide: IoServiceOptions, useValue: ioOptions });
+    }
+
     const ioInjector = Injector.create({
       name: 'IoInjector',
       parent: ioOptions?.injector ?? this.injector,
-      providers: [
-        { provide: IoService, useClass: IoService },
-        { provide: DynamicComponentInjectorToken, useValue: componentInjector },
-        ioOptions
-          ? { provide: IoServiceOptions, useValue: ioOptions }
-          : undefined,
-      ],
+      providers,
     });
 
     return ioInjector.get(IoService);

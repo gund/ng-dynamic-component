@@ -17,7 +17,7 @@ describe('Directive: ComponentOutletIo', () => {
     template: `<ng-container *ngComponentOutlet="component"></ng-container>`,
   })
   class HostComponent {
-    component: Type<any>;
+    component?: Type<any>;
   }
 
   const testSetup = new TestSetup(HostComponent, {
@@ -60,7 +60,7 @@ describe('Directive: ComponentOutletIo', () => {
 
       expect(outputs.output).not.toHaveBeenCalled();
 
-      fixture.getComponent(DynamicComponent).output.emit('data');
+      fixture.getComponent(DynamicComponent)!.output.emit('data');
 
       expect(outputs.output).toHaveBeenCalledWith('data');
     });

@@ -7,9 +7,9 @@ export function extractNgParamTypes(
   type: Type<unknown>,
 ): unknown[] | undefined {
   // NOTE: Accessing private APIs of Angular
-  return (type as any)?.ctorParameters?.()?.map((param) => param.type);
+  return (type as any)?.ctorParameters?.()?.map((param: any) => param.type);
 }
 
 export function isOnDestroy(obj: unknown): obj is OnDestroy {
-  return obj && typeof (obj as OnDestroy).ngOnDestroy === 'function';
+  return !!obj && typeof (obj as OnDestroy).ngOnDestroy === 'function';
 }

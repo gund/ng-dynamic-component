@@ -22,13 +22,13 @@ describe('DynamicAttributesDirective', () => {
     `,
   })
   class HostComponent {
-    component: Type<any>;
-    attrs: AttributesMap;
+    component?: Type<any> | null;
+    attrs?: AttributesMap | null;
   }
 
   class DynamicTestFixture<THost> extends TestFixture<THost> {
     getDynamicElem() {
-      return this.getComponentElement(DynamicComponent);
+      return this.getComponentElement(DynamicComponent)!;
     }
   }
 
@@ -110,7 +110,10 @@ describe('DynamicAttributesDirective', () => {
   });
 
   it('should add new attr if added to object', async () => {
-    const attrs = { 'attr-one': 'val-1', 'attr-two': 'val-two' };
+    const attrs: Record<string, any> = {
+      'attr-one': 'val-1',
+      'attr-two': 'val-two',
+    };
 
     const fixture = await testSetup.redner({ props: { attrs } });
 
@@ -131,7 +134,10 @@ describe('DynamicAttributesDirective', () => {
   });
 
   it('should remove attr if removed from object', async () => {
-    const attrs = { 'attr-one': 'val-1', 'attr-two': 'val-two' };
+    const attrs: Record<string, any> = {
+      'attr-one': 'val-1',
+      'attr-two': 'val-two',
+    };
 
     const fixture = await testSetup.redner({ props: { attrs } });
 
@@ -188,7 +194,7 @@ describe('DynamicAttributesDirective', () => {
     fixture.setHostProps({ component: Dynamic2Component });
 
     expect(
-      fixture.getComponentElement(Dynamic2Component).attributes,
+      fixture.getComponentElement(Dynamic2Component)?.attributes,
     ).toMatchObject({
       'attr-one': 'val-1',
       'attr-two': 'val-two',

@@ -64,9 +64,9 @@ export interface DirectiveRef<T> {
 })
 export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
   @Input()
-  ndcDynamicDirectives?: DynamicDirectiveDef<unknown>[];
+  ndcDynamicDirectives?: DynamicDirectiveDef<unknown>[] | null;
   @Input()
-  ngComponentOutletNdcDynamicDirectives?: DynamicDirectiveDef<unknown>[];
+  ngComponentOutletNdcDynamicDirectives?: DynamicDirectiveDef<unknown>[] | null;
 
   @Output()
   ndcDynamicDirectivesCreated = new EventEmitter<DirectiveRef<unknown>[]>();
@@ -80,7 +80,7 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
   }
 
   private get componentRef() {
-    return this.componentInjector.componentRef;
+    return this.componentInjector?.componentRef;
   }
 
   private get compInstance() {
@@ -96,7 +96,7 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
   }
 
   private get hostInjector() {
-    return this.componentRef.injector;
+    return this.componentRef?.injector;
   }
 
   private dirRef = new Map<Type<unknown>, DirectiveRef<unknown>>();
@@ -147,13 +147,17 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
   ) {
     changes.forEachRemovedItem(({ item }) => this.destroyDirective(item));
 
-    const createdDirs = [];
-    changes.forEachAddedItem(({ item }) =>
-      createdDirs.push(this.initDirective(item)),
-    );
+    const createdDirs: DirectiveRef<unknown>[] = [];
+    changes.forEachAddedItem(({ item }) => {
+      const dirRef = this.initDirective(item);
+
+      if (dirRef) {
+        createdDirs.push(dirRef);
+      }
+    });
 
     if (createdDirs.length) {
-      this.ndcDynamicDirectivesCreated.emit(createdDirs.filter(Boolean));
+      this.ndcDynamicDirectivesCreated.emit(createdDirs);
     }
   }
 
@@ -163,7 +167,7 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
 
   private updateDirective(dirDef: DynamicDirectiveDef<unknown>) {
     const io = this.dirIo.get(dirDef.type);
-    io.update(dirDef.inputs, dirDef.outputs);
+    io?.update(dirDef.inputs, dirDef.outputs);
   }
 
   private initDirective(
@@ -177,12 +181,12 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
     const directiveRef: DirectiveRef<unknown> = {
       instance,
       type: dirDef.type,
-      injector: this.hostInjector,
-      hostComponent: this.componentRef.instance,
-      hostView: this.componentRef.hostView,
-      location: this.componentRef.location,
-      changeDetectorRef: this.componentRef.changeDetectorRef,
-      onDestroy: this.componentRef.onDestroy,
+      injector: this.hostInjector!,
+      hostComponent: this.componentRef!.instance,
+      hostView: this.componentRef!.hostView,
+      location: this.componentRef!.location,
+      changeDetectorRef: this.componentRef!.changeDetectorRef,
+      onDestroy: this.componentRef!.onDestroy,
     };
 
     this.initDirIO(directiveRef, dirDef);
@@ -200,7 +204,10 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
   }
 
   private destroyDirective(dirDef: DynamicDirectiveDef<unknown>) {
-    this.destroyDirRef(this.dirRef.get(dirDef.type));
+    const dirRef = this.dirRef.get(dirDef.type);
+    if (dirRef) {
+      this.destroyDirRef(dirRef);
+    }
     this.dirRef.delete(dirDef.type);
     this.dirIo.delete(dirDef.type);
   }
@@ -210,36 +217,32 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
     dirDef: DynamicDirectiveDef<any>,
   ) {
     const io = this.ioFactoryService.create(
-      { componentRef: this.dirToCompDef(dirRef, dirDef) },
+      { componentRef: this.dirToCompDef(dirRef) },
       { trackOutputChanges: true, injector: this.injector },
     );
     io.update(dirDef.inputs, dirDef.outputs);
     this.dirIo.set(dirRef.type, io);
   }
 
-  private dirToCompDef(
-    dirRef: DirectiveRef<unknown>,
-    dirDef: DynamicDirectiveDef<unknown>,
-  ): ComponentRef<unknown> {
+  private dirToCompDef(dirRef: DirectiveRef<unknown>): ComponentRef<unknown> {
     return {
-      changeDetectorRef: this.componentRef.changeDetectorRef,
-      hostView: this.componentRef.hostView,
-      location: this.componentRef.location,
-      destroy: this.componentRef.destroy,
-      onDestroy: this.componentRef.onDestroy,
-      injector: this.componentRef.injector,
+      changeDetectorRef: this.componentRef!.changeDetectorRef,
+      hostView: this.componentRef!.hostView,
+      location: this.componentRef!.location,
+      destroy: this.componentRef!.destroy,
+      onDestroy: this.componentRef!.onDestroy,
+      injector: this.componentRef!.injector,
       instance: dirRef.instance,
       componentType: dirRef.type,
-      setInput: (name, value) => (dirRef.instance[name] = value),
+      setInput: (name, value) => ((dirRef.instance as any)[name] = value),
     };
   }
 
-  private destroyDirRef(dir: DirectiveRef<unknown>) {
-    const io = this.dirIo.get(dir.type);
-    io.ngOnDestroy();
+  private destroyDirRef(dirRef: DirectiveRef<unknown>) {
+    this.dirIo.get(dirRef.type)?.ngOnDestroy();
 
-    if (isOnDestroy(dir.instance)) {
-      dir.instance.ngOnDestroy();
+    if (isOnDestroy(dirRef.instance)) {
+      dirRef.instance.ngOnDestroy();
     }
   }
 
@@ -251,10 +254,12 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
           useClass: dirType,
           deps: this.resolveDirParamTypes(dirType),
         },
-        { provide: ElementRef, useValue: this.componentRef.location },
+        { provide: ElementRef, useValue: this.componentRef!.location },
       ],
       parent: this.hostInjector,
-      name: `DynamicDirectiveInjector:${dirType.name}@${this.componentRef.componentType.name}`,
+      name: `DynamicDirectiveInjector:${dirType.name}@${
+        this.componentRef!.componentType.name
+      }`,
     });
 
     return directiveInjector.get(dirType);
@@ -280,7 +285,7 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
     this.callHook(obj, 'ngAfterViewChecked');
   }
 
-  private callHook(obj: unknown, hook: string, args: unknown[] = []) {
+  private callHook(obj: any, hook: string, args: unknown[] = []) {
     if (obj[hook]) {
       obj[hook](...args);
     }

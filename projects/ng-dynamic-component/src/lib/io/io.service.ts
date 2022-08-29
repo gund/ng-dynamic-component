@@ -57,16 +57,16 @@ export class IoService implements OnDestroy {
   private outputsShouldDisconnect$ = new Subject<void>();
   private outputsEventContext: unknown;
 
-  private inputs: InputsType;
-  private outputs: OutputsType;
+  private inputs: InputsType = {};
+  private outputs: OutputsType = {};
   private outputsChanged: (outputs: OutputsType) => boolean = () => false;
 
   private get compRef() {
     return this.compInjector.componentRef;
   }
 
-  private get componentInst() {
-    return this.compRef ? this.compRef.instance : null;
+  private get componentInst(): Record<string, unknown> | null {
+    return this.compRef ? this.compRef.instance : (null as any);
   }
 
   private get componentInstChanged(): boolean {
@@ -110,7 +110,7 @@ export class IoService implements OnDestroy {
    *
    * It will detect both new and mutated changes.
    */
-  update(inputs: InputsType, outputs: OutputsType) {
+  update(inputs?: InputsType | null, outputs?: OutputsType | null) {
     if (!this.compRef) {
       this.disconnectOutputs();
       return;
@@ -136,7 +136,14 @@ export class IoService implements OnDestroy {
     }
   }
 
-  private updateIO(inputs: InputsType, outputs: OutputsType) {
+  private updateIO(inputs?: InputsType | null, outputs?: OutputsType | null) {
+    if (!inputs) {
+      inputs = {};
+    }
+    if (!outputs) {
+      outputs = {};
+    }
+
     const inputsChanged = this.inputs !== inputs;
     const outputsChanged = this.outputs !== outputs;
 
@@ -195,9 +202,9 @@ export class IoService implements OnDestroy {
     this.outputsShouldDisconnect$.next();
   }
 
-  private getInputsChanges(isCompChanged: boolean): KeyValueChangesAny {
+  private getInputsChanges(isCompChanged: boolean) {
     if (isCompChanged) {
-      this.inputsDiffer.diff(null);
+      this.inputsDiffer.diff({});
     }
 
     return this.inputsDiffer.diff(this.inputs);
@@ -218,13 +225,17 @@ export class IoService implements OnDestroy {
   // @see https://github.com/angular/angular/issues/44926
   // eslint-disable-next-line deprecation/deprecation
   private resolveCompFactory(): ComponentFactory<unknown> | null {
+    if (!this.compRef) {
+      return null;
+    }
+
     try {
       try {
         return this.cfr.resolveComponentFactory(this.compRef.componentType);
       } catch (e) {
         // Fallback if componentType does not exist (happens on NgComponentOutlet)
         return this.cfr.resolveComponentFactory(
-          this.compRef.instance.constructor as Type<unknown>,
+          (this.compRef.instance as any).constructor as Type<unknown>,
         );
       }
     } catch (e) {
@@ -269,7 +280,7 @@ export class IoService implements OnDestroy {
     const processedOutputs: OutputsTypeProcessed = {};
 
     Object.keys(outputs).forEach((key) => {
-      const outputExpr = outputs[key];
+      const outputExpr = outputs[key]!;
       let outputHandler: EventHandler<unknown>;
 
       if (typeof outputExpr === 'function') {
@@ -278,7 +289,7 @@ export class IoService implements OnDestroy {
         outputHandler = outputExpr && this.processOutputArgs(outputExpr);
       }
 
-      if (this.outputsEventContext) {
+      if (this.outputsEventContext && outputHandler) {
         outputHandler = outputHandler.bind(this.outputsEventContext);
       }
 
@@ -296,12 +307,12 @@ export class IoService implements OnDestroy {
 
     // When there is no event argument - use just arguments
     if (eventIdx === -1) {
-      return function () {
+      return function (this: unknown) {
         return handler.apply(this, args);
       };
     }
 
-    return function (event) {
+    return function (this: unknown, event) {
       const argsWithEvent = [...args];
       argsWithEvent[eventIdx] = event;
 
@@ -313,7 +324,7 @@ export class IoService implements OnDestroy {
     io: T,
     mapping: IOMappingList,
   ): T {
-    const newIO = {};
+    const newIO: Record<string, unknown> = {};
 
     Object.keys(io).forEach((key) => {
       const newKey = this.findPropByTplInMapping(key, mapping) || key;
