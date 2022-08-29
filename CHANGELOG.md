@@ -1,5 +1,12 @@
 # ng-dynamic-component - Changelog
 
+# [10.5.0](https://github.com/gund/ng-dynamic-component/compare/v10.4.0...v10.5.0) (2022-08-29)
+
+
+### Features
+
+* **lib:** enable strict mode in Typescript and Angular ([fbac529](https://github.com/gund/ng-dynamic-component/commit/fbac5299e500f354a96cc6f8c0599e151189a7ad))
+
 # [10.4.0](https://github.com/gund/ng-dynamic-component/compare/v10.3.1...v10.4.0) (2022-08-28)
 
 
