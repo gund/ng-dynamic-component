@@ -1,8 +1,5 @@
-import { ComponentRef, InjectionToken } from '@angular/core';
-
-export interface DynamicComponentInjector {
-  componentRef: ComponentRef<any> | null;
-}
+import { InjectionToken } from '@angular/core';
+import { DynamicComponentInjector } from './component-injector';
 
 export const DynamicComponentInjectorToken =
   new InjectionToken<DynamicComponentInjector>('DynamicComponentInjector');

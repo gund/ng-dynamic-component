@@ -2,7 +2,6 @@ import {
   Directive,
   DoCheck,
   Inject,
-  Injector,
   Input,
   KeyValueChanges,
   KeyValueDiffers,
@@ -31,31 +30,33 @@ interface AttributeActions {
 })
 export class DynamicAttributesDirective implements DoCheck {
   @Input()
-  ndcDynamicAttributes: AttributesMap;
+  ndcDynamicAttributes?: AttributesMap | null;
   @Input()
-  ngComponentOutletNdcDynamicAttributes: AttributesMap;
+  ngComponentOutletNdcDynamicAttributes?: AttributesMap | null;
 
   private attrsDiffer = this.differs.find({}).create<string, string>();
-  private lastCompType: Type<any>;
-  private lastAttrActions: AttributeActions;
+  private lastCompType?: Type<unknown>;
+  private lastAttrActions?: AttributeActions;
 
   private get _attributes() {
     return (
-      this.ndcDynamicAttributes || this.ngComponentOutletNdcDynamicAttributes
+      this.ndcDynamicAttributes ||
+      this.ngComponentOutletNdcDynamicAttributes ||
+      {}
     );
   }
 
-  private get _nativeElement() {
-    return this.componentInjector.componentRef?.location.nativeElement;
+  private get nativeElement() {
+    return this.componentInjector?.componentRef?.location.nativeElement;
   }
 
-  private get _compType() {
-    return this.componentInjector.componentRef?.componentType;
+  private get compType() {
+    return this.componentInjector?.componentRef?.componentType;
   }
 
-  private get _isCompChanged() {
-    if (this.lastCompType !== this._compType) {
-      this.lastCompType = this._compType;
+  private get isCompChanged() {
+    if (this.lastCompType !== this.compType) {
+      this.lastCompType = this.compType;
       return true;
     }
     return false;
@@ -64,40 +65,38 @@ export class DynamicAttributesDirective implements DoCheck {
   constructor(
     private renderer: Renderer2,
     private differs: KeyValueDiffers,
-    private injector: Injector,
     @Inject(DynamicComponentInjectorToken)
     @Optional()
     private componentInjector?: DynamicComponentInjector,
   ) {}
 
   ngDoCheck(): void {
-    const isCompChanged = this._isCompChanged;
+    const isCompChanged = this.isCompChanged;
     const changes = this.attrsDiffer.diff(this._attributes);
 
     if (changes) {
-      this.lastAttrActions = this._changesToAttrActions(changes);
+      this.lastAttrActions = this.changesToAttrActions(changes);
     }
 
     if (changes || (isCompChanged && this.lastAttrActions)) {
-      this._updateAttributes(this.lastAttrActions);
+      this.updateAttributes(this.lastAttrActions);
     }
   }
 
   setAttribute(name: string, value: string, namespace?: string) {
-    if (this._nativeElement) {
-      this.renderer.setAttribute(this._nativeElement, name, value, namespace);
+    if (this.nativeElement) {
+      this.renderer.setAttribute(this.nativeElement, name, value, namespace);
     }
   }
 
   removeAttribute(name: string, namespace?: string) {
-    if (this._nativeElement) {
-      this.renderer.removeAttribute(this._nativeElement, name, namespace);
+    if (this.nativeElement) {
+      this.renderer.removeAttribute(this.nativeElement, name, namespace);
     }
   }
 
-  private _updateAttributes(actions: AttributeActions) {
-    // ? Early exit if no dynamic component
-    if (!this._compType) {
+  private updateAttributes(actions?: AttributeActions) {
+    if (!this.compType || !actions) {
       return;
     }
 
@@ -108,7 +107,7 @@ export class DynamicAttributesDirective implements DoCheck {
     actions.remove.forEach((key) => this.removeAttribute(key));
   }
 
-  private _changesToAttrActions(
+  private changesToAttrActions(
     changes: KeyValueChanges<string, string>,
   ): AttributeActions {
     const attrActions: AttributeActions = {
@@ -116,9 +115,9 @@ export class DynamicAttributesDirective implements DoCheck {
       remove: [],
     };
 
-    changes.forEachAddedItem((r) => (attrActions.set[r.key] = r.currentValue));
+    changes.forEachAddedItem((r) => (attrActions.set[r.key] = r.currentValue!));
     changes.forEachChangedItem(
-      (r) => (attrActions.set[r.key] = r.currentValue),
+      (r) => (attrActions.set[r.key] = r.currentValue!),
     );
     changes.forEachRemovedItem((r) => attrActions.remove.push(r.key));
 

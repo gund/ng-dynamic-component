@@ -4,58 +4,69 @@ import {
   ComponentFactoryResolver,
   Inject,
   Injectable,
+  Injector,
+  KeyValueChangeRecord,
   KeyValueChanges,
   KeyValueDiffers,
   OnDestroy,
-  SimpleChanges,
+  Optional,
+  StaticProvider,
+  Type,
 } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { DynamicComponentInjector } from '../component-injector';
-import { createChange, createNewChange, noop } from '../util';
-import { EventArgumentToken } from './event-argument';
+import {
+  DynamicComponentInjector,
+  DynamicComponentInjectorToken,
+} from '../component-injector';
+import { IoEventArgumentToken } from './event-argument';
+import {
+  IoEventContextProviderToken,
+  IoEventContextToken,
+} from './event-context';
 import { EventHandler, InputsType, OutputsType, OutputWithArgs } from './types';
 
-export interface IOMapInfo {
+interface IOMapInfo {
   propName: string;
   templateName: string;
 }
-export type IOMappingList = IOMapInfo[];
-export type KeyValueChangesAny = KeyValueChanges<any, any>;
 
-export interface IoInitOptions {
-  trackOutputChanges?: boolean;
-}
+type IOMappingList = IOMapInfo[];
+
+type KeyValueChangesAny = KeyValueChanges<string, unknown>;
 
 interface OutputsTypeProcessed extends OutputsType {
   [k: string]: EventHandler;
 }
 
+@Injectable({ providedIn: 'root' })
+export class IoServiceOptions {
+  trackOutputChanges = false;
+}
+
 @Injectable()
 export class IoService implements OnDestroy {
-  private checkInit = this.failInit;
-
-  private lastComponentInst: any = null;
-  private lastInputChanges: SimpleChanges;
+  private lastComponentInst: unknown = null;
+  private lastChangedInputs = new Set<string>();
   private inputsDiffer = this.differs.find({}).create();
   // TODO: Replace ComponentFactory once new API is created
   // @see https://github.com/angular/angular/issues/44926
   // eslint-disable-next-line deprecation/deprecation
-  private compFactory: ComponentFactory<any> | null = null;
+  private compFactory: ComponentFactory<unknown> | null = null;
   private outputsShouldDisconnect$ = new Subject<void>();
+  private outputsEventContext: unknown;
 
-  private inputs: InputsType;
-  private outputs: OutputsType;
-  private compInjector: DynamicComponentInjector;
+  private inputs: InputsType = {};
+  private outputs: OutputsType = {};
   private outputsChanged: (outputs: OutputsType) => boolean = () => false;
 
   private get compRef() {
     return this.compInjector.componentRef;
   }
 
-  private get componentInst() {
-    return this.compRef ? this.compRef.instance : null;
+  private get componentInst(): Record<string, unknown> | null {
+    return this.compRef ? this.compRef.instance : (null as any);
   }
 
   private get componentInstChanged(): boolean {
@@ -67,121 +78,104 @@ export class IoService implements OnDestroy {
     }
   }
 
-  private get compCdr(): ChangeDetectorRef {
-    return this.compRef ? this.compRef.injector.get(ChangeDetectorRef) : null;
-  }
-
   constructor(
+    private injector: Injector,
     private differs: KeyValueDiffers,
     // TODO: Replace ComponentFactoryResolver once new API is created
     // @see https://github.com/angular/angular/issues/44926
     // eslint-disable-next-line deprecation/deprecation
     private cfr: ComponentFactoryResolver,
-    @Inject(EventArgumentToken)
+    private options: IoServiceOptions,
+    @Inject(DynamicComponentInjectorToken)
+    private compInjector: DynamicComponentInjector,
+    @Inject(IoEventArgumentToken)
     private eventArgument: string,
     private cdr: ChangeDetectorRef,
-  ) {}
-
-  ngOnDestroy(): void {
-    this._disconnectOutputs();
-  }
-
-  init(
-    componentInjector: DynamicComponentInjector,
-    options: IoInitOptions = {},
+    @Inject(IoEventContextProviderToken)
+    @Optional()
+    private eventContextProvider: StaticProvider,
   ) {
-    this.checkInit = componentInjector ? noop : this.failInit;
-    this.compInjector = componentInjector;
-
-    if (options.trackOutputChanges) {
+    if (this.options.trackOutputChanges) {
       const outputsDiffer = this.differs.find({}).create();
       this.outputsChanged = (outputs) => !!outputsDiffer.diff(outputs);
     }
   }
 
-  update(
-    inputs: InputsType,
-    outputs: OutputsType,
-    inputsChanged: boolean,
-    outputsChanged: boolean,
-  ) {
-    this.checkInit();
-    this.updateIO(inputs, outputs);
+  ngOnDestroy(): void {
+    this.disconnectOutputs();
+  }
+
+  /**
+   * Call update whenever inputs/outputs may or did change.
+   *
+   * It will detect both new and mutated changes.
+   */
+  update(inputs?: InputsType | null, outputs?: OutputsType | null) {
+    if (!this.compRef) {
+      this.disconnectOutputs();
+      return;
+    }
+
+    const changes = this.updateIO(inputs, outputs);
 
     const compChanged = this.componentInstChanged;
 
-    if (compChanged || inputsChanged) {
-      const inputsChanges = this._getInputsChanges();
-      if (inputsChanges) {
-        this._updateInputChanges(inputsChanges);
-      }
-      this.updateInputs(compChanged || !this.lastInputChanges);
-    }
-
-    if (compChanged || outputsChanged) {
-      this.bindOutputs();
-    }
-  }
-
-  maybeUpdate() {
-    this.checkInit();
-
-    if (this.componentInstChanged) {
-      this.updateInputs(true);
-      this.bindOutputs();
-      return;
-    }
-
-    if (this.outputsChanged(this.outputs)) {
-      this.bindOutputs();
-    }
-
-    if (!this.inputs) {
-      return;
-    }
-
-    const inputsChanges = this._getInputsChanges();
+    const inputsChanges = this.getInputsChanges(compChanged);
+    const outputsChanged = this.outputsChanged(this.outputs);
 
     if (inputsChanges) {
-      const isNotFirstChange = !!this.lastInputChanges;
-      this._updateInputChanges(inputsChanges);
+      this.updateChangedInputs(inputsChanges);
+    }
 
-      if (isNotFirstChange) {
-        this.updateInputs();
-      }
+    if (compChanged || inputsChanges) {
+      this.updateInputs(compChanged || !this.lastChangedInputs.size);
+    }
+
+    if (compChanged || outputsChanged || changes.outputsChanged) {
+      this.bindOutputs();
     }
   }
 
-  private updateIO(inputs: InputsType, outputs: OutputsType) {
+  private updateIO(inputs?: InputsType | null, outputs?: OutputsType | null) {
+    if (!inputs) {
+      inputs = {};
+    }
+    if (!outputs) {
+      outputs = {};
+    }
+
+    const inputsChanged = this.inputs !== inputs;
+    const outputsChanged = this.outputs !== outputs;
+
     this.inputs = inputs;
     this.outputs = outputs;
+
+    return { inputsChanged, outputsChanged };
   }
 
   private updateInputs(isFirstChange = false) {
     if (isFirstChange) {
-      this._updateCompFactory();
+      this.updateCompFactory();
     }
 
-    const compInst = this.componentInst;
-    let inputs = this.inputs;
+    const compRef = this.compRef;
+    const inputs = this.inputs;
 
-    if (!inputs || !compInst) {
+    if (!inputs || !compRef) {
       return;
     }
 
-    inputs = this._resolveInputs(inputs);
+    const ifInputChanged = this.lastChangedInputs.size
+      ? (name: string) => this.lastChangedInputs.has(name)
+      : () => true;
 
-    Object.keys(inputs).forEach((p) => (compInst[p] = inputs[p]));
-    // Mark component for check to re-render with new inputs
-    if (this.compCdr) {
-      this.compCdr.markForCheck();
-    }
-
-    this.notifyOnInputChanges(this.lastInputChanges, isFirstChange);
+    Object.keys(inputs)
+      .filter(ifInputChanged)
+      .forEach((name) => compRef.setInput(name, inputs[name]));
   }
 
   private bindOutputs() {
-    this._disconnectOutputs();
+    this.disconnectOutputs();
 
     const compInst = this.componentInst;
     let outputs = this.outputs;
@@ -190,88 +184,58 @@ export class IoService implements OnDestroy {
       return;
     }
 
-    outputs = this._resolveOutputs(outputs);
+    outputs = this.resolveOutputs(outputs);
 
     Object.keys(outputs)
       .filter((p) => compInst[p])
       .forEach((p) =>
-        compInst[p]
+        (compInst[p] as Observable<unknown>)
           .pipe(takeUntil(this.outputsShouldDisconnect$))
-          .subscribe((event: any) => {
+          .subscribe((event) => {
             this.cdr.markForCheck();
             return (outputs[p] as EventHandler)(event);
           }),
       );
   }
 
-  private notifyOnInputChanges(
-    changes: SimpleChanges = {},
-    forceFirstChanges: boolean,
-  ) {
-    // Exit early if component not interested to receive changes
-    if (!this.componentInst.ngOnChanges) {
-      return;
-    }
-
-    if (forceFirstChanges) {
-      changes = this._collectFirstChanges();
-    }
-
-    this.componentInst.ngOnChanges(changes);
-  }
-
-  private _disconnectOutputs() {
+  private disconnectOutputs() {
     this.outputsShouldDisconnect$.next();
   }
 
-  private _getInputsChanges(): KeyValueChangesAny {
+  private getInputsChanges(isCompChanged: boolean) {
+    if (isCompChanged) {
+      this.inputsDiffer.diff({});
+    }
+
     return this.inputsDiffer.diff(this.inputs);
   }
 
-  private _updateInputChanges(differ: KeyValueChangesAny) {
-    this.lastInputChanges = this._collectChangesFromDiffer(differ);
-  }
+  private updateChangedInputs(differ: KeyValueChangesAny) {
+    this.lastChangedInputs.clear();
 
-  private _collectFirstChanges(): SimpleChanges {
-    const changes = {} as SimpleChanges;
-    const inputs = this.inputs;
+    const addRecordKeyToSet = (record: KeyValueChangeRecord<string, unknown>) =>
+      this.lastChangedInputs.add(record.key);
 
-    Object.keys(inputs).forEach(
-      (prop) => (changes[prop] = createNewChange(inputs[prop])),
-    );
-
-    return this._resolveChanges(changes);
-  }
-
-  private _collectChangesFromDiffer(differ: KeyValueChangesAny): SimpleChanges {
-    const changes: SimpleChanges = {};
-
-    differ.forEachAddedItem(
-      (record) => (changes[record.key] = createNewChange(record.currentValue)),
-    );
-
-    differ.forEachChangedItem(
-      (record) =>
-        (changes[record.key] = createChange(
-          record.currentValue,
-          record.previousValue,
-        )),
-    );
-
-    return this._resolveChanges(changes);
+    differ.forEachAddedItem(addRecordKeyToSet);
+    differ.forEachChangedItem(addRecordKeyToSet);
+    differ.forEachRemovedItem(addRecordKeyToSet);
   }
 
   // TODO: Replace ComponentFactory once new API is created
   // @see https://github.com/angular/angular/issues/44926
   // eslint-disable-next-line deprecation/deprecation
-  private _resolveCompFactory(): ComponentFactory<any> | null {
+  private resolveCompFactory(): ComponentFactory<unknown> | null {
+    if (!this.compRef) {
+      return null;
+    }
+
     try {
       try {
         return this.cfr.resolveComponentFactory(this.compRef.componentType);
       } catch (e) {
         // Fallback if componentType does not exist (happens on NgComponentOutlet)
         return this.cfr.resolveComponentFactory(
-          this.compRef.instance.constructor,
+          (this.compRef.instance as any).constructor as Type<unknown>,
         );
       }
     } catch (e) {
@@ -280,76 +244,97 @@ export class IoService implements OnDestroy {
     }
   }
 
-  private _updateCompFactory() {
-    this.compFactory = this._resolveCompFactory();
+  private updateCompFactory() {
+    this.compFactory = this.resolveCompFactory();
   }
 
-  private _resolveInputs(inputs: InputsType): InputsType {
-    if (!this.compFactory) {
-      return inputs;
-    }
+  private resolveOutputs(outputs: OutputsType): OutputsType {
+    this.updateOutputsEventContext();
 
-    return this._remapIO(inputs, this.compFactory.inputs);
-  }
-
-  private _resolveOutputs(outputs: OutputsType): OutputsType {
-    outputs = this._processOutputs(outputs);
+    outputs = this.processOutputs(outputs);
 
     if (!this.compFactory) {
       return outputs;
     }
 
-    return this._remapIO(outputs, this.compFactory.outputs);
+    return this.remapIO(outputs, this.compFactory.outputs);
   }
 
-  private _processOutputs(outputs: OutputsType): OutputsTypeProcessed {
+  private updateOutputsEventContext() {
+    if (this.eventContextProvider) {
+      // Resolve custom context from local provider
+      const eventContextInjector = Injector.create({
+        name: 'EventContext',
+        parent: this.injector,
+        providers: [this.eventContextProvider],
+      });
+
+      this.outputsEventContext = eventContextInjector.get(IoEventContextToken);
+    } else {
+      // Try to get global context
+      this.outputsEventContext = this.injector.get(IoEventContextToken, null);
+    }
+  }
+
+  private processOutputs(outputs: OutputsType): OutputsTypeProcessed {
     const processedOutputs: OutputsTypeProcessed = {};
 
     Object.keys(outputs).forEach((key) => {
-      const outputExpr = outputs[key];
+      const outputExpr = outputs[key]!;
+      let outputHandler: EventHandler<unknown>;
 
       if (typeof outputExpr === 'function') {
-        processedOutputs[key] = outputExpr;
+        outputHandler = outputExpr;
       } else {
-        processedOutputs[key] =
-          outputExpr && this._processOutputArgs(outputExpr);
+        outputHandler = outputExpr && this.processOutputArgs(outputExpr);
       }
+
+      if (this.outputsEventContext && outputHandler) {
+        outputHandler = outputHandler.bind(this.outputsEventContext);
+      }
+
+      processedOutputs[key] = outputHandler;
     });
 
     return processedOutputs;
   }
 
-  private _processOutputArgs(output: OutputWithArgs): EventHandler {
-    const { handler } = output;
-    const args = 'args' in output ? output.args || [] : [this.eventArgument];
+  private processOutputArgs(output: OutputWithArgs): EventHandler {
+    const eventArgument = this.eventArgument;
+    const args = 'args' in output ? output.args || [] : [eventArgument];
+    const eventIdx = args.indexOf(eventArgument);
+    const handler = output.handler;
 
-    return (event) =>
-      handler(...args.map((arg) => (arg === this.eventArgument ? event : arg)));
-  }
-
-  private _resolveChanges(changes: SimpleChanges): SimpleChanges {
-    if (!this.compFactory) {
-      return changes;
+    // When there is no event argument - use just arguments
+    if (eventIdx === -1) {
+      return function (this: unknown) {
+        return handler.apply(this, args);
+      };
     }
 
-    return this._remapIO(changes, this.compFactory.inputs);
+    return function (this: unknown, event) {
+      const argsWithEvent = [...args];
+      argsWithEvent[eventIdx] = event;
+
+      return handler.apply(this, argsWithEvent);
+    };
   }
 
-  private _remapIO<T extends Record<string, any>>(
+  private remapIO<T extends Record<string, unknown>>(
     io: T,
     mapping: IOMappingList,
   ): T {
-    const newIO = {};
+    const newIO: Record<string, unknown> = {};
 
     Object.keys(io).forEach((key) => {
-      const newKey = this._findPropByTplInMapping(key, mapping) || key;
+      const newKey = this.findPropByTplInMapping(key, mapping) || key;
       newIO[newKey] = io[key];
     });
 
     return newIO as T;
   }
 
-  private _findPropByTplInMapping(
+  private findPropByTplInMapping(
     tplName: string,
     mapping: IOMappingList,
   ): string | null {
@@ -359,11 +344,5 @@ export class IoService implements OnDestroy {
       }
     }
     return null;
-  }
-
-  private failInit() {
-    throw Error(
-      'IoService: ComponentInjector was not set! Please call init() method!',
-    );
   }
 }

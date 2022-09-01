@@ -1,28 +1,38 @@
+import { Injectable, Injector, StaticProvider } from '@angular/core';
+
 import {
-  ChangeDetectorRef,
-  ComponentFactoryResolver,
-  Inject,
-  Injectable,
-  KeyValueDiffers,
-} from '@angular/core';
+  DynamicComponentInjector,
+  DynamicComponentInjectorToken,
+} from '../component-injector';
+import { IoService, IoServiceOptions } from './io.service';
 
-import { EventArgumentToken } from './event-argument';
-import { IoService } from './io.service';
+export interface IoFactoryServiceOptions {
+  injector?: Injector;
+}
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class IoFactoryService {
-  constructor(
-    private differs: KeyValueDiffers,
-    // TODO: Replace ComponentFactoryResolver once new API is created
-    // @see https://github.com/angular/angular/issues/44926
-    // eslint-disable-next-line deprecation/deprecation
-    private cfr: ComponentFactoryResolver,
-    @Inject(EventArgumentToken)
-    private eventArgument: string,
-    private cdr: ChangeDetectorRef,
-  ) {}
+  constructor(private injector: Injector) {}
 
-  create() {
-    return new IoService(this.differs, this.cfr, this.eventArgument, this.cdr);
+  create(
+    componentInjector: DynamicComponentInjector,
+    ioOptions?: IoServiceOptions & IoFactoryServiceOptions,
+  ) {
+    const providers: StaticProvider[] = [
+      { provide: IoService, useClass: IoService },
+      { provide: DynamicComponentInjectorToken, useValue: componentInjector },
+    ];
+
+    if (ioOptions) {
+      providers.push({ provide: IoServiceOptions, useValue: ioOptions });
+    }
+
+    const ioInjector = Injector.create({
+      name: 'IoInjector',
+      parent: ioOptions?.injector ?? this.injector,
+      providers,
+    });
+
+    return ioInjector.get(IoService);
   }
 }

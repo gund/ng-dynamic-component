@@ -14,7 +14,6 @@ import {
   Optional,
   Output,
   Type,
-  ViewContainerRef,
   ViewRef,
 } from '@angular/core';
 
@@ -23,8 +22,8 @@ import {
   DynamicComponentInjectorToken,
 } from '../component-injector';
 import { InputsType, IoFactoryService, IoService, OutputsType } from '../io';
-import { extractNgParamTypes, getCtorParamTypes } from '../util';
-import { WindowRefService } from '../window-ref';
+import { extractNgParamTypes, isOnDestroy } from '../util';
+import { ReflectService } from '../reflect';
 
 export interface DynamicDirectiveDef<T> {
   type: Type<T>;
@@ -44,7 +43,7 @@ export interface DirectiveRef<T> {
   instance: T;
   type: Type<T>;
   injector: Injector;
-  hostComponent: Type<any>;
+  hostComponent: unknown;
   hostView: ViewRef;
   location: ElementRef;
   changeDetectorRef: ChangeDetectorRef;
@@ -52,20 +51,27 @@ export interface DirectiveRef<T> {
   onDestroy: (callback: Function) => void;
 }
 
+/**
+ * @experimental Dynamic directives is an experimental API that may not work as expected.
+ *
+ * NOTE: There is a known issue with OnChanges hook not beign triggered on dynamic directives
+ * since this part of functionality has been removed from the core as Angular now
+ * supports this out of the box for dynamic components.
+ */
 @Directive({
   selector: '[ndcDynamicDirectives],[ngComponentOutletNdcDynamicDirectives]',
   providers: [IoFactoryService],
 })
 export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
   @Input()
-  ndcDynamicDirectives: DynamicDirectiveDef<any>[];
+  ndcDynamicDirectives?: DynamicDirectiveDef<unknown>[] | null;
   @Input()
-  ngComponentOutletNdcDynamicDirectives: DynamicDirectiveDef<any>[];
+  ngComponentOutletNdcDynamicDirectives?: DynamicDirectiveDef<unknown>[] | null;
 
   @Output()
-  ndcDynamicDirectivesCreated = new EventEmitter<DirectiveRef<any>[]>();
+  ndcDynamicDirectivesCreated = new EventEmitter<DirectiveRef<unknown>[]>();
 
-  private lastCompInstance: any;
+  private lastCompInstance: unknown;
 
   private get directives() {
     return (
@@ -74,7 +80,7 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
   }
 
   private get componentRef() {
-    return this.componentInjector.componentRef;
+    return this.componentInjector?.componentRef;
   }
 
   private get compInstance() {
@@ -90,29 +96,20 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
   }
 
   private get hostInjector() {
-    return this.componentRef.injector;
+    return this.componentRef?.injector;
   }
 
-  private get hostVcr(): ViewContainerRef {
-    // NOTE: Accessing private APIs of Angular
-    // eslint-disable-next-line @typescript-eslint/dot-notation
-    return this.componentRef['_viewRef']['_viewContainerRef'];
-  }
-
-  private get reflect() {
-    return (this.windowRef.nativeWindow as any).Reflect;
-  }
-
-  private dirRef = new Map<Type<any>, DirectiveRef<any>>();
-  private dirIo = new Map<Type<any>, IoService>();
+  private dirRef = new Map<Type<unknown>, DirectiveRef<unknown>>();
+  private dirIo = new Map<Type<unknown>, IoService>();
   private dirsDiffer = this.iterableDiffers
     .find([])
-    .create<DynamicDirectiveDef<any>>((_, def) => def.type);
+    .create<DynamicDirectiveDef<unknown>>((_, def) => def.type);
 
   constructor(
+    private injector: Injector,
     private iterableDiffers: IterableDiffers,
     private ioFactoryService: IoFactoryService,
-    private windowRef: WindowRefService,
+    private reflectService: ReflectService,
     @Inject(DynamicComponentInjectorToken)
     @Optional()
     private componentInjector?: DynamicComponentInjector,
@@ -146,55 +143,58 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
   }
 
   private processDirChanges(
-    changes: IterableChanges<DynamicDirectiveDef<any>>,
+    changes: IterableChanges<DynamicDirectiveDef<unknown>>,
   ) {
     changes.forEachRemovedItem(({ item }) => this.destroyDirective(item));
 
-    const createdDirs = [];
-    changes.forEachAddedItem(({ item }) =>
-      createdDirs.push(this.initDirective(item)),
-    );
+    const createdDirs: DirectiveRef<unknown>[] = [];
+    changes.forEachAddedItem(({ item }) => {
+      const dirRef = this.initDirective(item);
+
+      if (dirRef) {
+        createdDirs.push(dirRef);
+      }
+    });
 
     if (createdDirs.length) {
-      this.ndcDynamicDirectivesCreated.emit(createdDirs.filter(Boolean));
+      this.ndcDynamicDirectivesCreated.emit(createdDirs);
     }
   }
 
   private updateDirectives() {
-    this.directives.forEach((dir) => this.updateDirective(dir));
+    this.directives?.forEach((dir) => this.updateDirective(dir));
   }
 
-  private updateDirective(dirDef: DynamicDirectiveDef<any>) {
+  private updateDirective(dirDef: DynamicDirectiveDef<unknown>) {
     const io = this.dirIo.get(dirDef.type);
-    io.update(dirDef.inputs, dirDef.outputs, false, false);
-    io.maybeUpdate();
+    io?.update(dirDef.inputs, dirDef.outputs);
   }
 
   private initDirective(
-    dirDef: DynamicDirectiveDef<any>,
-  ): DirectiveRef<any> | undefined {
+    dirDef: DynamicDirectiveDef<unknown>,
+  ): DirectiveRef<unknown> | undefined {
     if (this.dirRef.has(dirDef.type)) {
       return;
     }
 
     const instance = this.createDirective(dirDef.type);
-    const dir = {
+    const directiveRef: DirectiveRef<unknown> = {
       instance,
       type: dirDef.type,
-      injector: this.hostInjector,
-      hostComponent: this.componentRef.instance,
-      hostView: this.componentRef.hostView,
-      location: this.componentRef.location,
-      changeDetectorRef: this.componentRef.changeDetectorRef,
-      onDestroy: this.componentRef.onDestroy,
+      injector: this.hostInjector!,
+      hostComponent: this.componentRef!.instance,
+      hostView: this.componentRef!.hostView,
+      location: this.componentRef!.location,
+      changeDetectorRef: this.componentRef!.changeDetectorRef,
+      onDestroy: this.componentRef!.onDestroy,
     };
 
-    this.initDirIO(dir, dirDef.inputs, dirDef.outputs);
+    this.initDirIO(directiveRef, dirDef);
     this.callInitHooks(instance);
 
-    this.dirRef.set(dir.type, dir);
+    this.dirRef.set(directiveRef.type, directiveRef);
 
-    return dir;
+    return directiveRef;
   }
 
   private destroyAllDirectives() {
@@ -203,41 +203,46 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
     this.dirIo.clear();
   }
 
-  private destroyDirective(dirDef: DynamicDirectiveDef<any>) {
-    this.destroyDirRef(this.dirRef.get(dirDef.type));
+  private destroyDirective(dirDef: DynamicDirectiveDef<unknown>) {
+    const dirRef = this.dirRef.get(dirDef.type);
+    if (dirRef) {
+      this.destroyDirRef(dirRef);
+    }
     this.dirRef.delete(dirDef.type);
     this.dirIo.delete(dirDef.type);
   }
 
-  private initDirIO(dir: DirectiveRef<any>, inputs?: any, outputs?: any) {
-    const io = this.ioFactoryService.create();
-    io.init(
-      { componentRef: this.dirToCompDef(dir) },
-      { trackOutputChanges: true },
+  private initDirIO(
+    dirRef: DirectiveRef<any>,
+    dirDef: DynamicDirectiveDef<any>,
+  ) {
+    const io = this.ioFactoryService.create(
+      { componentRef: this.dirToCompDef(dirRef) },
+      { trackOutputChanges: true, injector: this.injector },
     );
-    io.update(inputs, outputs, !!inputs, !!outputs);
-    this.dirIo.set(dir.type, io);
+    io.update(dirDef.inputs, dirDef.outputs);
+    this.dirIo.set(dirRef.type, io);
   }
 
-  private dirToCompDef(dir: DirectiveRef<any>): ComponentRef<any> {
+  private dirToCompDef(dirRef: DirectiveRef<unknown>): ComponentRef<unknown> {
     return {
-      changeDetectorRef: this.componentRef.changeDetectorRef,
-      hostView: this.componentRef.hostView,
-      location: this.componentRef.location,
-      destroy: this.componentRef.destroy,
-      onDestroy: this.componentRef.onDestroy,
-      injector: this.componentRef.injector,
-      instance: dir.instance,
-      componentType: dir.type,
+      changeDetectorRef: this.componentRef!.changeDetectorRef,
+      hostView: this.componentRef!.hostView,
+      location: this.componentRef!.location,
+      destroy: this.componentRef!.destroy,
+      onDestroy: this.componentRef!.onDestroy,
+      injector: this.componentRef!.injector,
+      instance: dirRef.instance,
+      componentType: dirRef.type,
+      setInput: (name, value) => ((dirRef.instance as any)[name] = value),
     };
   }
 
-  private destroyDirRef(dir: DirectiveRef<any>) {
-    const io = this.dirIo.get(dir.type);
-    io.ngOnDestroy();
+  private destroyDirRef(dirRef: DirectiveRef<unknown>) {
+    this.dirIo.get(dirRef.type)?.ngOnDestroy();
 
-    if ('ngOnDestroy' in dir.instance) {
-      dir.instance.ngOnDestroy();
+    if (isOnDestroy(dirRef.instance)) {
+      dirRef.instance.ngOnDestroy();
     }
   }
 
@@ -249,27 +254,29 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
           useClass: dirType,
           deps: this.resolveDirParamTypes(dirType),
         },
-        { provide: ElementRef, useValue: this.componentRef.location },
+        { provide: ElementRef, useValue: this.componentRef!.location },
       ],
       parent: this.hostInjector,
-      name: `DynamicDirectiveInjector:${dirType.name}@${this.componentRef.componentType.name}`,
+      name: `DynamicDirectiveInjector:${dirType.name}@${
+        this.componentRef!.componentType.name
+      }`,
     });
 
     return directiveInjector.get(dirType);
   }
 
-  private resolveDirParamTypes(dirType: Type<any>): any[] {
+  private resolveDirParamTypes(dirType: Type<unknown>): unknown[] {
     return (
       // First try Angular Compiler's metadata
       extractNgParamTypes(dirType) ??
-      // Then fallback to Typescript Reflect API
-      getCtorParamTypes(dirType, this.reflect) ??
+      // Then fallback to Reflect API
+      this.reflectService.getCtorParamTypes(dirType) ??
       // Bailout
       []
     );
   }
 
-  private callInitHooks(obj: any) {
+  private callInitHooks(obj: unknown) {
     this.callHook(obj, 'ngOnInit');
     this.callHook(obj, 'ngDoCheck');
     this.callHook(obj, 'ngAfterContentInit');
@@ -278,7 +285,7 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
     this.callHook(obj, 'ngAfterViewChecked');
   }
 
-  private callHook(obj: any, hook: string, args: any[] = []) {
+  private callHook(obj: any, hook: string, args: unknown[] = []) {
     if (obj[hook]) {
       obj[hook](...args);
     }

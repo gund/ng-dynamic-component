@@ -12,27 +12,24 @@
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 [![Greenkeeper badge](https://badges.greenkeeper.io/gund/ng-dynamic-component.svg)](https://greenkeeper.io/)
 
-## Compatibility with Angular
-
-Library supports Angular `v12+` since version `v10.2.x`.
-
 <details>
-  <summary>For a more detailed history see table below:</summary>
+  <summary>Compatibility with Angular</summary>
 
-| Angular | ng-dynamic-component | NPM package                    |
-| ------- | -------------------- | ------------------------------ |
-| 14.x.x  | 10.2.x               | `ng-dynamic-component@^10.2.0` |
-| 13.x.x  | 10.x.x               | `ng-dynamic-component@^10.0.0` |
-| 12.x.x  | 10.2.x or 9.x.x      | `ng-dynamic-component@^10.2.0` |
-| 11.x.x  | 8.x.x                | `ng-dynamic-component@^8.0.0`  |
-| 10.x.x  | 7.x.x                | `ng-dynamic-component@^7.0.0`  |
-| 9.x.x   | 6.x.x                | `ng-dynamic-component@^6.0.0`  |
-| 8.x.x   | 5.x.x                | `ng-dynamic-component@^5.0.0`  |
-| 7.x.x   | 4.x.x                | `ng-dynamic-component@^4.0.0`  |
-| 6.x.x   | 3.x.x                | `ng-dynamic-component@^3.0.0`  |
-| 5.x.x   | 2.x.x                | `ng-dynamic-component@^2.0.0`  |
-| 4.x.x   | 1.x.x                | `ng-dynamic-component@^1.0.0`  |
-| 2.x.x   | 0.x.x                | `ng-dynamic-component@^0.0.0`  |
+| Angular  | ng-dynamic-component | NPM package                    |
+| -------- | -------------------- | ------------------------------ |
+| >=14.1.3 | 10.3.1               | `ng-dynamic-component@^10.3.1` |
+| >=14.x.x | 10.2.x               | `ng-dynamic-component@^10.2.0` |
+| 13.x.x   | 10.1.x               | `ng-dynamic-component@~10.1.0` |
+| 12.x.x   | 9.x.x                | `ng-dynamic-component@^9.0.0`  |
+| 11.x.x   | 8.x.x                | `ng-dynamic-component@^8.0.0`  |
+| 10.x.x   | 7.x.x                | `ng-dynamic-component@^7.0.0`  |
+| 9.x.x    | 6.x.x                | `ng-dynamic-component@^6.0.0`  |
+| 8.x.x    | 5.x.x                | `ng-dynamic-component@^5.0.0`  |
+| 7.x.x    | 4.x.x                | `ng-dynamic-component@^4.0.0`  |
+| 6.x.x    | 3.x.x                | `ng-dynamic-component@^3.0.0`  |
+| 5.x.x    | 2.x.x                | `ng-dynamic-component@^2.0.0`  |
+| 4.x.x    | 1.x.x                | `ng-dynamic-component@^1.0.0`  |
+| 2.x.x    | 0.x.x                | `ng-dynamic-component@^0.0.0`  |
 
 </details>
 
@@ -40,14 +37,6 @@ Library supports Angular `v12+` since version `v10.2.x`.
 
 ```bash
 $ npm install ng-dynamic-component --save
-```
-
-#### Error message in the IDE
-
-If you have an error like **Can't bind to 'ndcDynamicInputs' since it isn't a known property of 'ndc-dynamic'** in your IDE, but the project compiles just fine, you might want to try installing the no-barrels version instead.
-
-```bash
-$ npm install --save ng-dynamic-component@no-barrels
 ```
 
 ## Usage
@@ -202,7 +191,53 @@ class MyComponent {
 Here you can specify at which argument event value should arrive via `'$event'` literal.
 
 _HINT:_ You can override event literal by providing
-[`EventArgumentToken`](projects/ng-dynamic-component/src/lib/io/event-argument.ts) in DI.
+[`IoEventArgumentToken`](projects/ng-dynamic-component/src/lib/io/event-argument.ts) in DI.
+
+#### Output Handler Context
+
+**Since v10.4.0**
+
+You can specify the context (`this`) that will be used when calling
+the output handlers by providing either:
+
+- [`IoEventContextToken`](projects/ng-dynamic-component/src/lib/io/event-context.ts) - which will be;
+  injected and used directly as a context value
+- [`IoEventContextProviderToken`](projects/ng-dynamic-component/src/lib/io/event-context.ts) - which
+  will be provided and instantiated within the `IoService` and used as a context value.  
+  This useful if you have some generic way of retrieving a
+  context for every dynamic component so you may encapsulate
+  it in an Angular DI provider that will be instantiated
+  within every component's injector;
+
+Example using your component as an output context:
+
+```ts
+import { IoEventContextToken } from 'ng-dynamic-component';
+
+@Component({
+  selector: 'my-component',
+  template: `
+    <ndc-dynamic
+      [ndcDynamicComponent]="component"
+      [ndcDynamicOutputs]="{
+        onSomething: doSomething
+      }"
+    ></ndc-dynamic>
+  `,
+  providers: [
+    {
+      provide: IoEventContextToken,
+      useExisting: MyComponent,
+    },
+  ],
+})
+class MyComponent {
+  component = MyDynamicComponent1;
+  doSomething(event) {
+    // Here `this` will be an instance of `MyComponent`
+  }
+}
+```
 
 ### Component Creation Events
 
@@ -282,8 +317,13 @@ class MyComponent {
 
 **Since v3.1.0** you can now declaratively set directives, via `ndcDynamicDirectives`.
 
-**NOTE**: In dynamic directives queries like `@ContentChild` and host decorators like `@HostBinding`
-will not work due to involved complexity required to handle it (but PRs are welcome!).
+> **NOTE**:
+> There is a known issue with OnChanges hook not beign triggered on dynamic directives
+> since this part of functionality has been removed from the core as Angular now
+> supports this out of the box for dynamic components.
+>
+> In dynamic directives queries like `@ContentChild` and host decorators like `@HostBinding`
+> will not work due to involved complexity required to implement it (but PRs are welcome!).
 
 Import module `DynamicDirectivesModule` and then in template:
 

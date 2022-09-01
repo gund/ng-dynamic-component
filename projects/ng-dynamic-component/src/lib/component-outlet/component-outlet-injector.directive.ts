@@ -4,7 +4,7 @@ import { ComponentRef, Directive, Host } from '@angular/core';
 import {
   DynamicComponentInjector,
   DynamicComponentInjectorToken,
-} from './token';
+} from '../component-injector';
 
 @Directive({
   // eslint-disable-next-line @angular-eslint/directive-selector
@@ -20,7 +20,7 @@ import {
 export class ComponentOutletInjectorDirective
   implements DynamicComponentInjector
 {
-  get componentRef(): ComponentRef<any> {
+  get componentRef(): ComponentRef<unknown> {
     // NOTE: Accessing private APIs of Angular
     return (this.componentOutlet as any)._componentRef;
   }

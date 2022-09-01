@@ -1,6 +1,5 @@
 import {
   Component,
-  ComponentFactoryResolver,
   ComponentRef,
   EventEmitter,
   Injector,
@@ -16,7 +15,6 @@ import {
   DynamicComponentInjector,
   DynamicComponentInjectorToken,
 } from './component-injector';
-import { NgVersion } from './ng-version';
 
 @Component({
   selector: 'ndc-dynamic',
@@ -25,7 +23,7 @@ import { NgVersion } from './ng-version';
     { provide: DynamicComponentInjectorToken, useExisting: DynamicComponent },
   ],
 })
-export class DynamicComponent<C = any>
+export class DynamicComponent<C = unknown>
   implements OnChanges, DynamicComponentInjector
 {
   private static UpdateOnInputs: (keyof DynamicComponent)[] = [
@@ -42,19 +40,14 @@ export class DynamicComponent<C = any>
   @Input()
   ndcDynamicProviders?: StaticProvider[] | null;
   @Input()
-  ndcDynamicContent?: any[][] | null;
+  ndcDynamicContent?: Node[][];
 
   @Output()
-  ndcDynamicCreated: EventEmitter<ComponentRef<C>> = new EventEmitter();
+  ndcDynamicCreated = new EventEmitter<ComponentRef<C>>();
 
   componentRef: ComponentRef<C> | null = null;
 
-  private _createComponent =
-    this.ngVersion.major === '12'
-      ? () => this._v12vcrCreateComponent()
-      : () => this._vcrCreateComponent();
-
-  constructor(private vcr: ViewContainerRef, private ngVersion: NgVersion) {}
+  constructor(private vcr: ViewContainerRef) {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (
@@ -71,7 +64,11 @@ export class DynamicComponent<C = any>
     this.componentRef = null;
 
     if (this.ndcDynamicComponent) {
-      this.componentRef = this._createComponent();
+      this.componentRef = this.vcr.createComponent(this.ndcDynamicComponent, {
+        index: 0,
+        injector: this._resolveInjector(),
+        projectableNodes: this.ndcDynamicContent,
+      });
       this.ndcDynamicCreated.emit(this.componentRef);
     }
   }
@@ -88,26 +85,4 @@ export class DynamicComponent<C = any>
 
     return injector;
   }
-
-  private _vcrCreateComponent() {
-    return this.vcr.createComponent(this.ndcDynamicComponent, {
-      index: 0,
-      injector: this._resolveInjector(),
-      projectableNodes: this.ndcDynamicContent,
-    });
-  }
-
-  // TODO: Remove compat code once Angular drops ComponentFactory APIs
-  /* eslint-disable deprecation/deprecation */
-  private _v12vcrCreateComponent() {
-    const cfr = this.vcr.injector.get(ComponentFactoryResolver);
-
-    return this.vcr.createComponent(
-      cfr.resolveComponentFactory(this.ndcDynamicComponent),
-      0,
-      this._resolveInjector(),
-      this.ndcDynamicContent,
-    );
-  }
-  /* eslint-enable deprecation/deprecation */
 }

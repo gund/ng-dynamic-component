@@ -1,5 +1,71 @@
 # ng-dynamic-component - Changelog
 
+# [10.5.0](https://github.com/gund/ng-dynamic-component/compare/v10.4.0...v10.5.0) (2022-08-29)
+
+
+### Features
+
+* **lib:** enable strict mode in Typescript and Angular ([fbac529](https://github.com/gund/ng-dynamic-component/commit/fbac5299e500f354a96cc6f8c0599e151189a7ad))
+
+# [10.4.0](https://github.com/gund/ng-dynamic-component/compare/v10.3.1...v10.4.0) (2022-08-28)
+
+
+### Bug Fixes
+
+* **io:** simplify IoService to have just one method for updates ([21b0e20](https://github.com/gund/ng-dynamic-component/commit/21b0e205ec3e8a31f8e81025cc157dc13ca40d24))
+* **lib:** make sure all inputs chanegs are sent to new component ([25e4d34](https://github.com/gund/ng-dynamic-component/commit/25e4d34218ec545709b57340c3004351bfcf0574))
+
+
+### Features
+
+* **api:** expose WindowRef and ReflectRef services as public api ([c634e20](https://github.com/gund/ng-dynamic-component/commit/c634e20219beb5770e9c8e1d2631895835c037d1))
+* **outputs:** allow to specify context for output handlers via Tokens ([9a03765](https://github.com/gund/ng-dynamic-component/commit/9a037653a5051d2682e5cf7b09c52453f64e0977))
+
+
+### Performance Improvements
+
+* **io:** check if component has OnChanges hook once ([88f187f](https://github.com/gund/ng-dynamic-component/commit/88f187f3146dc121313ab6f33d7881d32a4b039c))
+* **io:** do not detect any changes when there is no component ([8e7dbce](https://github.com/gund/ng-dynamic-component/commit/8e7dbce6232b8e4ce157e755d2fa7ad41fa62e96))
+
+## [10.3.1](https://github.com/gund/ng-dynamic-component/compare/v10.3.0...v10.3.1) (2022-08-27)
+
+
+### Bug Fixes
+
+* **lib:** specify minimum version of Angular v14.1.3 ([a5fe899](https://github.com/gund/ng-dynamic-component/commit/a5fe8998686721879f0c35de1df8df0eaf22f7bd))
+
+# [10.3.0](https://github.com/gund/ng-dynamic-component/compare/v10.2.1...v10.3.0) (2022-08-27)
+
+
+### Features
+
+* **lib:** use new ComponentRef API to set inputs on components ([7cc48a6](https://github.com/gund/ng-dynamic-component/commit/7cc48a6e6241cf6f281ee7316397dee4691b6ba3))
+* **ng:** update to latest Angular v14 ([64d82cc](https://github.com/gund/ng-dynamic-component/commit/64d82cc8949ba8405620535c956842385c3262f5))
+
+## [10.2.1](https://github.com/gund/ng-dynamic-component/compare/v10.2.0...v10.2.1) (2022-06-17)
+
+
+### Bug Fixes
+
+* **deps:** update peer deps to allow Angular v13+ ([969aef9](https://github.com/gund/ng-dynamic-component/commit/969aef95a293ff98869199d5ca4760ec08b1f4b7))
+
+
+### Reverts
+
+* Revert "fix(component): add compatibility with Angular v12 to component rendering" ([21de6fd](https://github.com/gund/ng-dynamic-component/commit/21de6fd53379555eb416a2b0669cde72acbe43d6))
+
+# [10.2.0](https://github.com/gund/ng-dynamic-component/compare/v10.1.0...v10.2.0) (2022-06-16)
+
+
+### Bug Fixes
+
+* **component:** add compatibility with Angular v12 to component rendering ([18c3922](https://github.com/gund/ng-dynamic-component/commit/18c3922e1ddf6b884411eaff1f821143e526a1aa)), closes [#472](https://github.com/gund/ng-dynamic-component/issues/472)
+
+
+### Features
+
+* **ng:** add support for Angular v14+ ([451f04e](https://github.com/gund/ng-dynamic-component/commit/451f04ec7862e3c597f8c90379cbb437e631d376)), closes [#469](https://github.com/gund/ng-dynamic-component/issues/469)
+
 # [10.2.0-next.3](https://github.com/gund/ng-dynamic-component/compare/v10.2.0-next.2...v10.2.0-next.3) (2022-06-16)
 
 

@@ -1,631 +1,674 @@
-/* eslint-disable @typescript-eslint/dot-notation */
+/* eslint-disable @angular-eslint/no-output-rename */
+/* eslint-disable @angular-eslint/no-input-rename */
+/* eslint-disable @angular-eslint/component-selector */
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
   SimpleChange,
   SimpleChanges,
+  Type,
 } from '@angular/core';
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { Observable, Subject } from 'rxjs';
+import { TestFixture, TestSetup } from '../../test';
+import { ComponentOutletInjectorModule } from '../component-outlet';
+import { DynamicComponent as NdcDynamicComponent } from '../dynamic.component';
+import { InputsType, IoEventArgumentToken, OutputsType } from '../io';
 import {
-  ComponentInjectorComponent,
-  getByPredicate,
-  InjectedBoundComponent,
-  InjectedComponent,
-  MockedInjectedComponent,
-  TestComponent,
-  TestModule,
-} from '../../test';
-import {
-  ComponentOutletInjectorDirective,
-  DynamicComponentInjectorToken,
-} from '../component-injector';
-import { EventArgumentToken } from '../io';
+  IoEventContextProviderToken,
+  IoEventContextToken,
+} from '../io/event-context';
 import { DynamicIoDirective } from './dynamic-io.directive';
 
-const getComponentInjectorFrom = getByPredicate<ComponentInjectorComponent>(
-  By.directive(ComponentInjectorComponent),
-);
-const getInjectedComponentFrom = getByPredicate<InjectedComponent>(
-  By.directive(InjectedComponent),
-);
-const getInjectedBoundComponentFrom = getByPredicate<InjectedBoundComponent>(
-  By.directive(InjectedBoundComponent),
-);
-
 describe('Directive: DynamicIo', () => {
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      declarations: [
-        TestComponent,
-        ComponentInjectorComponent,
-        DynamicIoDirective,
-        ComponentOutletInjectorDirective,
-      ],
-      providers: [
-        {
-          provide: DynamicComponentInjectorToken,
-          useExisting: ComponentInjectorComponent,
-        },
-      ],
-    });
+  @Component({
+    selector: 'dynamic',
+    template: `
+      <p>Input1: {{ input1 }}</p>
+      <p>Input2: {{ input2 }}</p>
+      <p>Input3: {{ input3 }}</p>
+    `,
+  })
+  class DynamicComponent implements OnInit, OnChanges {
+    @Input() input1: any;
+    @Input() input2: any;
+    @Input('input3Renamed') input3: any;
+    @Output() output1 = new EventEmitter<any>();
+    @Output() output2 = new EventEmitter<any>();
+    @Output('output3Renamed') output3 = new EventEmitter<any>();
+    ngOnInitSpy = jest.fn();
+    ngOnChangesSpy = jest.fn();
+    ngOnInit(): void {
+      this.ngOnInitSpy();
+    }
+    ngOnChanges(changes: SimpleChanges): void {
+      this.ngOnChangesSpy(changes);
+    }
+  }
+
+  @Component({
+    selector: 'host',
+    template: `<ng-container
+      [ngComponentOutlet]="component"
+      [ndcDynamicInputs]="inputs"
+      [ndcDynamicOutputs]="outputs"
+    ></ng-container>`,
+  })
+  class HostComponent {
+    component?: Type<any> | null;
+    inputs?: InputsType | null;
+    outputs?: OutputsType | null;
+  }
+
+  class DynamicTestFixture<THost> extends TestFixture<THost> {
+    getDynamicComponent() {
+      return this.getComponent(DynamicComponent)!;
+    }
+    getDynamicElement() {
+      return this.getComponentElement(DynamicComponent)!;
+    }
+    getDynamicParagraphs() {
+      return this.getDynamicElement()?.queryAll(By.css('p'))!;
+    }
+  }
+
+  const testSetup = new TestSetup(HostComponent, {
+    props: { component: DynamicComponent },
+    ngModule: {
+      imports: [CommonModule, ComponentOutletInjectorModule],
+      declarations: [DynamicComponent, DynamicIoDirective],
+    },
+    fixtureCtor: DynamicTestFixture,
   });
 
   describe('inputs', () => {
-    let fixture: ComponentFixture<TestComponent>;
-    let injectorComp: ComponentInjectorComponent;
-    let injectedComp: MockedInjectedComponent;
+    it('should be passed to component', async () => {
+      const inputs = { input1: 'val1', input2: 'val2', input3Renamed: 'val3' };
 
-    beforeEach(waitForAsync(() => {
-      const template = `<component-injector [ndcDynamicInputs]="inputs"></component-injector>`;
-      TestBed.overrideComponent(TestComponent, { set: { template } });
-      fixture = TestBed.createComponent(TestComponent);
-      injectorComp = getComponentInjectorFrom(fixture).component;
-      injectedComp = injectorComp.component;
+      const fixture = await testSetup.redner({ props: { inputs } });
 
-      fixture.componentInstance['inputs'] = { prop1: 'prop1', prop2: 2 };
-    }));
-
-    it('should be passed to component', () => {
-      fixture.detectChanges();
-
-      expect(injectedComp['prop1']).toBe('prop1');
-      expect(injectedComp['prop2']).toBe(2);
-    });
-
-    it('should be reassigned when replaced', () => {
-      fixture.detectChanges();
-      fixture.componentInstance['inputs'] = { otherProp: 'set' };
-      fixture.detectChanges();
-
-      expect(injectedComp['otherProp']).toBe('set');
-    });
-
-    it('should be reassigned from `null|undefined` when replaced', () => {
-      fixture.componentInstance['inputs'] = null;
-      fixture.detectChanges();
-      fixture.componentInstance['inputs'] = { otherProp: 'set' };
-      fixture.detectChanges();
-
-      expect(injectedComp['otherProp']).toBe('set');
-    });
-
-    it('should trigger initially `OnChanges` life-cycle hook', () => {
-      fixture.detectChanges();
-
-      expect(injectedComp.ngOnChanges).toHaveBeenCalledTimes(1);
-      expect(injectedComp.ngOnChanges).toHaveBeenCalledWith({
-        prop1: new SimpleChange(undefined, 'prop1', true),
-        prop2: new SimpleChange(undefined, 2, true),
-      });
-    });
-
-    it('should trigger markForCheck of component`s `ChangeDetectorRef`', () => {
-      const cdr = { markForCheck: jest.fn() };
-      injectorComp.injectorGet.mockReturnValue(cdr);
-
-      fixture.detectChanges();
-
-      expect(injectedComp.ngOnChanges).toHaveBeenCalledTimes(1);
-      expect(injectorComp.injectorGet).toHaveBeenCalledWith(ChangeDetectorRef);
-      expect(cdr.markForCheck).toHaveBeenCalled();
-    });
-
-    it('should trigger `OnChanges` life-cycle hook on updates', () => {
-      fixture.detectChanges();
-
-      expect(injectedComp.ngOnChanges).toHaveBeenCalledTimes(1);
-      injectedComp.ngOnChanges.mockReset();
-
-      fixture.componentInstance['inputs'].prop1 = '123';
-      fixture.detectChanges();
-
-      expect(injectedComp.ngOnChanges).toHaveBeenCalledTimes(1);
-      expect(injectedComp.ngOnChanges).toHaveBeenCalledWith({
-        prop1: new SimpleChange('prop1', '123', false),
-      });
-    });
-
-    it('should trigger `OnChanges` life-cycle hook if component instance was updated', () => {
-      injectedComp.ngOnChanges.mockImplementation((changes: SimpleChanges) => {
-        expect(changes.prop1).toBeDefined();
-        expect(changes.prop1.currentValue).toBe('prop1');
-        expect(changes.prop1.isFirstChange()).toBeTruthy();
-        expect(changes.prop2).toBeDefined();
-        expect(changes.prop2.currentValue).toBe(2);
-        expect(changes.prop2.isFirstChange()).toBeTruthy();
-      });
-
-      fixture.detectChanges();
-
-      expect(injectedComp.ngOnChanges).toHaveBeenCalledTimes(1);
-
-      const newInjectedComp = (injectorComp.component = Object.assign(
-        {},
-        injectorComp.component,
-      ));
-      fixture.detectChanges();
-
-      expect(newInjectedComp.ngOnChanges).toHaveBeenCalledTimes(2);
-    });
-
-    it('should NOT trigger `OnChanges` hook if not available on dynamic component', () => {
-      delete injectedComp.ngOnChanges;
-      expect(() => fixture.detectChanges()).not.toThrow();
-    });
-
-    it('should NOT throw exception if inputs undefined', () => {
-      fixture.componentInstance['inputs'] = undefined;
-      expect(() => fixture.detectChanges()).not.toThrow();
-    });
-
-    it('should NOT throw exception if inputs null', () => {
-      fixture.componentInstance['inputs'] = null;
-      expect(() => fixture.detectChanges()).not.toThrow();
-    });
-
-    it('should NOT throw exception when same inputs are reassigned with new object', () => {
-      fixture.detectChanges();
-      fixture.componentInstance['inputs'] = {
-        ...fixture.componentInstance['inputs'],
-      };
-      expect(() => fixture.detectChanges()).not.toThrow();
-    });
-
-    it('should NOT throw if component injector is null', () => {
-      injectorComp.component = null;
-      expect(() => fixture.detectChanges()).not.toThrow();
-    });
-
-    it('should call `ngOnChanges` once when inputs and component updated', () => {
-      fixture.detectChanges();
-      injectorComp.component.ngOnChanges.mockReset();
-
-      const inputs = fixture.componentInstance['inputs'];
-      fixture.componentInstance['inputs'] = { ...inputs, prop: 'any' };
-      const newInjectedComp = (injectorComp.component = {
-        ...injectorComp.component,
-      });
-
-      newInjectedComp.ngOnChanges.mockImplementation(
-        (changes: SimpleChanges) => {
-          expect(changes.prop).toBeDefined();
-          expect(changes.prop.currentValue).toBe('any');
-          expect(changes.prop.previousValue).toBeUndefined();
-          expect(changes.prop.isFirstChange()).toBeTruthy();
-
-          expect(changes.prop1).toBeDefined();
-          expect(changes.prop1.currentValue).toBe('prop1');
-          expect(changes.prop1.previousValue).toBeUndefined();
-          expect(changes.prop1.isFirstChange()).toBeTruthy();
-        },
+      expect(fixture.getDynamicComponent()).toEqual(
+        expect.objectContaining({
+          input1: 'val1',
+          input2: 'val2',
+          input3: 'val3',
+        }),
       );
-
-      fixture.detectChanges();
-
-      expect(newInjectedComp.ngOnChanges).toHaveBeenCalledTimes(1);
-    });
-  });
-
-  describe('inputs with `NgComponentOutlet`', () => {
-    let fixture: ComponentFixture<TestComponent>;
-
-    beforeEach(waitForAsync(() => {
-      TestBed.configureTestingModule({
-        imports: [TestModule],
-        declarations: [DynamicIoDirective, TestComponent],
-      });
-
-      const template = `<ng-container [ngComponentOutlet]="comp" [ndcDynamicInputs]="inputs"></ng-container>`;
-      TestBed.overrideComponent(TestComponent, { set: { template } });
-      fixture = TestBed.createComponent(TestComponent);
-
-      fixture.componentInstance['inputs'] = { prop1: '123', prop2: 1 };
-      fixture.componentInstance['comp'] = InjectedComponent;
-    }));
-
-    it('should be passed to dynamic component instance', () => {
-      fixture.detectChanges();
-
-      const injectedComp = getInjectedComponentFrom(fixture).component;
-
-      expect(injectedComp['prop1']).toBe('123');
-      expect(injectedComp['prop2']).toBe(1);
-    });
-  });
-
-  describe('inputs with `NgComponentOutlet` * syntax', () => {
-    let fixture: ComponentFixture<TestComponent>;
-
-    beforeEach(waitForAsync(() => {
-      TestBed.configureTestingModule({
-        imports: [TestModule],
-        declarations: [DynamicIoDirective, TestComponent],
-      });
-
-      const template = `<ng-container *ngComponentOutlet="comp; ndcDynamicInputs: inputs"></ng-container>`;
-      TestBed.overrideComponent(TestComponent, { set: { template } });
-      fixture = TestBed.createComponent(TestComponent);
-
-      fixture.componentInstance['inputs'] = { prop1: '123', prop2: 1 };
-      fixture.componentInstance['comp'] = InjectedComponent;
-    }));
-
-    it('should be passed to dynamic component instance', () => {
-      fixture.detectChanges();
-
-      const injectedComp = getInjectedComponentFrom(fixture).component;
-
-      expect(injectedComp['prop1']).toBe('123');
-      expect(injectedComp['prop2']).toBe(1);
-    });
-  });
-
-  describe('bound inputs', () => {
-    let fixture: ComponentFixture<TestComponent>;
-    let testComp: any;
-    let injectedComp: InjectedBoundComponent;
-    let onChangesMock: jest.Mock;
-
-    beforeEach(waitForAsync(() => {
-      TestBed.configureTestingModule({
-        imports: [TestModule],
-        declarations: [DynamicIoDirective, TestComponent],
-      });
-
-      const template = `<ng-container [ngComponentOutlet]="comp" [ndcDynamicInputs]="inputs"></ng-container>`;
-      TestBed.overrideComponent(TestComponent, {
-        set: { template },
-      }).compileComponents();
-      fixture = TestBed.createComponent(TestComponent);
-
-      testComp = fixture.componentInstance;
-      testComp.comp = InjectedBoundComponent;
-      testComp.inputs = null;
-
-      fixture.detectChanges();
-      injectedComp = getInjectedBoundComponentFrom(fixture).component;
-      injectedComp['ngOnChanges'] = onChangesMock = jest.fn();
-    }));
-
-    it('should correctly be passed to dynamic component', () => {
-      testComp.inputs = { outerProp: '123' };
-      fixture.detectChanges();
-
-      expect(injectedComp.innerProp).toBe('123');
     });
 
-    it('should trigger `OnChanges` life-cycle hook with correct names', () => {
-      onChangesMock.mockImplementation((changes: SimpleChanges) => {
-        expect(changes.innerProp).toBeDefined();
-        expect(changes.innerProp.currentValue).toBe('123');
-        expect(changes.innerProp.isFirstChange()).toBeTruthy();
-      });
+    it('should be reassigned when replaced', async () => {
+      const inputs = { input1: 'val1', input2: 'val2', input3Renamed: 'val3' };
 
-      testComp.inputs = { outerProp: '123' };
+      const fixture = await testSetup.redner({ props: { inputs } });
+
+      inputs.input1 = 'new-val1';
+
       fixture.detectChanges();
 
-      expect(onChangesMock).toHaveBeenCalledTimes(1);
+      expect(fixture.getDynamicComponent()).toEqual(
+        expect.objectContaining({
+          input1: 'new-val1',
+          input2: 'val2',
+          input3: 'val3',
+        }),
+      );
+    });
 
-      onChangesMock.mockImplementation((changes: SimpleChanges) => {
-        expect(changes.innerProp).toBeDefined();
-        expect(changes.innerProp.currentValue).toBe('456');
-        expect(changes.innerProp.previousValue).toBe('123');
-        expect(changes.innerProp.isFirstChange()).toBeFalsy();
+    it('should be reassigned from `null|undefined` when replaced', async () => {
+      const fixture = await testSetup.redner({ props: { inputs: null } });
+
+      fixture.setHostProps({
+        inputs: {
+          input1: 'val1',
+          input2: 'val2',
+          input3Renamed: 'val3',
+        },
       });
 
-      testComp.inputs = { outerProp: '456' };
+      expect(fixture.getDynamicComponent()).toEqual(
+        expect.objectContaining({
+          input1: 'val1',
+          input2: 'val2',
+          input3: 'val3',
+        }),
+      );
+    });
+
+    it('should trigger initially `OnChanges` life-cycle hook', async () => {
+      const inputs = { input1: 'val1', input2: 'val2', input3Renamed: 'val3' };
+
+      const fixture = await testSetup.redner({ props: { inputs } });
+      const component = fixture.getDynamicComponent();
+
+      expect(component.ngOnChangesSpy).toHaveBeenCalledTimes(1);
+      expect(component.ngOnChangesSpy).toHaveBeenCalledWith({
+        input1: new SimpleChange(undefined, 'val1', true),
+        input2: new SimpleChange(undefined, 'val2', true),
+        input3: new SimpleChange(undefined, 'val3', true),
+      });
+    });
+
+    it('should trigger `OnChanges` life-cycle hook on updates', async () => {
+      const inputs = { input1: 'val1', input2: 'val2', input3Renamed: 'val3' };
+
+      const fixture = await testSetup.redner({ props: { inputs } });
+      const component = fixture.getDynamicComponent();
+
+      component.ngOnChangesSpy.mockClear();
+
+      inputs.input2 = 'new-val2';
+
       fixture.detectChanges();
 
-      expect(onChangesMock).toHaveBeenCalledTimes(2);
+      expect(component.ngOnChangesSpy).toHaveBeenCalledTimes(1);
+      expect(component.ngOnChangesSpy).toHaveBeenCalledWith({
+        input2: new SimpleChange('val2', 'new-val2', false),
+      });
+    });
+
+    it('should trigger `OnChanges` life-cycle hook if component instance was updated', async () => {
+      @Component({ selector: 'dynamic2', template: '' })
+      class Dynamic2Component implements OnChanges {
+        @Input() input1: any;
+        @Input() input2: any;
+        ngOnChangesSpy = jest.fn();
+        ngOnChanges(changes: SimpleChanges): void {
+          this.ngOnChangesSpy(changes);
+        }
+      }
+
+      const inputs = { input1: 'val1', input2: 'val2' };
+
+      const fixture = await testSetup.redner({
+        props: { inputs },
+        ngModule: { declarations: [Dynamic2Component] },
+      });
+
+      expect(
+        fixture.getDynamicComponent().ngOnChangesSpy,
+      ).toHaveBeenCalledTimes(1);
+
+      fixture.setHostProps({ component: Dynamic2Component });
+
+      const component = fixture.getComponent(Dynamic2Component)!;
+
+      expect(component.ngOnChangesSpy).toHaveBeenCalledTimes(1);
+      expect(component.ngOnChangesSpy).toHaveBeenCalledWith({
+        input1: new SimpleChange(undefined, 'val1', true),
+        input2: new SimpleChange(undefined, 'val2', true),
+      });
+    });
+
+    it('should trigger `ngOnChanges` life-cycle hook if inputs and component updated', async () => {
+      @Component({ selector: 'dynamic2', template: '' })
+      class Dynamic2Component extends DynamicComponent {}
+
+      const inputs = { input1: 'val1', input2: 'val2' };
+
+      const fixture = await testSetup.redner({
+        props: { inputs },
+        ngModule: { declarations: [Dynamic2Component] },
+      });
+
+      inputs.input1 = 'new-val1';
+      fixture.setHostProps({ component: Dynamic2Component });
+
+      const component = fixture.getComponent(Dynamic2Component)!;
+
+      expect(component.ngOnChangesSpy).toHaveBeenCalledTimes(1);
+      expect(component.ngOnChangesSpy).toHaveBeenCalledWith({
+        input1: new SimpleChange(undefined, 'new-val1', true),
+        input2: new SimpleChange(undefined, 'val2', true),
+      });
+    });
+
+    it('should render inputs with Default strategy', async () => {
+      const inputs = { input1: 'val1', input2: 'val2', input3Renamed: 'val3' };
+
+      const fixture = await testSetup.redner({ props: { inputs } });
+      const [p1, p2, p3] = fixture.getDynamicParagraphs();
+
+      expect(p1.nativeElement.textContent).toBe('Input1: val1');
+      expect(p2.nativeElement.textContent).toBe('Input2: val2');
+      expect(p3.nativeElement.textContent).toBe('Input3: val3');
+    });
+
+    it('should render inputs with OnPush strategy', async () => {
+      TestBed.overrideComponent(DynamicComponent, {
+        set: { changeDetection: ChangeDetectionStrategy.OnPush },
+      });
+
+      const inputs = { input1: 'val1', input2: 'val2', input3Renamed: 'val3' };
+
+      const fixture = await testSetup.redner({
+        props: { inputs },
+        hostOverrides: {
+          set: { changeDetection: ChangeDetectionStrategy.OnPush },
+        },
+      });
+      const [p1, p2, p3] = fixture.getDynamicParagraphs();
+
+      expect(p1.nativeElement.textContent).toBe('Input1: val1');
+      expect(p2.nativeElement.textContent).toBe('Input2: val2');
+      expect(p3.nativeElement.textContent).toBe('Input3: val3');
+    });
+
+    it('should NOT trigger `OnChanges` hook if not available on dynamic component', async () => {
+      @Component({ selector: 'dynamic2', template: '' })
+      class Dynamic2Component {
+        @Input() input1: any;
+        @Input() input2: any;
+      }
+
+      const inputs = { input1: 'val1', input2: 'val2' };
+
+      expect.assertions(1);
+
+      await expect(
+        testSetup.redner({
+          props: {
+            component: Dynamic2Component,
+            inputs,
+          },
+          ngModule: { declarations: [Dynamic2Component] },
+        }),
+      ).resolves.not.toThrow();
+    });
+
+    it('should NOT throw exception if inputs undefined', async () => {
+      expect.assertions(1);
+
+      await expect(
+        testSetup.redner({ props: { inputs: undefined } }),
+      ).resolves.not.toThrow();
+    });
+
+    it('should NOT throw exception if inputs null', async () => {
+      expect.assertions(1);
+
+      await expect(
+        testSetup.redner({ props: { inputs: null } }),
+      ).resolves.not.toThrow();
+    });
+
+    it('should NOT throw exception when same inputs are reassigned with new object', async () => {
+      const inputs = { input1: 'val1', input2: 'val2' };
+
+      const fixture = await testSetup.redner({ props: { inputs } });
+
+      expect(() =>
+        fixture.setHostProps({ inputs: { ...inputs } }),
+      ).not.toThrow();
+    });
+
+    it('should NOT throw if component injector is null', async () => {
+      const inputs = { input1: 'val1', input2: 'val2' };
+
+      expect.assertions(1);
+
+      await expect(
+        testSetup.redner({ props: { inputs, component: null } }),
+      ).resolves.not.toThrow();
     });
   });
 
   describe('outputs', () => {
-    let fixture: ComponentFixture<TestComponent>;
-    let injectorComp: ComponentInjectorComponent;
-    let injectedComp: MockedInjectedComponent;
-    let outputSpy: jest.Mock;
+    it('should bind outputs to component and receive events', async () => {
+      const outputs = {
+        output1: jest.fn(),
+        output2: jest.fn(),
+        output3Renamed: jest.fn(),
+      };
 
-    beforeEach(waitForAsync(() => {
-      const template = `<component-injector [ndcDynamicOutputs]="outputs"></component-injector>`;
-      TestBed.overrideComponent(TestComponent, { set: { template } });
-      fixture = TestBed.createComponent(TestComponent);
-      injectorComp = getComponentInjectorFrom(fixture).component;
-      injectedComp = injectorComp.component;
-      outputSpy = jest.fn();
+      const fixture = await testSetup.redner({ props: { outputs } });
 
-      fixture.componentInstance['outputs'] = { onEvent: outputSpy };
-    }));
+      expect(outputs.output1).not.toHaveBeenCalled();
+      expect(outputs.output2).not.toHaveBeenCalled();
+      expect(outputs.output3Renamed).not.toHaveBeenCalled();
 
-    it('should bind outputs to component and receive events', waitForAsync(() => {
+      const component = fixture.getDynamicComponent();
+
+      component.output1.emit('val1');
+      component.output2.emit('val2');
+      component.output3.emit('val3');
+
+      expect(outputs.output1).toHaveBeenCalledTimes(1);
+      expect(outputs.output1).toHaveBeenCalledWith('val1');
+      expect(outputs.output2).toHaveBeenCalledTimes(1);
+      expect(outputs.output2).toHaveBeenCalledWith('val2');
+      expect(outputs.output3Renamed).toHaveBeenCalledTimes(1);
+      expect(outputs.output3Renamed).toHaveBeenCalledWith('val3');
+    });
+
+    it('should NOT bind outputs to component when outputs undefined', async () => {
+      expect.assertions(1);
+
+      await expect(
+        testSetup.redner({ props: { outputs: undefined } }),
+      ).resolves.not.toThrow();
+    });
+
+    it('should NOT bind outputs to component when outputs null', async () => {
+      expect.assertions(1);
+
+      await expect(
+        testSetup.redner({ props: { outputs: null } }),
+      ).resolves.not.toThrow();
+    });
+
+    it('should re-bind outputs after `null|undefined` to component and receive events', async () => {
+      const outputs = {
+        output1: jest.fn(),
+        output2: jest.fn(),
+        output3Renamed: jest.fn(),
+      };
+
+      const fixture = await testSetup.redner({ props: { outputs: null } });
+
+      fixture.setHostProps({ outputs });
+
+      const component = fixture.getDynamicComponent();
+
+      component.output1.emit('val1');
+      component.output2.emit('val2');
+      component.output3.emit('val3');
+
+      expect(outputs.output1).toHaveBeenCalledTimes(1);
+      expect(outputs.output1).toHaveBeenCalledWith('val1');
+      expect(outputs.output2).toHaveBeenCalledTimes(1);
+      expect(outputs.output2).toHaveBeenCalledWith('val2');
+      expect(outputs.output3Renamed).toHaveBeenCalledTimes(1);
+      expect(outputs.output3Renamed).toHaveBeenCalledWith('val3');
+    });
+
+    it('should unbind outputs when set to null|undefined', async () => {
+      const outputs = {
+        output1: jest.fn(),
+        output2: jest.fn(),
+        output3Renamed: jest.fn(),
+      };
+
+      const fixture = await testSetup.redner({ props: { outputs } });
+
+      fixture.setHostProps({ outputs: null });
+
+      const component = fixture.getDynamicComponent();
+
+      component.output1.emit('val1');
+      component.output2.emit('val2');
+      component.output3.emit('val3');
+
+      expect(outputs.output1).not.toHaveBeenCalled();
+      expect(outputs.output2).not.toHaveBeenCalled();
+      expect(outputs.output3Renamed).not.toHaveBeenCalled();
+    });
+
+    it('should unbind outputs when component destroys', async () => {
+      const outputs = {
+        output1: jest.fn(),
+        output2: jest.fn(),
+        output3Renamed: jest.fn(),
+      };
+
+      const fixture = await testSetup.redner({ props: { outputs } });
+
+      const component = fixture.getDynamicComponent();
+
+      fixture.setHostProps({ component: null });
+
+      component.output1.emit('val1');
+      component.output2.emit('val2');
+      component.output3.emit('val3');
+
+      expect(outputs.output1).not.toHaveBeenCalled();
+      expect(outputs.output2).not.toHaveBeenCalled();
+      expect(outputs.output3Renamed).not.toHaveBeenCalled();
+    });
+
+    it('should update parent after event emits with OnPush strategy', async () => {
+      let fixture: DynamicTestFixture<HostComponent & { value: any }>;
+
+      const outputs = {
+        output1: jest
+          .fn()
+          .mockImplementation((value) =>
+            fixture.setHostPropsNoDetect({ value }),
+          ),
+      };
+
+      fixture = await testSetup.redner<{ value: any }>({
+        props: { outputs },
+        template: `
+          <ng-container [ngComponentOutlet]="component"
+            [ndcDynamicOutputs]="outputs"
+          ></ng-container>
+          <p class="output">Output: {{value}}<p>
+        `,
+        hostOverrides: {
+          set: { changeDetection: ChangeDetectionStrategy.OnPush },
+        },
+      });
+
+      fixture.getDynamicComponent().output1.emit('val1');
+
+      expect(outputs.output1).toHaveBeenCalledTimes(1);
+
       fixture.detectChanges();
 
-      injectedComp.onEvent.next('data');
+      const outputElem = fixture.fixture.debugElement.query(By.css('.output'));
 
-      expect(outputSpy).toHaveBeenCalledTimes(1);
-      expect(outputSpy).toHaveBeenCalledWith('data');
-    }));
-
-    it('should re-bind outputs after `null|undefined` to component and receive events', waitForAsync(() => {
-      fixture.componentInstance['outputs'] = null;
-      fixture.detectChanges();
-      fixture.componentInstance['outputs'] = { onEvent: outputSpy };
-      fixture.detectChanges();
-
-      injectedComp.onEvent.next('data');
-
-      expect(outputSpy).toHaveBeenCalledTimes(1);
-      expect(outputSpy).toHaveBeenCalledWith('data');
-    }));
-
-    it('should NOT bind outputs to component when outputs undefined', waitForAsync(() => {
-      fixture.componentInstance['outputs'] = undefined;
-
-      expect(() => fixture.detectChanges()).not.toThrow();
-
-      injectedComp.onEvent.next('data');
-
-      expect(outputSpy).not.toHaveBeenCalled();
-    }));
-
-    it('should NOT bind outputs to component when outputs null', waitForAsync(() => {
-      fixture.componentInstance['outputs'] = null;
-
-      expect(() => fixture.detectChanges()).not.toThrow();
-
-      injectedComp.onEvent.next('data');
-
-      expect(outputSpy).not.toHaveBeenCalled();
-    }));
-
-    it('should unbind outputs when component destroys', () => {
-      const tearDownFn = jest.fn();
-
-      injectedComp.onEvent = new Observable((_) => tearDownFn) as any;
-
-      fixture.detectChanges();
-
-      injectorComp.component = null;
-      fixture.detectChanges();
-
-      expect(tearDownFn).toHaveBeenCalledTimes(1);
+      expect(outputElem.nativeElement.textContent).toBe('Output: val1');
     });
   });
 
   describe('outputs with template arguments', () => {
-    let fixture: ComponentFixture<TestComponent>;
-    let injectorComp: ComponentInjectorComponent;
-    let injectedComp: MockedInjectedComponent;
-    let outputSpy: jest.Mock;
-
-    const init = (template: string) => {
-      TestBed.overrideTemplate(TestComponent, template);
-      fixture = TestBed.createComponent(TestComponent);
-      injectorComp = getComponentInjectorFrom(fixture).component;
-      injectedComp = injectorComp.component;
-      outputSpy = jest.fn();
-
-      fixture.componentInstance['outputSpy'] = outputSpy;
-    };
-
-    it('should bind outputs with event without specifying template arguments', () => {
-      init(
-        `<component-injector
-          [ndcDynamicOutputs]="{ onEvent: { handler: outputSpy } }"
-          ></component-injector>`,
-      );
-      fixture.detectChanges();
-
-      injectedComp.onEvent.next('data');
-
-      expect(outputSpy).toHaveBeenCalledWith('data');
-    });
-
-    it('should bind outputs without event when set to null/undefined', () => {
-      init(
-        `<component-injector
-          [ndcDynamicOutputs]="{ onEvent: { handler: outputSpy, args: null } }"
-          ></component-injector>`,
-      );
-      fixture.detectChanges();
-
-      injectedComp.onEvent.next('data');
-
-      expect(outputSpy).toHaveBeenCalledWith();
-    });
-
-    it('should bind outputs with event and template arguments', () => {
-      init(
-        `<component-injector
-          [ndcDynamicOutputs]="{ onEvent: { handler: outputSpy, args: ['$event', tplVar] } }"
-          ></component-injector>`,
-      );
-      fixture.componentInstance['tplVar'] = 'from-template';
-      fixture.detectChanges();
-
-      injectedComp.onEvent.next('data');
-
-      expect(outputSpy).toHaveBeenCalledWith('data', 'from-template');
-    });
-
-    it('should bind outputs with updated template arguments', () => {
-      init(
-        `<component-injector
-          [ndcDynamicOutputs]="{ onEvent: { handler: outputSpy, args: ['$event', tplVar] } }"
-          ></component-injector>`,
-      );
-      fixture.componentInstance['tplVar'] = 'from-template';
-      fixture.detectChanges();
-      injectedComp.onEvent.next('data');
-
-      expect(outputSpy).toHaveBeenCalledWith('data', 'from-template');
-
-      fixture.componentInstance['tplVar'] = 'new-value';
-      fixture.detectChanges();
-      injectedComp.onEvent.next('new-data');
-
-      expect(outputSpy).toHaveBeenCalledWith('new-data', 'new-value');
-    });
-
-    it('should bind outputs with custom event ID', () => {
-      TestBed.configureTestingModule({
-        providers: [{ provide: EventArgumentToken, useValue: '$e' }],
-      });
-      init(
-        `<component-injector
-          [ndcDynamicOutputs]="{ onEvent: { handler: outputSpy, args: ['$e', tplVar] } }"
-          ></component-injector>`,
-      );
-      fixture.componentInstance['tplVar'] = 'from-template';
-      fixture.detectChanges();
-
-      injectedComp.onEvent.next('data');
-
-      expect(outputSpy).toHaveBeenCalledWith('data', 'from-template');
-    });
-  });
-
-  describe('outputs with `NgComponentOutlet`', () => {
-    let fixture: ComponentFixture<TestComponent>;
-    let outputSpy: jest.Mock;
-
-    beforeEach(waitForAsync(() => {
-      TestBed.configureTestingModule({
-        imports: [TestModule],
-        declarations: [DynamicIoDirective, TestComponent],
-      });
-
-      const template = `<ng-container [ngComponentOutlet]="comp" [ndcDynamicOutputs]="outputs"></ng-container>`;
-      TestBed.overrideComponent(TestComponent, { set: { template } });
-      fixture = TestBed.createComponent(TestComponent);
-
-      outputSpy = jest.fn();
-
-      InjectedComponent.prototype['onEvent'] = new Subject<any>();
-
-      fixture.componentInstance['outputs'] = { onEvent: outputSpy };
-      fixture.componentInstance['comp'] = InjectedComponent;
-    }));
-
-    afterEach(() => delete InjectedComponent.prototype['onEvent']);
-
-    it('should be passed to dynamic component instance', () => {
-      fixture.detectChanges();
-
-      const injectedComp = getInjectedComponentFrom(fixture).component;
-
-      injectedComp['onEvent'].next('data');
-
-      expect(outputSpy).toHaveBeenCalledTimes(1);
-      expect(outputSpy).toHaveBeenCalledWith('data');
-    });
-  });
-
-  describe('outputs with `NgComponentOutlet` * syntax', () => {
-    let fixture: ComponentFixture<TestComponent>;
-    let outputSpy: jest.Mock;
-
-    beforeEach(waitForAsync(() => {
-      TestBed.configureTestingModule({
-        imports: [TestModule],
-        declarations: [DynamicIoDirective, TestComponent],
-      });
-
-      const template = `<ng-container *ngComponentOutlet="comp; ndcDynamicOutputs: outputs"></ng-container>`;
-      TestBed.overrideComponent(TestComponent, { set: { template } });
-      fixture = TestBed.createComponent(TestComponent);
-
-      outputSpy = jest.fn();
-
-      InjectedComponent.prototype['onEvent'] = new Subject<any>();
-
-      fixture.componentInstance['outputs'] = { onEvent: outputSpy };
-      fixture.componentInstance['comp'] = InjectedComponent;
-    }));
-
-    afterEach(() => delete InjectedComponent.prototype['onEvent']);
-
-    it('should be passed to dynamic component instance', () => {
-      fixture.detectChanges();
-
-      const injectedComp = getInjectedComponentFrom(fixture).component;
-
-      injectedComp['onEvent'].next('data');
-
-      expect(outputSpy).toHaveBeenCalledTimes(1);
-      expect(outputSpy).toHaveBeenCalledWith('data');
-    });
-  });
-
-  describe('bound outputs', () => {
-    let fixture: ComponentFixture<TestComponent>;
-    let testComp: any;
-    let injectedComp: InjectedBoundComponent;
-    let outputHandler: jest.Mock;
-
-    beforeEach(waitForAsync(() => {
-      TestBed.configureTestingModule({
-        imports: [TestModule],
-        declarations: [DynamicIoDirective, TestComponent],
-      });
-
-      const template = `<ng-container [ngComponentOutlet]="comp" [ndcDynamicOutputs]="outputs"></ng-container>`;
-      TestBed.overrideComponent(TestComponent, {
-        set: { template },
-      }).compileComponents();
-      fixture = TestBed.createComponent(TestComponent);
-
-      testComp = fixture.componentInstance;
-      testComp.comp = InjectedBoundComponent;
-      testComp.outputs = null;
-
-      fixture.detectChanges();
-      injectedComp = getInjectedBoundComponentFrom(fixture).component;
-
-      outputHandler = jest.fn();
-    }));
-
-    it('should correctly be passed to dynamic component', () => {
-      testComp.outputs = { outerEvt: outputHandler };
-      fixture.detectChanges();
-
-      injectedComp.innerEvt.emit('data');
-
-      expect(outputHandler).toHaveBeenCalledTimes(1);
-      expect(outputHandler).toHaveBeenCalledWith('data');
-    });
-  });
-
-  describe('outputs with OnPush', () => {
-    function testOnPush(withArgs: boolean) {
-      const template = `<span [class]="value"></span><component-injector [ndcDynamicOutputs]="outputs"></component-injector>`;
-      TestBed.overrideComponent(TestComponent, {
-        set: { template, changeDetection: ChangeDetectionStrategy.OnPush },
-      });
-      const fixture = TestBed.createComponent(TestComponent);
-      const injectorComp = getComponentInjectorFrom(fixture).component;
-      const injectedComp = injectorComp.component;
-
-      const eventHandler = (v: string) =>
-        ((fixture.componentInstance as any).value = v);
-      fixture.componentInstance['outputs'] = {
-        onEvent: withArgs ? { handler: eventHandler } : eventHandler,
+    it('should bind outputs with event without specifying template arguments', async () => {
+      const outputs = {
+        output: jest.fn(),
       };
-      fixture.detectChanges();
-      expect(fixture.nativeElement.querySelector('.foo')).toBeFalsy();
-      injectedComp.onEvent.emit('foo');
-      fixture.detectChanges();
-      expect(fixture.nativeElement.querySelector('.foo')).toBeTruthy();
-    }
 
-    it('should mark host component for check when calling event handler', () => {
-      testOnPush(false);
+      const fixture = await testSetup.redner({
+        props: { outputs },
+        template: `
+          <ng-container [ngComponentOutlet]="component"
+            [ndcDynamicOutputs]="{ output1: { handler: outputs.output } }"
+          ></ng-container>
+        `,
+      });
+
+      fixture.getDynamicComponent().output1.emit('val1');
+
+      expect(outputs.output).toHaveBeenCalledTimes(1);
+      expect(outputs.output).toHaveBeenCalledWith('val1');
     });
 
-    it('should mark host component for check when calling output with args', () => {
-      testOnPush(true);
+    it('should bind outputs without event when set to null/undefined', async () => {
+      const outputs = {
+        output: jest.fn(),
+      };
+
+      const fixture = await testSetup.redner({
+        props: { outputs },
+        template: `
+          <ng-container [ngComponentOutlet]="component"
+            [ndcDynamicOutputs]="{ output1: { handler: outputs.output, args: null } }"
+          ></ng-container>
+        `,
+      });
+
+      fixture.getDynamicComponent().output1.emit('val1');
+
+      expect(outputs.output).toHaveBeenCalledTimes(1);
+      expect(outputs.output).toHaveBeenCalledWith();
+    });
+
+    it('should bind outputs with event and template arguments', async () => {
+      const outputs = {
+        output: jest.fn(),
+      };
+
+      const fixture = await testSetup.redner<{ tplVar: any }>({
+        props: { outputs },
+        template: `
+          <ng-container [ngComponentOutlet]="component"
+            [ndcDynamicOutputs]="{ output1: { handler: outputs.output, args: ['$event', tplVar] } }"
+          ></ng-container>
+        `,
+      });
+
+      fixture.setHostProps({ tplVar: 'from-template' });
+
+      fixture.getDynamicComponent().output1.emit('val1');
+
+      expect(outputs.output).toHaveBeenCalledTimes(1);
+      expect(outputs.output).toHaveBeenCalledWith('val1', 'from-template');
+    });
+
+    it('should bind outputs with custom event ID', async () => {
+      const outputs = {
+        output: jest.fn(),
+      };
+
+      const fixture = await testSetup.redner<{ tplVar: any }>({
+        props: { outputs },
+        template: `
+          <ng-container [ngComponentOutlet]="component"
+            [ndcDynamicOutputs]="{ output1: { handler: outputs.output, args: ['$e', tplVar] } }"
+          ></ng-container>
+        `,
+        ngModule: {
+          providers: [{ provide: IoEventArgumentToken, useValue: '$e' }],
+        },
+      });
+
+      fixture.setHostProps({ tplVar: 'from-template' });
+
+      fixture.getDynamicComponent().output1.emit('val1');
+
+      expect(outputs.output).toHaveBeenCalledTimes(1);
+      expect(outputs.output).toHaveBeenCalledWith('val1', 'from-template');
+    });
+
+    it('should bind outputs with custom global context', async () => {
+      const customEventContext = { customEventContext: 'global' };
+      const outputs = {
+        output: jest.fn().mockImplementation(function (this: unknown) {
+          // Use non-strict equal due to a bug in Jest
+          // that clones `this` object and destroys original ref
+          expect(this).toEqual(customEventContext);
+        }),
+      };
+
+      const fixture = await testSetup.redner<{ tplVar: any }>({
+        props: { outputs },
+        template: `
+          <ng-container [ngComponentOutlet]="component"
+            [ndcDynamicOutputs]="{ output1: { handler: outputs.output, args: ['$event', tplVar] } }"
+          ></ng-container>
+        `,
+        ngModule: {
+          providers: [
+            { provide: IoEventContextToken, useValue: customEventContext },
+          ],
+        },
+      });
+
+      fixture.setHostProps({ tplVar: 'from-template' });
+
+      fixture.getDynamicComponent().output1.emit('val1');
+
+      expect(outputs.output).toHaveBeenCalledTimes(1);
+      expect(outputs.output).toHaveBeenCalledWith('val1', 'from-template');
+    });
+
+    it('should bind outputs with custom local context', async () => {
+      const customEventContext = { customEventContext: 'local' };
+      const outputs = {
+        output: jest.fn().mockImplementation(function (this: unknown) {
+          // Use non-strict equal due to a bug in Jest
+          // that clones `this` object and destroys original ref
+          expect(this).toEqual(customEventContext);
+        }),
+      };
+
+      const fixture = await testSetup.redner<{ tplVar: any }>({
+        props: { outputs },
+        template: `
+          <ng-container [ngComponentOutlet]="component"
+            [ndcDynamicOutputs]="{ output1: { handler: outputs.output, args: ['$event', tplVar] } }"
+          ></ng-container>
+        `,
+        ngModule: {
+          providers: [
+            {
+              provide: IoEventContextProviderToken,
+              useValue: {
+                provide: IoEventContextToken,
+                useValue: customEventContext,
+              },
+            },
+          ],
+        },
+      });
+
+      fixture.setHostProps({ tplVar: 'from-template' });
+
+      fixture.getDynamicComponent().output1.emit('val1');
+
+      expect(outputs.output).toHaveBeenCalledTimes(1);
+      expect(outputs.output).toHaveBeenCalledWith('val1', 'from-template');
+    });
+  });
+
+  describe('integration', () => {
+    it('should work with `ngComponentOutlet` * syntax', async () => {
+      const inputs = { input1: 'val1', input2: 'val2', input3Renamed: 'val3' };
+
+      const fixture = await testSetup.redner({
+        props: { inputs },
+        template: `
+          <ng-container
+            *ngComponentOutlet="component; ndcDynamicInputs: inputs"
+          ></ng-container>
+        `,
+      });
+
+      expect(fixture.getDynamicComponent()).toEqual(
+        expect.objectContaining({
+          input1: 'val1',
+          input2: 'val2',
+          input3: 'val3',
+        }),
+      );
+    });
+
+    it('should work with `ndc-dynamic`', async () => {
+      const inputs = { input1: 'val1', input2: 'val2', input3Renamed: 'val3' };
+
+      const fixture = await testSetup.redner({
+        props: { inputs },
+        template: `
+          <ndc-dynamic
+            [ndcDynamicComponent]="component"
+            [ndcDynamicInputs]="inputs"
+          ></ndc-dynamic>
+        `,
+        ngModule: { declarations: [NdcDynamicComponent] },
+      });
+
+      expect(fixture.getDynamicComponent()).toEqual(
+        expect.objectContaining({
+          input1: 'val1',
+          input2: 'val2',
+          input3: 'val3',
+        }),
+      );
     });
   });
 });
