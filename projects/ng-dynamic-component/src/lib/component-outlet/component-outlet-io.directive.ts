@@ -1,6 +1,6 @@
 import { Directive, DoCheck, Input } from '@angular/core';
 
-import { InputsType, IoService, OutputsType } from '../../io';
+import { InputsType, IoService, OutputsType } from '../io';
 
 @Directive({
   selector:

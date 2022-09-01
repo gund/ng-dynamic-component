@@ -1,6 +1,6 @@
 /* eslint-disable @angular-eslint/component-selector */
 import { Component, EventEmitter, Input, Output, Type } from '@angular/core';
-import { TestSetup } from '../../../test';
+import { TestSetup } from '../../test';
 import { ComponentOutletInjectorDirective } from './component-outlet-injector.directive';
 import { ComponentOutletIoDirective } from './component-outlet-io.directive';
 

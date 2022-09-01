@@ -4,6 +4,7 @@
 
 export * from './lib/io';
 export * from './lib/component-injector';
+export * from './lib/component-outlet';
 export * from './lib/dynamic.module';
 export * from './lib/dynamic.component';
 export * from './lib/dynamic-io';

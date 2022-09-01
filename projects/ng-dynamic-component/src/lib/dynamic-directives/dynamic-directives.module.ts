@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
-import { ComponentOutletInjectorModule } from '../component-injector';
+import { ComponentOutletInjectorModule } from '../component-outlet';
 import { DynamicDirectivesDirective } from './dynamic-directives.directive';
 
 @NgModule({
