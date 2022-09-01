@@ -22,7 +22,7 @@ import {
 } from '@angular/core';
 
 import { TestFixture, TestSetup } from '../../test';
-import { ComponentOutletInjectorDirective } from '../component-injector';
+import { ComponentOutletInjectorDirective } from '../component-outlet';
 import { DynamicComponent as NdcDynamicComponent } from '../dynamic.component';
 import { IoFactoryService } from '../io';
 import {

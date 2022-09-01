@@ -17,7 +17,7 @@ import {
 import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { TestFixture, TestSetup } from '../../test';
-import { ComponentOutletInjectorModule } from '../component-injector';
+import { ComponentOutletInjectorModule } from '../component-outlet';
 import { DynamicComponent as NdcDynamicComponent } from '../dynamic.component';
 import { InputsType, IoEventArgumentToken, OutputsType } from '../io';
 import {
