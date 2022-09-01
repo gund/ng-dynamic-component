@@ -1,5 +1,12 @@
 # ng-dynamic-component - Changelog
 
+## [10.5.1](https://github.com/gund/ng-dynamic-component/compare/v10.5.0...v10.5.1) (2022-09-01)
+
+
+### Bug Fixes
+
+* **lib:** remove circular refs in IoService ([6d225e6](https://github.com/gund/ng-dynamic-component/commit/6d225e6f88b993a09abafc1546d21901c617f3cd)), closes [#480](https://github.com/gund/ng-dynamic-component/issues/480)
+
 ## [10.5.1-next.1](https://github.com/gund/ng-dynamic-component/compare/v10.5.0...v10.5.1-next.1) (2022-09-01)
 
 
