@@ -8,20 +8,19 @@ assignees: ''
 ---
 
 **Describe the bug**
-A clear and concise description of what the bug is.
+<!-- A clear and concise description of what the bug is. -->
+
+**Expected behavior**
+<!-- A clear and concise description of what you expected to happen. -->
 
 **Reproduction**
 <!-- Please create a reproduction in an online code editor like stackblitz that reproduces the bug -->
 <!-- As a starting point you may use: https://stackblitz.com/edit/ndc-dynamic-component-example -->
 <!-- If reproduction in online editors is not possible then provide a public github repo that reproduces the bug -->
 <!-- NOTE: Without a reproduction example we may close the issue -->
-Link to stackblitz:
-
-**Expected behavior**
-A clear and concise description of what you expected to happen.
 
 **Screenshots**
-If applicable, add screenshots to help explain your problem.
+<!-- Optional: add screenshots to help explain your problem. -->
 
 **Environment:**
  - OS: [e.g. Linux Ubuntu 14.02]
@@ -30,4 +29,4 @@ If applicable, add screenshots to help explain your problem.
  - Angular version: [e.g. 14.0.0]
 
 **Additional context**
-Add any other context about the problem here.
+<!-- Optional: Add any other context about the problem here. -->
