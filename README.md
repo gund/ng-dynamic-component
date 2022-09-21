@@ -12,8 +12,8 @@
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 [![Greenkeeper badge](https://badges.greenkeeper.io/gund/ng-dynamic-component.svg)](https://greenkeeper.io/)
 
-> Hey! There is a [proposal for new API](https://github.com/gund/ng-dynamic-component/discussions/484)
-> so if you are using this library please give your vote/feedback.
+### Hey! There is a [proposal for new API](https://github.com/gund/ng-dynamic-component/discussions/484)!
+So if you are using this library please give your vote/feedback.
 
 <details>
   <summary>Compatibility with Angular</summary>
