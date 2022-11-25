@@ -1,0 +1,14 @@
+{
+  "recommendations": [
+    "ms-vscode-remote.remote-containers",
+    "Angular.ng-template",
+    "expertly-simple.ng-evergreen",
+    "ghaschel.vscode-angular-html",
+    "nrwl.angular-console",
+    "rbbit.typescript-hero",
+    "dbaeumer.vscode-eslint",
+    "christian-kohler.npm-intellisense",
+    "eamodio.gitlens",
+    "GitHub.vscode-pull-request-github"
+  ]
+}

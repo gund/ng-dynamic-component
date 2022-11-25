@@ -1,0 +1,52 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/typescript-node
+{
+  "name": "Development",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:18",
+
+  // Features to add to the dev container. More info: https://containers.dev/features.
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:1": {},
+    "ghcr.io/devcontainers/features/docker-from-docker:1": {},
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers-contrib/features/angular-cli:1": {}
+  },
+
+  "settings": {
+    "terminal.integrated.defaultProfile.linux": "zsh"
+  },
+
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
+  // "forwardPorts": [],
+
+  // Use 'postCreateCommand' to run commands after the container is created.
+  "postCreateCommand": "sudo chown -R node .git/* && npm i",
+
+  // Configure tool-specific properties.
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "Angular.ng-template",
+        "expertly-simple.ng-evergreen",
+        "ghaschel.vscode-angular-html",
+        "nrwl.angular-console",
+        "rbbit.typescript-hero",
+        "dbaeumer.vscode-eslint",
+        "christian-kohler.npm-intellisense",
+        "eamodio.gitlens",
+        "GitHub.vscode-pull-request-github"
+      ]
+    }
+  },
+
+  // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+  "remoteUser": "node",
+
+  "runArgs": [
+    // Forward SSH Agent from host to container
+    "-v",
+    "${env:SSH_AUTH_SOCK}:/tmp/ssh-agent.socket",
+    "-e",
+    "SSH_AUTH_SOCK=/tmp/ssh-agent.socket"
+  ]
+}
