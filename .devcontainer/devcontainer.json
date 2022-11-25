@@ -8,7 +8,9 @@
     "context": "..",
     "args": {
       "NODE_VERSION": "18",
-      "USERNAME": "node"
+      "USERNAME": "node",
+      "ZSH_PLUGINS": "npm zsh-autosuggestions",
+      "OMZSH_CUSTOM_PLUGINS": "https://github.com/zsh-users/zsh-autosuggestions"
     }
   },
 
@@ -61,7 +63,9 @@
   ],
 
   "mounts": [
-    // Persist vscode extentions between instances
-    "source=ng-dynamic-component-extentions,target=/home/node/.vscode-server/extensions,type=volume"
+    // Volume for vscode extentions
+    "source=ng-dynamic-component-extentions,target=/home/node/.vscode-server/extensions,type=volume",
+    // Volume for shell history
+    "source=ng-dynamic-component-bashhistory,target=/commandhistory,type=volume"
   ]
 }
