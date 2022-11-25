@@ -13,6 +13,7 @@
 [![Greenkeeper badge](https://badges.greenkeeper.io/gund/ng-dynamic-component.svg)](https://greenkeeper.io/)
 
 ### Hey! There is a [proposal for new API](https://github.com/gund/ng-dynamic-component/discussions/484)!
+
 So if you are using this library please give your vote/feedback.
 
 <details>
@@ -433,6 +434,11 @@ It was done to be able to reuse [`NgComponentOutlet`](https://github.com/angular
 To see example of how to implement custom component injector - see
 [`ComponentOutletInjectorDirective`](projects/ng-dynamic-component/src/lib/component-injector/component-outlet-injector.directive.ts)
 that is used to integrate `NgComponentOutlet` directive with inputs/outputs.
+
+## Contributing
+
+You are welcome to contribute to this project.
+Simply follow the [contribution guide](/CONTRIBUTING.md).
 
 ## License
 
