@@ -2,14 +2,26 @@
 // README at: https://github.com/devcontainers/templates/tree/main/src/typescript-node
 {
   "name": "Development",
-  "image": "mcr.microsoft.com/devcontainers/typescript-node:18",
+
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "..",
+    "args": {
+      "NODE_VERSION": "18",
+      "USERNAME": "node",
+      "ZSH_PLUGINS": "npm zsh-autosuggestions",
+      "OMZSH_CUSTOM_PLUGINS": "https://github.com/zsh-users/zsh-autosuggestions"
+    }
+  },
 
   // Features to add to the dev container. More info: https://containers.dev/features.
   "features": {
     "ghcr.io/devcontainers/features/common-utils:1": {},
     "ghcr.io/devcontainers/features/docker-from-docker:1": {},
     "ghcr.io/devcontainers/features/git:1": {},
-    "ghcr.io/devcontainers-contrib/features/angular-cli:1": {}
+    "ghcr.io/devcontainers-contrib/features/angular-cli:1": {
+      "VERSION": "14"
+    }
   },
 
   "settings": {
@@ -48,5 +60,12 @@
     "${env:SSH_AUTH_SOCK}:/tmp/ssh-agent.socket",
     "-e",
     "SSH_AUTH_SOCK=/tmp/ssh-agent.socket"
+  ],
+
+  "mounts": [
+    // Volume for vscode extentions
+    "source=ng-dynamic-component-extentions,target=/home/node/.vscode-server/extensions,type=volume",
+    // Volume for shell history
+    "source=ng-dynamic-component-bashhistory,target=/commandhistory,type=volume"
   ]
 }
