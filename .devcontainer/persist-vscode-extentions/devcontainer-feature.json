@@ -1,0 +1,22 @@
+{
+  "name": "Persist VSCode Extentions",
+  "id": "persist-vscode-extentions",
+  "version": "0.0.1",
+  "description": "Persist VSCode Extentions between container instances for faster boot times",
+  "options": {
+    "username": {
+      "type": "string",
+      "default": "",
+      "proposals": ["root", "node", "vscode"],
+      "description": "For which user to persist extentions, by default uses 'remoteUser' or 'containerUser' from config"
+    }
+  },
+  "entrypoint": "/usr/local/share/fix-vscode-extensions.sh",
+  "mounts": [
+    {
+      "source": "vscode-extentions-${devcontainerId}",
+      "target": "/usr/local/share/vscode-extensions",
+      "type": "volume"
+    }
+  ]
+}

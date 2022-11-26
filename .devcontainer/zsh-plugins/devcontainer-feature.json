@@ -1,0 +1,26 @@
+{
+  "name": "ZSH Plugins",
+  "id": "zsh-plugins",
+  "version": "0.0.1",
+  "description": "Install (Oh-My-)ZSH plugins",
+  "options": {
+    "plugins": {
+      "type": "string",
+      "default": "",
+      "proposals": ["ssh-agent npm"],
+      "description": "Space separated list of ZSH plugin names that will be added to .zshrc"
+    },
+    "omzPlugins": {
+      "type": "string",
+      "default": "",
+      "proposals": ["https://github.com/zsh-users/zsh-autosuggestions"],
+      "description": "Space separated list of Oh-My-ZSH custom plugin Git URLs that will be cloned"
+    },
+    "username": {
+      "type": "string",
+      "default": "",
+      "proposals": ["root", "node", "vscode"],
+      "description": "For which user to setup ZSH plugins, by default uses 'remoteUser' or 'containerUser' from config"
+    }
+  }
+}
