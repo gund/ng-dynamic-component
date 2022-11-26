@@ -3,16 +3,7 @@
 {
   "name": "Development",
 
-  "build": {
-    "dockerfile": "Dockerfile",
-    "context": "..",
-    "args": {
-      "NODE_VERSION": "18",
-      "USERNAME": "node",
-      "ZSH_PLUGINS": "npm zsh-autosuggestions",
-      "OMZSH_CUSTOM_PLUGINS": "https://github.com/zsh-users/zsh-autosuggestions"
-    }
-  },
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:18",
 
   // Features to add to the dev container. More info: https://containers.dev/features.
   "features": {
@@ -21,11 +12,15 @@
     "ghcr.io/devcontainers/features/git:1": {},
     "ghcr.io/devcontainers-contrib/features/angular-cli:1": {
       "VERSION": "14"
-    }
-  },
-
-  "settings": {
-    "terminal.integrated.defaultProfile.linux": "zsh"
+    },
+    "./zsh-plugins": {
+      "plugins": "npm zsh-autosuggestions",
+      "omzPlugins": "https://github.com/zsh-users/zsh-autosuggestions"
+    },
+    "./persist-history": {
+      "shellName": "zsh"
+    },
+    "./persist-vscode-extentions": {}
   },
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
@@ -37,8 +32,11 @@
   // Configure tool-specific properties.
   "customizations": {
     "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh"
+      },
       "extensions": [
-        "Angular.ng-template",
+        "angular.ng-template",
         "expertly-simple.ng-evergreen",
         "ghaschel.vscode-angular-html",
         "nrwl.angular-console",
@@ -46,26 +44,12 @@
         "dbaeumer.vscode-eslint",
         "christian-kohler.npm-intellisense",
         "eamodio.gitlens",
-        "GitHub.vscode-pull-request-github"
+        "gitHub.vscode-pull-request-github",
+        "esbenp.prettier-vscode"
       ]
     }
   },
 
   // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-  "remoteUser": "node",
-
-  "runArgs": [
-    // Forward SSH Agent from host to container
-    "-v",
-    "${env:SSH_AUTH_SOCK}:/tmp/ssh-agent.socket",
-    "-e",
-    "SSH_AUTH_SOCK=/tmp/ssh-agent.socket"
-  ],
-
-  "mounts": [
-    // Volume for vscode extentions
-    "source=ng-dynamic-component-extentions,target=/home/node/.vscode-server/extensions,type=volume",
-    // Volume for shell history
-    "source=ng-dynamic-component-bashhistory,target=/commandhistory,type=volume"
-  ]
+  "remoteUser": "node"
 }

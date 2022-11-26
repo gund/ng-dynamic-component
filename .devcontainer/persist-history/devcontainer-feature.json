@@ -1,0 +1,28 @@
+{
+  "name": "Persist shell history",
+  "id": "persist-history",
+  "version": "0.0.1",
+  "description": "Persist shell history between container instances",
+  "options": {
+    "shell": {
+      "type": "string",
+      "default": "bash",
+      "enum": ["bash", "zsh"],
+      "description": "Which shell history to persist"
+    },
+    "username": {
+      "type": "string",
+      "default": "",
+      "proposals": ["root", "node", "vscode"],
+      "description": "For which user to persist history, by default uses 'remoteUser' or 'containerUser' from config"
+    }
+  },
+  "entrypoint": "/usr/local/share/fix-history.sh",
+  "mounts": [
+    {
+      "source": "shell-history-${devcontainerId}",
+      "target": "/usr/local/share/commandhistory",
+      "type": "volume"
+    }
+  ]
+}
