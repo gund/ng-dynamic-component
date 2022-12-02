@@ -2,7 +2,8 @@
 
 > Dynamic components with full life-cycle support for inputs and outputs
 
-[![Travis CI](https://img.shields.io/travis/gund/ng-dynamic-component/master.svg?maxAge=2592000)](https://travis-ci.org/gund/ng-dynamic-component)
+[![Release Workflow](https://github.com/gund/ng-dynamic-component/actions/workflows/release.yml/badge.svg)](https://github.com/gund/ng-dynamic-component/actions/workflows/release.yml)
+[![Test Workflow](https://github.com/gund/ng-dynamic-component/actions/workflows/test.yml/badge.svg)](https://github.com/gund/ng-dynamic-component/actions/workflows/test.yml)
 [![Appveyor](https://ci.appveyor.com/api/projects/status/qwfaor0nnt9l24nj/branch/master?svg=true)](https://ci.appveyor.com/project/gund/ng-dynamic-component/branch/master)
 [![Coverage](https://codecov.io/gh/gund/ng-dynamic-component/branch/master/graph/badge.svg?token=BjOghV9KX8)](https://codecov.io/gh/gund/ng-dynamic-component)
 [![Maintainability](https://api.codeclimate.com/v1/badges/df4884f0ef7b49c285d0/maintainability)](https://codeclimate.com/github/gund/ng-dynamic-component/maintainability)
@@ -10,7 +11,6 @@
 [![Npm Downloads](https://img.shields.io/npm/dt/ng-dynamic-component.svg?maxAge=2592000)](https://www.npmjs.com/package/ng-dynamic-component)
 [![Licence](https://img.shields.io/npm/l/ng-dynamic-component.svg?maxAge=2592000)](https://github.com/gund/ng-dynamic-component/blob/master/LICENSE)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
-[![Greenkeeper badge](https://badges.greenkeeper.io/gund/ng-dynamic-component.svg)](https://greenkeeper.io/)
 
 ### Hey! There is a [proposal for new API](https://github.com/gund/ng-dynamic-component/discussions/484)!
 
