@@ -1,0 +1,32 @@
+name: Release Workflow
+
+on:
+  # Triggers the workflow after the Test Workflow has completed
+  workflow_run:
+    workflows: ['Test Workflow']
+    types:
+      - completed
+    branches:
+      - master
+      - next
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: npm-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            npm-node-
+      - name: Install Deps
+        run: npm ci --ignore-scripts
+      - name: Build
+        run: npm run build
+      - name: Release to NPM
+        run: npm run semantic-release

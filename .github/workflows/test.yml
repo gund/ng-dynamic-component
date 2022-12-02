@@ -1,0 +1,32 @@
+name: Test Workflow
+
+on:
+  # Triggers the workflow on push events
+  push:
+  # Triggers the workflow on pull request events
+  pull_request:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: npm-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            npm-node-
+      - name: Install Deps
+        run: npm ci --ignore-scripts
+      - name: Format check
+        run: npm run format:check
+      - name: Lint check
+        run: npm run lint
+      - name: Unit tests
+        run: npm run test:ci
+      - name: Build
+        run: npm run build
