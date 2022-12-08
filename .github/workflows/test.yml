@@ -26,6 +26,7 @@ jobs:
             cmd: "npm run test:ci"
           - name: "Build"
             cmd: "npm run build"
+    name: ${{ matrix.name }}
     steps:
       - uses: actions/setup-node@v3
       - uses: actions/checkout@v3
