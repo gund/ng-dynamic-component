@@ -14,6 +14,18 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: "Format check"
+            cmd: "npm run format:check"
+          - name: "Lint check"
+            cmd: "npm run lint"
+          - name: "Unit tests"
+            cmd: "npm run test:ci"
+          - name: "Build"
+            cmd: "npm run build"
     steps:
       - uses: actions/setup-node@v3
       - uses: actions/checkout@v3
@@ -25,11 +37,5 @@ jobs:
             npm-node-
       - name: Install Deps
         run: npm ci --ignore-scripts
-      - name: Format check
-        run: npm run format:check
-      - name: Lint check
-        run: npm run lint
-      - name: Unit tests
-        run: npm run test:ci
-      - name: Build
-        run: npm run build
+      - name: ${{ matrix.name }}
+        run: ${{ matrix.cmd }}
