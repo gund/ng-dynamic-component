@@ -12,11 +12,10 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-environment: release
-
 jobs:
   release:
     runs-on: ubuntu-latest
+    environment: release
     steps:
       - uses: actions/setup-node@v3
       - uses: actions/checkout@v3
