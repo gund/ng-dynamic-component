@@ -41,6 +41,8 @@ export class DynamicComponent<C = unknown>
   ndcDynamicProviders?: StaticProvider[] | null;
   @Input()
   ndcDynamicContent?: Node[][];
+  @Input()
+  ndcDynamicModule?: NgModuleRef;
 
   @Output()
   ndcDynamicCreated = new EventEmitter<ComponentRef<C>>();
@@ -68,6 +70,7 @@ export class DynamicComponent<C = unknown>
         index: 0,
         injector: this._resolveInjector(),
         projectableNodes: this.ndcDynamicContent,
+        ngModuleRef: this.ndcDynamicModule
       });
       this.ndcDynamicCreated.emit(this.componentRef);
     }
