@@ -31,6 +31,7 @@ export class DynamicComponent<C = unknown>
     'ndcDynamicInjector',
     'ndcDynamicProviders',
     'ndcDynamicContent',
+    'ndcDynamicModule'
   ];
 
   @Input()
