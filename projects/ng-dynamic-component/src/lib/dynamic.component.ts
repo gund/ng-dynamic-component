@@ -10,6 +10,8 @@ import {
   StaticProvider,
   Type,
   ViewContainerRef,
+  NgModuleRef,
+  EnvironmentInjector,
 } from '@angular/core';
 import {
   DynamicComponentInjector,
@@ -31,7 +33,8 @@ export class DynamicComponent<C = unknown>
     'ndcDynamicInjector',
     'ndcDynamicProviders',
     'ndcDynamicContent',
-    'ndcDynamicModule'
+    'ndcDynamicNgModuleRef',
+    'ndcDynamicEnvironmentInjector',
   ];
 
   @Input()
@@ -43,7 +46,9 @@ export class DynamicComponent<C = unknown>
   @Input()
   ndcDynamicContent?: Node[][];
   @Input()
-  ndcDynamicModule?: NgModuleRef;
+  ndcDynamicNgModuleRef?: NgModuleRef<any>;
+  @Input()
+  ndcDynamicEnvironmentInjector?: EnvironmentInjector;
 
   @Output()
   ndcDynamicCreated = new EventEmitter<ComponentRef<C>>();
@@ -71,7 +76,8 @@ export class DynamicComponent<C = unknown>
         index: 0,
         injector: this._resolveInjector(),
         projectableNodes: this.ndcDynamicContent,
-        ngModuleRef: this.ndcDynamicModule
+        ngModuleRef: this.ndcDynamicNgModuleRef,
+        environmentInjector: this.ndcDynamicEnvironmentInjector,
       });
       this.ndcDynamicCreated.emit(this.componentRef);
     }
