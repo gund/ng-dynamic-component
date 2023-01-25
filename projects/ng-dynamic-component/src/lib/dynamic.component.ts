@@ -1,17 +1,17 @@
 import {
   Component,
   ComponentRef,
+  EnvironmentInjector,
   EventEmitter,
   Injector,
   Input,
+  NgModuleRef,
   OnChanges,
   Output,
   SimpleChanges,
   StaticProvider,
   Type,
   ViewContainerRef,
-  NgModuleRef,
-  EnvironmentInjector,
 } from '@angular/core';
 import {
   DynamicComponentInjector,

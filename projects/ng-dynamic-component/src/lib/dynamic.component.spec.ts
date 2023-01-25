@@ -1,15 +1,14 @@
 /* eslint-disable @angular-eslint/component-selector */
 import {
   Component,
-  InjectionToken,
-  Injector,
-  StaticProvider,
-  Type,
-  NgModule,
-  NgModuleRef,
   createNgModule,
   EnvironmentInjector,
-  inject,
+  InjectionToken,
+  Injector,
+  NgModule,
+  NgModuleRef,
+  StaticProvider,
+  Type,
 } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { TestFixture, TestSetup } from '../test';
@@ -36,8 +35,8 @@ describe('DynamicComponent', () => {
     injector?: Injector;
     providers?: StaticProvider[];
     content?: Node[][];
-    ngModuleRef?: NgModuleRef<any>;
-    environmentInjector?: EnvironmentInjector;
+    ngModuleRef?: NgModuleRef<unknown>;
+    environmentInjector?: EnvironmentInjector | NgModuleRef<unknown>;
     createdComponent = jest.fn();
   }
 
