@@ -1,5 +1,12 @@
 # ng-dynamic-component - Changelog
 
+# [10.6.0](https://github.com/gund/ng-dynamic-component/compare/v10.5.1...v10.6.0) (2023-01-25)
+
+
+### Features
+
+* add `NgModuleRef` and `EnvironmentInjector` inputs to `ndc-dynamic` component ([bfaceb3](https://github.com/gund/ng-dynamic-component/commit/bfaceb38d993e170e43a6da3752c6b45cb458825))
+
 ## [10.5.1](https://github.com/gund/ng-dynamic-component/compare/v10.5.0...v10.5.1) (2022-09-01)
 
 
