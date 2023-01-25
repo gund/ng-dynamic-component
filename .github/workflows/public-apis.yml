@@ -1,0 +1,30 @@
+name: Public APIs
+
+on:
+  # Triggers the workflow on pull request events
+  pull_request:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    name: Check
+    steps:
+      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: npm-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            npm-node-
+      - name: Install Deps
+        run: npm ci --ignore-scripts
+      - name: Build
+        run: npx nx run ng-dynamic-component:build
+      - name: Update APIs
+        if: ${{ failure() }}
+        run: |
+          npx nx run ng-dynamic-component:build:local
+          .github/workflows/commit-api.sh
