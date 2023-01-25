@@ -18,6 +18,9 @@ import {
   DynamicComponentInjectorToken,
 } from './component-injector';
 
+/**
+ * @public
+ */
 @Component({
   selector: 'ndc-dynamic',
   template: '',

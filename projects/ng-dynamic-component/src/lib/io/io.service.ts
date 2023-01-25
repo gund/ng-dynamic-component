@@ -40,11 +40,17 @@ interface OutputsTypeProcessed extends OutputsType {
   [k: string]: EventHandler;
 }
 
+/**
+ * @public
+ */
 @Injectable({ providedIn: 'root' })
 export class IoServiceOptions {
   trackOutputChanges = false;
 }
 
+/**
+ * @public
+ */
 @Injectable()
 export class IoService implements OnDestroy {
   private lastComponentInst: unknown = null;
