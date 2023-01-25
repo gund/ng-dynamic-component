@@ -1,8 +1,12 @@
 /* eslint-disable @angular-eslint/component-selector */
 import {
   Component,
+  createNgModule,
+  EnvironmentInjector,
   InjectionToken,
   Injector,
+  NgModule,
+  NgModuleRef,
   StaticProvider,
   Type,
 } from '@angular/core';
@@ -21,6 +25,8 @@ describe('DynamicComponent', () => {
       [ndcDynamicInjector]="injector"
       [ndcDynamicProviders]="providers"
       [ndcDynamicContent]="content"
+      [ndcDynamicNgModuleRef]="ngModuleRef"
+      [ndcDynamicEnvironmentInjector]="environmentInjector"
       (ndcDynamicCreated)="createdComponent($event)"
     ></ndc-dynamic>`,
   })
@@ -29,6 +35,8 @@ describe('DynamicComponent', () => {
     injector?: Injector;
     providers?: StaticProvider[];
     content?: Node[][];
+    ngModuleRef?: NgModuleRef<unknown>;
+    environmentInjector?: EnvironmentInjector | NgModuleRef<unknown>;
     createdComponent = jest.fn();
   }
 
@@ -256,6 +264,106 @@ describe('DynamicComponent', () => {
       expect(fixture.getInjectedText()).toMatch(
         'projected: Projected2 content2',
       );
+    });
+  });
+
+  describe('@Input(ndcDynamicNgModuleRef)', () => {
+    const testToken = new InjectionToken<any>('TEST_TOKEN');
+    const testTokenValue = {};
+    let ngModuleRef: NgModuleRef<any>;
+    let parentInjector: Injector;
+
+    @NgModule({
+      providers: [{ provide: testToken, useValue: testTokenValue }],
+    })
+    class CustomNgModule {}
+
+    it('should use input if provided for ngModuleRef', async () => {
+      const fixture = await testSetup.redner();
+
+      parentInjector = TestBed.inject(NgModuleRef).injector;
+      ngModuleRef = createNgModule(CustomNgModule, parentInjector);
+      fixture.setHostProps({ ngModuleRef });
+
+      expect(fixture.getInjectedInjector().get(testToken)).toBe(testTokenValue);
+    });
+
+    it('should change component if input updated', async () => {
+      const fixture = await testSetup.redner();
+
+      parentInjector = TestBed.inject(NgModuleRef).injector;
+      ngModuleRef = createNgModule(CustomNgModule, parentInjector);
+      fixture.setHostProps({ ngModuleRef });
+
+      const injectedComp = fixture.getInjectedComponent();
+
+      expect(fixture.getInjectedInjector().get(testToken)).toBe(testTokenValue);
+
+      const testTokenValue2 = {};
+      @NgModule({
+        providers: [{ provide: testToken, useValue: testTokenValue2 }],
+      })
+      class CustomNgModule2 {}
+      ngModuleRef = createNgModule(CustomNgModule2, parentInjector);
+
+      fixture.setHostProps({ ngModuleRef });
+
+      expect(fixture.getInjectedInjector().get(testToken)).toBe(
+        testTokenValue2,
+      );
+      expect(fixture.getInjectedComponent()).not.toBe(injectedComp);
+    });
+  });
+
+  describe('@Input(ndcDynamicEnvironmentInjector)', () => {
+    const testToken = new InjectionToken<any>('TEST_TOKEN');
+    const testTokenValue = {};
+    let ngModuleRef: NgModuleRef<any>;
+    let environmentInjector: EnvironmentInjector;
+    let parentInjector: Injector;
+
+    @NgModule({
+      providers: [{ provide: testToken, useValue: testTokenValue }],
+    })
+    class CustomNgModule {}
+
+    it('should use input if provided for environmentInjector', async () => {
+      const fixture = await testSetup.redner();
+
+      parentInjector = TestBed.inject(NgModuleRef).injector;
+      ngModuleRef = createNgModule(CustomNgModule, parentInjector);
+      environmentInjector = ngModuleRef.injector;
+      fixture.setHostProps({ environmentInjector });
+
+      expect(fixture.getInjectedInjector().get(testToken)).toBe(testTokenValue);
+    });
+
+    it('should change component if input updated', async () => {
+      const fixture = await testSetup.redner();
+
+      parentInjector = TestBed.inject(NgModuleRef).injector;
+      ngModuleRef = createNgModule(CustomNgModule, parentInjector);
+      environmentInjector = ngModuleRef.injector;
+      fixture.setHostProps({ environmentInjector });
+
+      const injectedComp = fixture.getInjectedComponent();
+
+      expect(fixture.getInjectedInjector().get(testToken)).toBe(testTokenValue);
+
+      const testTokenValue2 = {};
+      @NgModule({
+        providers: [{ provide: testToken, useValue: testTokenValue2 }],
+      })
+      class CustomNgModule2 {}
+      ngModuleRef = createNgModule(CustomNgModule2, parentInjector);
+      environmentInjector = ngModuleRef.injector;
+
+      fixture.setHostProps({ environmentInjector });
+
+      expect(fixture.getInjectedInjector().get(testToken)).toBe(
+        testTokenValue2,
+      );
+      expect(fixture.getInjectedComponent()).not.toBe(injectedComp);
     });
   });
 });
