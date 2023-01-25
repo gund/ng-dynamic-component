@@ -10,4 +10,4 @@ export * from './lib/dynamic.component';
 export * from './lib/dynamic-io';
 export * from './lib/dynamic-attributes';
 export * from './lib/dynamic-directives';
-export * from './lib/reflect';
+// export * from './lib/reflect';
