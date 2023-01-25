@@ -418,6 +418,9 @@ You can have more advanced stuff over your dynamically rendered components like 
 or providing additional/overriding providers (`[ndcDynamicProviders]`) or both simultaneously
 or projecting nodes (`[ndcDynamicContent]`).
 
+**Since v10.6.0**: You can provide custom NgModuleRef (`[ndcDynamicNgModuleRef]`)
+or EnvironmentInjector (`[ndcDynamicEnvironmentInjector]`) for your dynamic component.
+
 NOTE: In practice functionality of this library is split in two pieces:
 
 - one - component (`ndc-dynamic`) that is responsible for instantiating and rendering of dynamic components;

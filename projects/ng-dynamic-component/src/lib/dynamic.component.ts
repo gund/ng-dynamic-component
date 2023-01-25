@@ -46,9 +46,9 @@ export class DynamicComponent<C = unknown>
   @Input()
   ndcDynamicContent?: Node[][];
   @Input()
-  ndcDynamicNgModuleRef?: NgModuleRef<any>;
+  ndcDynamicNgModuleRef?: NgModuleRef<unknown>;
   @Input()
-  ndcDynamicEnvironmentInjector?: EnvironmentInjector;
+  ndcDynamicEnvironmentInjector?: EnvironmentInjector | NgModuleRef<unknown>;
 
   @Output()
   ndcDynamicCreated = new EventEmitter<ComponentRef<C>>();
