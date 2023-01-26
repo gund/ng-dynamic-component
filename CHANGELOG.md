@@ -1,5 +1,12 @@
 # ng-dynamic-component - Changelog
 
+## [10.6.1](https://github.com/gund/ng-dynamic-component/compare/v10.6.0...v10.6.1) (2023-01-26)
+
+
+### Bug Fixes
+
+* **lib:** setup d.ts rollup as single file ([2ace410](https://github.com/gund/ng-dynamic-component/commit/2ace41054404868ae23d6e02c687fcaca7aa3ec9))
+
 # [10.6.0](https://github.com/gund/ng-dynamic-component/compare/v10.5.1...v10.6.0) (2023-01-25)
 
 
