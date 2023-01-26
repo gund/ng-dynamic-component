@@ -184,6 +184,7 @@ export function dynamicDirectiveDef<T>(type: Type<T>, inputs?: InputsType, outpu
 
 // @public
 export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
+    // Warning: (ae-forgotten-export) The symbol "ReflectService" needs to be exported by the entry point public-api.d.ts
     constructor(injector: Injector, iterableDiffers: IterableDiffers, ioFactoryService: IoFactoryService, reflectService: ReflectService, componentInjector?: DynamicComponentInjector | undefined);
     // (undocumented)
     ndcDynamicDirectives?: DynamicDirectiveDef<unknown>[] | null;
@@ -322,26 +323,6 @@ export interface OutputWithArgs {
     args?: unknown[];
     // (undocumented)
     handler: AnyFunction;
-}
-
-// @public
-export interface ReflectApi {
-    // (undocumented)
-    getMetadata(type: string, obj: unknown): unknown[];
-}
-
-// @public (undocumented)
-export const ReflectRef: InjectionToken<ReflectApi>;
-
-// @public (undocumented)
-export class ReflectService {
-    constructor(reflect: ReflectApi);
-    // (undocumented)
-    getCtorParamTypes(ctor: Type<unknown>): unknown[];
-    // (undocumented)
-    static ɵfac: i0.ɵɵFactoryDeclaration<ReflectService, never>;
-    // (undocumented)
-    static ɵprov: i0.ɵɵInjectableDeclaration<ReflectService>;
 }
 
 // (No @packageDocumentation comment for this package)
