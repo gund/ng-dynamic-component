@@ -6,10 +6,16 @@ import {
 } from '../component-injector';
 import { IoService, IoServiceOptions } from './io.service';
 
+/**
+ * @public
+ */
 export interface IoFactoryServiceOptions {
   injector?: Injector;
 }
 
+/**
+ * @public
+ */
 @Injectable({ providedIn: 'root' })
 export class IoFactoryService {
   constructor(private injector: Injector) {}

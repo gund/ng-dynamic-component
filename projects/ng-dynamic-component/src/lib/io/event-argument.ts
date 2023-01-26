@@ -1,9 +1,15 @@
 import { InjectionToken } from '@angular/core';
 
+/**
+ * @public
+ */
 export function defaultEventArgumentFactory() {
   return '$event';
 }
 
+/**
+ * @public
+ */
 export const IoEventArgumentToken = new InjectionToken<string>(
   'EventArgument',
   {
@@ -13,6 +19,7 @@ export const IoEventArgumentToken = new InjectionToken<string>(
 );
 
 /**
+ * @public
  * @deprecated Since v10.4.0 - Use {@link IoEventArgumentToken} instead!
  */
 export const EventArgumentToken = IoEventArgumentToken;

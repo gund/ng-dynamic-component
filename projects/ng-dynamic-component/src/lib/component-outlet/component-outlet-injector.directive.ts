@@ -6,6 +6,9 @@ import {
   DynamicComponentInjectorToken,
 } from '../component-injector';
 
+/**
+ * @public
+ */
 @Directive({
   // eslint-disable-next-line @angular-eslint/directive-selector
   selector: '[ngComponentOutlet]',

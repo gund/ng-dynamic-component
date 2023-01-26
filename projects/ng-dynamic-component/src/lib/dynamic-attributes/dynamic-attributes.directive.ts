@@ -15,6 +15,9 @@ import {
   DynamicComponentInjectorToken,
 } from '../component-injector';
 
+/**
+ * @public
+ */
 export interface AttributesMap {
   [key: string]: string;
 }
@@ -24,6 +27,9 @@ interface AttributeActions {
   remove: string[];
 }
 
+/**
+ * @public
+ */
 @Directive({
   selector: '[ndcDynamicAttributes],[ngComponentOutletNdcDynamicAttributes]',
   exportAs: 'ndcDynamicAttributes',

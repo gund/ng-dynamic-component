@@ -1,0 +1,41 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "projects/ng-dynamic-component/src",
+  "prefix": "ndc",
+  "targets": {
+    "build-lib": {
+      "executor": "@angular-devkit/build-angular:ng-packagr",
+      "options": {
+        "tsConfig": "projects/ng-dynamic-component/tsconfig.lib.json",
+        "project": "projects/ng-dynamic-component/ng-package.json"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": ["goldens/ng-dynamic-component", "dist/ng-dynamic-component"],
+      "options": {
+        "command": "npx api-extractor run -c projects/ng-dynamic-component/api-extractor.json"
+      },
+      "configurations": {
+        "local": {
+          "command": "npx api-extractor run -c projects/ng-dynamic-component/api-extractor.json --local"
+        }
+      },
+      "dependsOn": ["build-lib", "^build-lib"]
+    },
+    "test": {
+      "executor": "@angular-builders/jest:run",
+      "options": {}
+    },
+    "lint": {
+      "executor": "@angular-eslint/builder:lint",
+      "options": {
+        "lintFilePatterns": [
+          "projects/ng-dynamic-component/**/*.ts",
+          "projects/ng-dynamic-component/**/*.html"
+        ]
+      }
+    }
+  }
+}

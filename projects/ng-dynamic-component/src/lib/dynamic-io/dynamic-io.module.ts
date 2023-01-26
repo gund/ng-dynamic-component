@@ -4,6 +4,9 @@ import { NgModule } from '@angular/core';
 import { ComponentOutletInjectorModule } from '../component-outlet';
 import { DynamicIoDirective } from './dynamic-io.directive';
 
+/**
+ * @public
+ */
 @NgModule({
   imports: [CommonModule],
   exports: [DynamicIoDirective, ComponentOutletInjectorModule],

@@ -1,0 +1,42 @@
+name: Public APIs
+
+on:
+  # Triggers the workflow on pull request events
+  pull_request:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    name: Check
+    environment: 'public-api'
+    steps:
+      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref || github.ref }}
+      - uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: npm-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            npm-node-
+      - name: Install Deps
+        run: npm ci --ignore-scripts
+      - name: Build
+        id: build
+        continue-on-error: true
+        run: npx nx run ng-dynamic-component:build
+      - name: Update APIs
+        if: ${{ steps.build.outcome == 'failure' }}
+        run: npx nx run ng-dynamic-component:build:local
+      - name: Commit API changes
+        if: ${{ steps.build.outcome == 'failure' }}
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: 'goldens/*'
+          default_author: github_actions
+          message: 'chore(api): changes of Public API goldens'

@@ -1,9 +1,9 @@
 name: Release Workflow
 
 on:
-  # Triggers the workflow after the Test Workflow has completed
+  # Triggers the workflow after the Test has completed
   workflow_run:
-    workflows: ['Test Workflow']
+    workflows: ['Test']
     types:
       - completed
     branches:

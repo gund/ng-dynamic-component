@@ -4,6 +4,7 @@
     "outDir": "../../out-tsc/lib",
     "target": "esnext",
     "declaration": true,
+    "declarationMap": true,
     "inlineSources": true,
     "types": []
   },

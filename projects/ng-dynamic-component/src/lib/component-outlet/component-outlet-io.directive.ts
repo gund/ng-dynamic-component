@@ -2,6 +2,9 @@ import { Directive, DoCheck, Input } from '@angular/core';
 
 import { InputsType, IoService, OutputsType } from '../io';
 
+/**
+ * @public
+ */
 @Directive({
   selector:
     // eslint-disable-next-line @angular-eslint/directive-selector

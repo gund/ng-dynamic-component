@@ -4,6 +4,9 @@ import { NgModule } from '@angular/core';
 import { DynamicIoModule } from './dynamic-io';
 import { DynamicComponent } from './dynamic.component';
 
+/**
+ * @public
+ */
 @NgModule({
   imports: [CommonModule, DynamicIoModule],
   exports: [DynamicComponent, DynamicIoModule],

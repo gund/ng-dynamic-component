@@ -25,12 +25,18 @@ import { InputsType, IoFactoryService, IoService, OutputsType } from '../io';
 import { extractNgParamTypes, isOnDestroy } from '../util';
 import { ReflectService } from '../reflect';
 
+/**
+ * @public
+ */
 export interface DynamicDirectiveDef<T> {
   type: Type<T>;
   inputs?: InputsType;
   outputs?: OutputsType;
 }
 
+/**
+ * @public
+ */
 export function dynamicDirectiveDef<T>(
   type: Type<T>,
   inputs?: InputsType,
@@ -39,6 +45,9 @@ export function dynamicDirectiveDef<T>(
   return { type, inputs, outputs };
 }
 
+/**
+ * @public
+ */
 export interface DirectiveRef<T> {
   instance: T;
   type: Type<T>;
@@ -52,6 +61,7 @@ export interface DirectiveRef<T> {
 }
 
 /**
+ * @public
  * @experimental Dynamic directives is an experimental API that may not work as expected.
  *
  * NOTE: There is a known issue with OnChanges hook not beign triggered on dynamic directives

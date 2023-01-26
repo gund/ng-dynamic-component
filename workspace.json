@@ -1,0 +1,7 @@
+{
+  "version": 2,
+  "newProjectRoot": "projects",
+  "projects": {
+    "ng-dynamic-component": "projects/ng-dynamic-component"
+  }
+}
