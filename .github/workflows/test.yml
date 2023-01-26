@@ -18,14 +18,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: "Format check"
-            cmd: "npm run format:check"
-          - name: "Lint check"
-            cmd: "npm run lint"
-          - name: "Unit tests"
-            cmd: "npm run test:ci"
-          - name: "Build"
-            cmd: "npm run build"
+          - name: 'Format check'
+            cmd: 'npm run format:check'
+          - name: 'Lint check'
+            cmd: 'npm run lint'
+          - name: 'Unit tests'
+            cmd: 'npm run test:ci'
+          - name: 'Build'
+            cmd: 'npm run build'
     name: ${{ matrix.name }}
     steps:
       - uses: actions/setup-node@v3
