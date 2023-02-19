@@ -1,10 +1,12 @@
 {
   "name": "root",
   "version": "0.0.0",
-  "packageManager": "npm@18.0.0",
+  "packageManager": "npm@9.3.1",
   "private": true,
   "scripts": {
     "ct": "git-cz",
+    "update-deps": "rm -rf node_modules && rm -rf npm_cache && npm i",
+    "verify-deps": "git diff --name-only | grep npm_cache/_cacache/content",
     "start": "nx serve ng-dynamic-component",
     "build": "nx build ng-dynamic-component",
     "test": "nx test ng-dynamic-component",

@@ -1,0 +1,35 @@
+name: 'Dependencies'
+
+on:
+  # Triggers the workflow on pull request events
+  pull_request:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    name: Review
+    steps:
+      - uses: actions/checkout@v3
+      - name: Dependencies Review
+        uses: actions/dependency-review-action@v2
+  # FIXME: This validation does not work on CI
+  # verify:
+  #   runs-on: ubuntu-latest
+  #   name: Verify
+  #   steps:
+  #     - uses: actions/setup-node@v3
+  #     - uses: actions/checkout@v3
+  #     - name: Update Cache
+  #       run: npm run update-deps
+  #     - name: Verify Deps
+  #       run: |
+  #         if [[ $(npm run verify-deps) ]]; then
+  #           echo "Dependencies content has changed! Update dependencies via 'npm run update-deps' and commit changes!"
+  #           npm run verify-deps
+  #           exit 1
+  #         fi
