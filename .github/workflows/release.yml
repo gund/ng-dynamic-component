@@ -19,12 +19,6 @@ jobs:
     steps:
       - uses: actions/setup-node@v3
       - uses: actions/checkout@v3
-      - uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: npm-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            npm-node-
       - name: Install Deps
         run: npm ci --ignore-scripts
       - name: Build
