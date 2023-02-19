@@ -1,6 +1,8 @@
 {
   "name": "root",
   "version": "0.0.0",
+  "packageManager": "npm@18.0.0",
+  "private": true,
   "scripts": {
     "ct": "git-cz",
     "start": "nx serve ng-dynamic-component",
@@ -18,7 +20,6 @@
     "prepare": "husky install",
     "postinstall": "ngcc --properties es2020 browser module main"
   },
-  "private": true,
   "dependencies": {
     "@angular/common": "^14.1.3",
     "@angular/compiler": "^14.1.3",

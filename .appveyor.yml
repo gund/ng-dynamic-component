@@ -1,5 +1,5 @@
 environment:
-  nodejs_version: '16'
+  nodejs_version: '18'
 
 matrix:
   fast_finish: true
@@ -8,15 +8,12 @@ skip_tags: true
 
 install:
   - ps: Install-Product node $env:nodejs_version
-  - npm install
+  - node --version
+  - npm ci --ignore-scripts
 
 test_script:
-  - node --version
   - npm run build
   - npm run test:ci
 
 build: off
 deploy: off
-
-cache:
-  - node_modules
