@@ -18,7 +18,7 @@ import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { TestFixture, TestSetup } from '../../test';
 import { ComponentOutletInjectorModule } from '../component-outlet';
-import { DynamicComponent as NdcDynamicComponent } from '../dynamic.component';
+import { DynamicComponent } from '../dynamic.component';
 import { InputsType, IoEventArgumentToken, OutputsType } from '../io';
 import {
   IoEventContextProviderToken,
@@ -35,7 +35,7 @@ describe('Directive: DynamicIo', () => {
       <p>Input3: {{ input3 }}</p>
     `,
   })
-  class DynamicComponent implements OnInit, OnChanges {
+  class Dynamic1Component implements OnInit, OnChanges {
     @Input() input1: any;
     @Input() input2: any;
     @Input('input3Renamed') input3: any;
@@ -68,10 +68,10 @@ describe('Directive: DynamicIo', () => {
 
   class DynamicTestFixture<THost> extends TestFixture<THost> {
     getDynamicComponent() {
-      return this.getComponent(DynamicComponent)!;
+      return this.getComponent(Dynamic1Component)!;
     }
     getDynamicElement() {
-      return this.getComponentElement(DynamicComponent)!;
+      return this.getComponentElement(Dynamic1Component)!;
     }
     getDynamicParagraphs() {
       return this.getDynamicElement()?.queryAll(By.css('p'))!;
@@ -79,10 +79,14 @@ describe('Directive: DynamicIo', () => {
   }
 
   const testSetup = new TestSetup(HostComponent, {
-    props: { component: DynamicComponent },
+    props: { component: Dynamic1Component },
     ngModule: {
-      imports: [CommonModule, ComponentOutletInjectorModule],
-      declarations: [DynamicComponent, DynamicIoDirective],
+      imports: [
+        CommonModule,
+        ComponentOutletInjectorModule,
+        DynamicIoDirective,
+      ],
+      declarations: [Dynamic1Component],
     },
     fixtureCtor: DynamicTestFixture,
   });
@@ -207,7 +211,7 @@ describe('Directive: DynamicIo', () => {
 
     it('should trigger `ngOnChanges` life-cycle hook if inputs and component updated', async () => {
       @Component({ selector: 'dynamic2', template: '' })
-      class Dynamic2Component extends DynamicComponent {}
+      class Dynamic2Component extends Dynamic1Component {}
 
       const inputs = { input1: 'val1', input2: 'val2' };
 
@@ -240,7 +244,7 @@ describe('Directive: DynamicIo', () => {
     });
 
     it('should render inputs with OnPush strategy', async () => {
-      TestBed.overrideComponent(DynamicComponent, {
+      TestBed.overrideComponent(Dynamic1Component, {
         set: { changeDetection: ChangeDetectionStrategy.OnPush },
       });
 
@@ -659,7 +663,7 @@ describe('Directive: DynamicIo', () => {
             [ndcDynamicInputs]="inputs"
           ></ndc-dynamic>
         `,
-        ngModule: { declarations: [NdcDynamicComponent] },
+        ngModule: { imports: [DynamicComponent] },
       });
 
       expect(fixture.getDynamicComponent()).toEqual(

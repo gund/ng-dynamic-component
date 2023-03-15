@@ -8,8 +8,7 @@ import { DynamicIoDirective } from './dynamic-io.directive';
  * @public
  */
 @NgModule({
-  imports: [CommonModule],
+  imports: [DynamicIoDirective],
   exports: [DynamicIoDirective, ComponentOutletInjectorModule],
-  declarations: [DynamicIoDirective],
 })
 export class DynamicIoModule {}

@@ -8,8 +8,7 @@ import { DynamicComponent } from './dynamic.component';
  * @public
  */
 @NgModule({
-  imports: [CommonModule, DynamicIoModule],
-  exports: [DynamicComponent, DynamicIoModule],
-  declarations: [DynamicComponent],
+  imports: [DynamicIoModule, DynamicComponent],
+  exports: [DynamicIoModule, DynamicComponent],
 })
 export class DynamicModule {}

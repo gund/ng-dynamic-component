@@ -23,6 +23,7 @@ import {
  */
 @Component({
   selector: 'ndc-dynamic',
+  standalone: true,
   template: '',
   providers: [
     { provide: DynamicComponentInjectorToken, useExisting: DynamicComponent },

@@ -71,6 +71,33 @@ class MyComponent {
 }
 ```
 
+#### Standalone API
+
+**Since vv10.7.0**
+
+You may use `<ndc-dynamic>` as a standalone component:
+
+```ts
+import { DynamicComponent } from 'ng-dynamic-component';
+
+@Component({
+  selector: 'my-component',
+  template: ` <ndc-dynamic [ndcDynamicComponent]="component"></ndc-dynamic> `,
+  imports: [DynamicComponent],
+  standalone: true,
+})
+class MyComponent {
+  component = Math.random() > 0.5 ? MyDynamicComponent1 : MyDynamicComponent2;
+}
+```
+
+_NOTE:_ Hovewer you should be aware that this will only import `<ndc-dynamic>`
+into your component and nothing else so things like dynamic inputs/outputs
+will not work and you will have to import them separately (see their respective sections).
+
+If you still need to use both `<ndc-dynamic>` and dynamic inputs/outputs it is recommended
+to keep using `DynamicModule` API.
+
 ### NgComponentOutlet
 
 You can also use [`NgComponentOutlet`](https://angular.io/api/common/NgComponentOutlet)
@@ -113,6 +140,53 @@ Also you can use `ngComponentOutlet` with `*` syntax:
                             ndcDynamicInputs: inputs;
                             ndcDynamicOutputs: outputs"
                             ></ng-container>`
+})
+class MyComponent {
+  component = MyDynamicComponent1;
+  inputs = {...};
+  outputs = {...};
+}
+```
+
+#### Standalone API
+
+**Since vv10.7.0**
+
+You may use dynamic inputs/outputs with `*ngComponentOutlet` as a standalone API:
+
+```ts
+import { ComponentOutletInjectorModule } from 'ng-dynamic-component';
+
+@Component({
+  selector: 'my-component',
+  template: `<ng-container *ngComponentOutlet="component;
+                            ndcDynamicInputs: inputs;
+                            ndcDynamicOutputs: outputs"
+                            ></ng-container>`
+  imports: [ComponentOutletInjectorModule],
+  standalone: true,
+})
+class MyComponent {
+  component = MyDynamicComponent1;
+  inputs = {...};
+  outputs = {...};
+}
+```
+
+If you want to use standard dynamic inputs/outputs with `ngComponentOutlet` as a standalone API
+you need to add the `DynamicIoDirective` to your imports:
+
+```ts
+import { DynamicIoDirective, ComponentOutletInjectorModule } from 'ng-dynamic-component';
+
+@Component({
+  selector: 'my-component',
+  template: `<ng-container *ngComponentOutlet="component;
+                            ndcDynamicInputs: inputs;
+                            ndcDynamicOutputs: outputs"
+                            ></ng-container>`
+  imports: [DynamicIoDirective, ComponentOutletInjectorModule],
+  standalone: true,
 })
 class MyComponent {
   component = MyDynamicComponent1;
@@ -165,6 +239,34 @@ class MyDynamicComponent1 {
 
 Here you can update your inputs (ex. `inputs.hello = 'WORLD'`) and they will trigger standard Angular's life-cycle hooks
 (of course you should consider which change detection strategy you are using).
+
+#### Standalone API
+
+**Since vv10.7.0**
+
+You can use standalone API to pass dynamic inputs/outputs
+using `DynamicIoDirective` with `DynamicComponent` or `ngComponentOutlet`:
+
+```ts
+import { DynamicIoDirective, DynamicComponent } from 'ng-dynamic-component';
+
+@Component({
+  selector: 'my-component',
+  template: `
+    <ndc-dynamic
+      [ndcDynamicComponent]="component"
+      [ndcDynamicInputs]="inputs"
+      [ndcDynamicOutputs]="outputs"
+    ></ndc-dynamic>
+  `,
+  imports: [DynamicIoDirective, DynamicComponent]
+})
+class MyComponent {
+  component = MyDynamicComponent1;
+  inputs = {...};
+  outputs = {...};
+}
+```
 
 #### Output template variables
 
@@ -317,6 +419,32 @@ class MyComponent {
 }
 ```
 
+#### Standalone API
+
+**Since vv10.7.0**
+
+You can use standalone API to pass dynamic inputs/outputs
+using `DynamicAttributesDirective` with `DynamicComponent` or `ngComponentOutlet`:
+
+```ts
+import { DynamicAttributesDirective, DynamicComponent } from 'ng-dynamic-component';
+
+@Component({
+  selector: 'my-component',
+  template: `
+    <ndc-dynamic
+      [ndcDynamicComponent]="component"
+      [ndcDynamicAttributes]="attrs"
+    ></ndc-dynamic>
+  `,
+  imports: [DynamicAttributesDirective, DynamicComponent]
+})
+class MyComponent {
+  component = MyDynamicComponent1;
+  attrs: AttributesMap = {...};
+}
+```
+
 ### Directives (experimental)
 
 **Since v3.1.0** you can now declaratively set directives, via `ndcDynamicDirectives`.
@@ -412,6 +540,32 @@ class MyComponent {
 }
 ```
 
+#### Standalone API
+
+**Since vv10.7.0**
+
+You can use standalone API to pass dynamic inputs/outputs
+using `DynamicDirectivesDirective` with `DynamicComponent` or `ngComponentOutlet`:
+
+```ts
+import { DynamicDirectivesDirective, DynamicComponent } from 'ng-dynamic-component';
+
+@Component({
+  selector: 'my-component',
+  template: `
+    <ng-container
+      [ngComponentOutlet]="component"
+      [ndcDynamicDirectives]="dirs"
+    ></ng-container>
+  `,
+  imports: [DynamicDirectivesDirective, DynamicComponent]
+})
+class MyComponent {
+  component = MyDynamicComponent1;
+  dirs = [...];
+}
+```
+
 ### Extra
 
 You can have more advanced stuff over your dynamically rendered components like setting custom injector (`[ndcDynamicInjector]`)
@@ -420,6 +574,8 @@ or projecting nodes (`[ndcDynamicContent]`).
 
 **Since v10.6.0**: You can provide custom NgModuleRef (`[ndcDynamicNgModuleRef]`)
 or EnvironmentInjector (`[ndcDynamicEnvironmentInjector]`) for your dynamic component.
+
+---
 
 NOTE: In practice functionality of this library is split in two pieces:
 

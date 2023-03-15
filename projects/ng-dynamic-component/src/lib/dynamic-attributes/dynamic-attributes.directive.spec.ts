@@ -2,7 +2,7 @@
 import { Component, Type } from '@angular/core';
 import { TestFixture, TestSetup } from '../../test';
 import { ComponentOutletInjectorDirective } from '../component-outlet';
-import { DynamicComponent as NdcDynamicComponent } from '../dynamic.component';
+import { DynamicComponent } from '../dynamic.component';
 import {
   AttributesMap,
   DynamicAttributesDirective,
@@ -10,7 +10,7 @@ import {
 
 describe('DynamicAttributesDirective', () => {
   @Component({ selector: 'dynamic', template: `` })
-  class DynamicComponent {}
+  class Dynamic1Component {}
 
   @Component({
     selector: 'host',
@@ -28,17 +28,15 @@ describe('DynamicAttributesDirective', () => {
 
   class DynamicTestFixture<THost> extends TestFixture<THost> {
     getDynamicElem() {
-      return this.getComponentElement(DynamicComponent)!;
+      return this.getComponentElement(Dynamic1Component)!;
     }
   }
 
   const testSetup = new TestSetup(HostComponent, {
-    props: { component: DynamicComponent },
+    props: { component: Dynamic1Component },
     ngModule: {
-      declarations: [
-        DynamicAttributesDirective,
-        ComponentOutletInjectorDirective,
-      ],
+      imports: [DynamicAttributesDirective, ComponentOutletInjectorDirective],
+      declarations: [Dynamic1Component],
     },
     fixtureCtor: DynamicTestFixture,
   });
@@ -252,7 +250,7 @@ describe('DynamicAttributesDirective', () => {
             [ndcDynamicAttributes]="attrs"
           ></ndc-dynamic>
       `,
-        ngModule: { declarations: [NdcDynamicComponent] },
+        ngModule: { imports: [DynamicComponent] },
       });
 
       expect(fixture.getDynamicElem().attributes).toMatchObject({

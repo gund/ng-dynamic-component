@@ -70,6 +70,7 @@ export interface DirectiveRef<T> {
  */
 @Directive({
   selector: '[ndcDynamicDirectives],[ngComponentOutletNdcDynamicDirectives]',
+  standalone: true,
   providers: [IoFactoryService],
 })
 export class DynamicDirectivesDirective implements OnDestroy, DoCheck {

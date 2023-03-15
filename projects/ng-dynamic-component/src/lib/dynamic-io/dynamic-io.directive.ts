@@ -8,6 +8,7 @@ import { InputsType, IoService, OutputsType } from '../io';
 @Directive({
   selector: '[ndcDynamicInputs],[ndcDynamicOutputs]',
   exportAs: 'ndcDynamicIo',
+  standalone: true,
   providers: [IoService],
 })
 export class DynamicIoDirective implements DoCheck {
