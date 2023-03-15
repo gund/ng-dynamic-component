@@ -1,5 +1,12 @@
 # ng-dynamic-component - Changelog
 
+# [10.7.0](https://github.com/gund/ng-dynamic-component/compare/v10.6.2...v10.7.0) (2023-03-15)
+
+
+### Features
+
+* **api:** add standalone support to components and directives ([e3fe906](https://github.com/gund/ng-dynamic-component/commit/e3fe9069ae3cd723dbb2235ac707eae2951b27e3))
+
 ## [10.6.2](https://github.com/gund/ng-dynamic-component/compare/v10.6.1...v10.6.2) (2023-03-15)
 
 
