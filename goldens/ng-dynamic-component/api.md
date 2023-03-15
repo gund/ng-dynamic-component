@@ -268,6 +268,12 @@ export interface InputsType {
 // @public (undocumented)
 export const IoEventArgumentToken: InjectionToken<string>;
 
+// @public
+export const IoEventContextProviderToken: InjectionToken<StaticProvider>;
+
+// @public
+export const IoEventContextToken: InjectionToken<unknown>;
+
 // @public (undocumented)
 export class IoFactoryService {
     constructor(injector: Injector);
