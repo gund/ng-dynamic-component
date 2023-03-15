@@ -1,5 +1,12 @@
 # ng-dynamic-component - Changelog
 
+## [10.6.2](https://github.com/gund/ng-dynamic-component/compare/v10.6.1...v10.6.2) (2023-03-15)
+
+
+### Bug Fixes
+
+* **api:** export event context symbols ([c5bbaf6](https://github.com/gund/ng-dynamic-component/commit/c5bbaf6cd4366ceef84458edbcd5edead20a2439)), closes [#503](https://github.com/gund/ng-dynamic-component/issues/503)
+
 ## [10.6.1](https://github.com/gund/ng-dynamic-component/compare/v10.6.0...v10.6.1) (2023-01-26)
 
 
