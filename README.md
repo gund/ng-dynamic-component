@@ -73,7 +73,7 @@ class MyComponent {
 
 #### Standalone API
 
-**Since vv10.7.0**
+**Since v10.7.0**
 
 You may use `<ndc-dynamic>` as a standalone component:
 
@@ -150,7 +150,7 @@ class MyComponent {
 
 #### Standalone API
 
-**Since vv10.7.0**
+**Since v10.7.0**
 
 You may use dynamic inputs/outputs with `*ngComponentOutlet` as a standalone API:
 
@@ -242,7 +242,7 @@ Here you can update your inputs (ex. `inputs.hello = 'WORLD'`) and they will tri
 
 #### Standalone API
 
-**Since vv10.7.0**
+**Since v10.7.0**
 
 You can use standalone API to pass dynamic inputs/outputs
 using `DynamicIoDirective` with `DynamicComponent` or `ngComponentOutlet`:
@@ -421,7 +421,7 @@ class MyComponent {
 
 #### Standalone API
 
-**Since vv10.7.0**
+**Since v10.7.0**
 
 You can use standalone API to pass dynamic inputs/outputs
 using `DynamicAttributesDirective` with `DynamicComponent` or `ngComponentOutlet`:
@@ -542,7 +542,7 @@ class MyComponent {
 
 #### Standalone API
 
-**Since vv10.7.0**
+**Since v10.7.0**
 
 You can use standalone API to pass dynamic inputs/outputs
 using `DynamicDirectivesDirective` with `DynamicComponent` or `ngComponentOutlet`:
