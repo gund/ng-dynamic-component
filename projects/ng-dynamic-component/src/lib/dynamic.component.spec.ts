@@ -57,7 +57,10 @@ describe('DynamicComponent', () => {
 
   const testSetup = new TestSetup(HostComponent, {
     props: { component: InjectedComponent },
-    ngModule: { declarations: [DynamicComponent, InjectedComponent] },
+    ngModule: {
+      imports: [DynamicComponent],
+      declarations: [InjectedComponent],
+    },
     fixtureCtor: InjectedTestFixture,
   });
 

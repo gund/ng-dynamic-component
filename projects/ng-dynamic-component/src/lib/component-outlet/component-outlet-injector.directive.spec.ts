@@ -5,7 +5,7 @@ import { ComponentOutletInjectorDirective } from './component-outlet-injector.di
 
 describe('ComponentOutletInjectorDirective', () => {
   @Component({ selector: 'dynamic', template: '' })
-  class DynamicComponent {}
+  class Dynamic1Component {}
 
   @Component({
     selector: 'host',
@@ -18,9 +18,10 @@ describe('ComponentOutletInjectorDirective', () => {
   }
 
   const testSetup = new TestSetup(HostComponent, {
-    props: { component: DynamicComponent },
+    props: { component: Dynamic1Component },
     ngModule: {
-      declarations: [ComponentOutletInjectorDirective, DynamicComponent],
+      imports: [ComponentOutletInjectorDirective],
+      declarations: [Dynamic1Component],
     },
   });
 
@@ -45,6 +46,6 @@ describe('ComponentOutletInjectorDirective', () => {
 
     const directive = fixture.getHost().directive;
 
-    expect(directive?.componentRef.instance).toBeInstanceOf(DynamicComponent);
+    expect(directive?.componentRef.instance).toBeInstanceOf(Dynamic1Component);
   });
 });

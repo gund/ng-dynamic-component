@@ -12,7 +12,6 @@ import { ElementRef } from '@angular/core';
 import { EnvironmentInjector } from '@angular/core';
 import { EventEmitter } from '@angular/core';
 import * as i0 from '@angular/core';
-import * as i3 from '@angular/common';
 import { InjectionToken } from '@angular/core';
 import { Injector } from '@angular/core';
 import { IterableDiffers } from '@angular/core';
@@ -43,7 +42,7 @@ export class ComponentOutletInjectorDirective implements DynamicComponentInjecto
     // (undocumented)
     get componentRef(): ComponentRef<unknown>;
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<ComponentOutletInjectorDirective, "[ngComponentOutlet]", ["ndcComponentOutletInjector"], {}, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<ComponentOutletInjectorDirective, "[ngComponentOutlet]", ["ndcComponentOutletInjector"], {}, {}, never, never, true>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<ComponentOutletInjectorDirective, [{ host: true; }]>;
 }
@@ -58,7 +57,7 @@ export class ComponentOutletInjectorModule {
     // Warning: (ae-forgotten-export) The symbol "i2" needs to be exported by the entry point public-api.d.ts
     //
     // (undocumented)
-    static ɵmod: i0.ɵɵNgModuleDeclaration<ComponentOutletInjectorModule, [typeof i1.ComponentOutletInjectorDirective, typeof i2.ComponentOutletIoDirective], [typeof i3.CommonModule], [typeof i1.ComponentOutletInjectorDirective, typeof i2.ComponentOutletIoDirective]>;
+    static ɵmod: i0.ɵɵNgModuleDeclaration<ComponentOutletInjectorModule, never, [typeof i1.ComponentOutletInjectorDirective, typeof i2.ComponentOutletIoDirective], [typeof i1.ComponentOutletInjectorDirective, typeof i2.ComponentOutletIoDirective]>;
 }
 
 // @public (undocumented)
@@ -71,7 +70,7 @@ export class ComponentOutletIoDirective implements DoCheck {
     // (undocumented)
     ngDoCheck(): void;
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<ComponentOutletIoDirective, "[ngComponentOutletNdcDynamicInputs],[ngComponentOutletNdcDynamicOutputs]", ["ndcDynamicIo"], { "ngComponentOutletNdcDynamicInputs": "ngComponentOutletNdcDynamicInputs"; "ngComponentOutletNdcDynamicOutputs": "ngComponentOutletNdcDynamicOutputs"; }, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<ComponentOutletIoDirective, "[ngComponentOutletNdcDynamicInputs],[ngComponentOutletNdcDynamicOutputs]", ["ndcDynamicIo"], { "ngComponentOutletNdcDynamicInputs": "ngComponentOutletNdcDynamicInputs"; "ngComponentOutletNdcDynamicOutputs": "ngComponentOutletNdcDynamicOutputs"; }, {}, never, never, true>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<ComponentOutletIoDirective, never>;
 }
@@ -113,7 +112,7 @@ export class DynamicAttributesDirective implements DoCheck {
     // (undocumented)
     setAttribute(name: string, value: string, namespace?: string): void;
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<DynamicAttributesDirective, "[ndcDynamicAttributes],[ngComponentOutletNdcDynamicAttributes]", ["ndcDynamicAttributes"], { "ndcDynamicAttributes": "ndcDynamicAttributes"; "ngComponentOutletNdcDynamicAttributes": "ngComponentOutletNdcDynamicAttributes"; }, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<DynamicAttributesDirective, "[ndcDynamicAttributes],[ngComponentOutletNdcDynamicAttributes]", ["ndcDynamicAttributes"], { "ndcDynamicAttributes": "ndcDynamicAttributes"; "ngComponentOutletNdcDynamicAttributes": "ngComponentOutletNdcDynamicAttributes"; }, {}, never, never, true>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<DynamicAttributesDirective, [null, null, { optional: true; }]>;
 }
@@ -125,10 +124,10 @@ export class DynamicAttributesModule {
     // (undocumented)
     static ɵinj: i0.ɵɵInjectorDeclaration<DynamicAttributesModule>;
     // Warning: (ae-forgotten-export) The symbol "i1_4" needs to be exported by the entry point public-api.d.ts
-    // Warning: (ae-forgotten-export) The symbol "i3_3" needs to be exported by the entry point public-api.d.ts
+    // Warning: (ae-forgotten-export) The symbol "i2_2" needs to be exported by the entry point public-api.d.ts
     //
     // (undocumented)
-    static ɵmod: i0.ɵɵNgModuleDeclaration<DynamicAttributesModule, [typeof i1_4.DynamicAttributesDirective], [typeof i3.CommonModule], [typeof i1_4.DynamicAttributesDirective, typeof i3_3.ComponentOutletInjectorModule]>;
+    static ɵmod: i0.ɵɵNgModuleDeclaration<DynamicAttributesModule, never, [typeof i1_4.DynamicAttributesDirective], [typeof i1_4.DynamicAttributesDirective, typeof i2_2.ComponentOutletInjectorModule]>;
 }
 
 // @public (undocumented)
@@ -155,7 +154,7 @@ export class DynamicComponent<C = unknown> implements OnChanges, DynamicComponen
     // (undocumented)
     ngOnChanges(changes: SimpleChanges): void;
     // (undocumented)
-    static ɵcmp: i0.ɵɵComponentDeclaration<DynamicComponent<any>, "ndc-dynamic", never, { "ndcDynamicComponent": "ndcDynamicComponent"; "ndcDynamicInjector": "ndcDynamicInjector"; "ndcDynamicProviders": "ndcDynamicProviders"; "ndcDynamicContent": "ndcDynamicContent"; "ndcDynamicNgModuleRef": "ndcDynamicNgModuleRef"; "ndcDynamicEnvironmentInjector": "ndcDynamicEnvironmentInjector"; }, { "ndcDynamicCreated": "ndcDynamicCreated"; }, never, never, false>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<DynamicComponent<any>, "ndc-dynamic", never, { "ndcDynamicComponent": "ndcDynamicComponent"; "ndcDynamicInjector": "ndcDynamicInjector"; "ndcDynamicProviders": "ndcDynamicProviders"; "ndcDynamicContent": "ndcDynamicContent"; "ndcDynamicNgModuleRef": "ndcDynamicNgModuleRef"; "ndcDynamicEnvironmentInjector": "ndcDynamicEnvironmentInjector"; }, { "ndcDynamicCreated": "ndcDynamicCreated"; }, never, never, true>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<DynamicComponent<any>, never>;
 }
@@ -196,7 +195,7 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
     // (undocumented)
     ngOnDestroy(): void;
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<DynamicDirectivesDirective, "[ndcDynamicDirectives],[ngComponentOutletNdcDynamicDirectives]", never, { "ndcDynamicDirectives": "ndcDynamicDirectives"; "ngComponentOutletNdcDynamicDirectives": "ngComponentOutletNdcDynamicDirectives"; }, { "ndcDynamicDirectivesCreated": "ndcDynamicDirectivesCreated"; }, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<DynamicDirectivesDirective, "[ndcDynamicDirectives],[ngComponentOutletNdcDynamicDirectives]", never, { "ndcDynamicDirectives": "ndcDynamicDirectives"; "ngComponentOutletNdcDynamicDirectives": "ngComponentOutletNdcDynamicDirectives"; }, { "ndcDynamicDirectivesCreated": "ndcDynamicDirectivesCreated"; }, never, never, true>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<DynamicDirectivesDirective, [null, null, null, null, { optional: true; }]>;
 }
@@ -210,7 +209,7 @@ export class DynamicDirectivesModule {
     // Warning: (ae-forgotten-export) The symbol "i1_5" needs to be exported by the entry point public-api.d.ts
     //
     // (undocumented)
-    static ɵmod: i0.ɵɵNgModuleDeclaration<DynamicDirectivesModule, [typeof i1_5.DynamicDirectivesDirective], [typeof i3.CommonModule], [typeof i1_5.DynamicDirectivesDirective, typeof i3_3.ComponentOutletInjectorModule]>;
+    static ɵmod: i0.ɵɵNgModuleDeclaration<DynamicDirectivesModule, never, [typeof i1_5.DynamicDirectivesDirective], [typeof i1_5.DynamicDirectivesDirective, typeof i2_2.ComponentOutletInjectorModule]>;
 }
 
 // @public (undocumented)
@@ -223,7 +222,7 @@ export class DynamicIoDirective implements DoCheck {
     // (undocumented)
     ngDoCheck(): void;
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<DynamicIoDirective, "[ndcDynamicInputs],[ndcDynamicOutputs]", ["ndcDynamicIo"], { "ndcDynamicInputs": "ndcDynamicInputs"; "ndcDynamicOutputs": "ndcDynamicOutputs"; }, {}, never, never, false>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<DynamicIoDirective, "[ndcDynamicInputs],[ndcDynamicOutputs]", ["ndcDynamicIo"], { "ndcDynamicInputs": "ndcDynamicInputs"; "ndcDynamicOutputs": "ndcDynamicOutputs"; }, {}, never, never, true>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<DynamicIoDirective, never>;
 }
@@ -237,7 +236,7 @@ export class DynamicIoModule {
     // Warning: (ae-forgotten-export) The symbol "i1_3" needs to be exported by the entry point public-api.d.ts
     //
     // (undocumented)
-    static ɵmod: i0.ɵɵNgModuleDeclaration<DynamicIoModule, [typeof i1_3.DynamicIoDirective], [typeof i3.CommonModule], [typeof i1_3.DynamicIoDirective, typeof i3_3.ComponentOutletInjectorModule]>;
+    static ɵmod: i0.ɵɵNgModuleDeclaration<DynamicIoModule, never, [typeof i1_3.DynamicIoDirective], [typeof i1_3.DynamicIoDirective, typeof i2_2.ComponentOutletInjectorModule]>;
 }
 
 // @public (undocumented)
@@ -247,10 +246,10 @@ export class DynamicModule {
     // (undocumented)
     static ɵinj: i0.ɵɵInjectorDeclaration<DynamicModule>;
     // Warning: (ae-forgotten-export) The symbol "i1_2" needs to be exported by the entry point public-api.d.ts
-    // Warning: (ae-forgotten-export) The symbol "i3_2" needs to be exported by the entry point public-api.d.ts
+    // Warning: (ae-forgotten-export) The symbol "i2_3" needs to be exported by the entry point public-api.d.ts
     //
     // (undocumented)
-    static ɵmod: i0.ɵɵNgModuleDeclaration<DynamicModule, [typeof i1_2.DynamicComponent], [typeof i3.CommonModule, typeof i3_2.DynamicIoModule], [typeof i1_2.DynamicComponent, typeof i3_2.DynamicIoModule]>;
+    static ɵmod: i0.ɵɵNgModuleDeclaration<DynamicModule, never, [typeof i1_2.DynamicIoModule, typeof i2_3.DynamicComponent], [typeof i1_2.DynamicIoModule, typeof i2_3.DynamicComponent]>;
 }
 
 // @public @deprecated (undocumented)

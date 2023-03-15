@@ -23,7 +23,7 @@ import {
 
 import { TestFixture, TestSetup } from '../../test';
 import { ComponentOutletInjectorDirective } from '../component-outlet';
-import { DynamicComponent as NdcDynamicComponent } from '../dynamic.component';
+import { DynamicComponent } from '../dynamic.component';
 import { IoFactoryService } from '../io';
 import {
   DirectiveRef,
@@ -34,7 +34,7 @@ import {
 
 describe('Directive: DynamicDirectives', () => {
   @Component({ selector: 'dynamic', template: `` })
-  class DynamicComponent {}
+  class Dynamic1Component {}
 
   @Component({
     selector: 'host',
@@ -121,14 +121,10 @@ describe('Directive: DynamicDirectives', () => {
   }
 
   const testSetup = new TestSetup(HostComponent, {
-    props: { component: DynamicComponent },
+    props: { component: Dynamic1Component },
     ngModule: {
-      declarations: [
-        DynamicDirectivesDirective,
-        ComponentOutletInjectorDirective,
-        HostComponent,
-        DynamicComponent,
-      ],
+      imports: [DynamicDirectivesDirective, ComponentOutletInjectorDirective],
+      declarations: [Dynamic1Component],
       providers: [IoFactoryService],
     },
     fixtureCtor: DirectivesTestFixture,
@@ -643,7 +639,7 @@ describe('Directive: DynamicDirectives', () => {
         ngModule: { imports: [CommonModule] },
       });
 
-      const dynamicElem = fixture.getComponentElement(DynamicComponent)!;
+      const dynamicElem = fixture.getComponentElement(Dynamic1Component)!;
 
       expect(dynamicElem).toBeTruthy();
       expect(dynamicElem.classes).toEqual({ cls1: true, cls2: true });
@@ -664,7 +660,7 @@ describe('Directive: DynamicDirectives', () => {
         ngModule: { imports: [CommonModule] },
       });
 
-      const dynamicElem = fixture.getComponentElement(DynamicComponent)!;
+      const dynamicElem = fixture.getComponentElement(Dynamic1Component)!;
 
       expect(dynamicElem).toBeTruthy();
       expect(dynamicElem.classes).toEqual({ cls1: true, cls2: true });
@@ -684,12 +680,11 @@ describe('Directive: DynamicDirectives', () => {
           ></ndc-dynamic>
         `,
         ngModule: {
-          imports: [CommonModule],
-          declarations: [NdcDynamicComponent],
+          imports: [CommonModule, DynamicComponent],
         },
       });
 
-      const dynamicElem = fixture.getComponentElement(DynamicComponent)!;
+      const dynamicElem = fixture.getComponentElement(Dynamic1Component)!;
 
       expect(dynamicElem).toBeTruthy();
       expect(dynamicElem.classes).toEqual({ cls1: true, cls2: true });

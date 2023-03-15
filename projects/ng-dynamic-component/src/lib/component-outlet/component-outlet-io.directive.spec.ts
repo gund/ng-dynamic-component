@@ -6,7 +6,7 @@ import { ComponentOutletIoDirective } from './component-outlet-io.directive';
 
 describe('Directive: ComponentOutletIo', () => {
   @Component({ selector: 'dynamic', template: 'DynamicComponent' })
-  class DynamicComponent {
+  class Dynamic1Component {
     @Input() prop1: any;
     @Input() prop2: any;
     @Output() output = new EventEmitter<any>();
@@ -21,13 +21,10 @@ describe('Directive: ComponentOutletIo', () => {
   }
 
   const testSetup = new TestSetup(HostComponent, {
-    props: { component: DynamicComponent },
+    props: { component: Dynamic1Component },
     ngModule: {
-      declarations: [
-        ComponentOutletIoDirective,
-        ComponentOutletInjectorDirective,
-        DynamicComponent,
-      ],
+      imports: [ComponentOutletIoDirective, ComponentOutletInjectorDirective],
+      declarations: [Dynamic1Component],
     },
   });
 
@@ -40,7 +37,7 @@ describe('Directive: ComponentOutletIo', () => {
         template: `<ng-container *ngComponentOutlet="component; ndcDynamicInputs: inputs"></ng-container>`,
       });
 
-      expect(fixture.getComponent(DynamicComponent)).toEqual(
+      expect(fixture.getComponent(Dynamic1Component)).toEqual(
         expect.objectContaining({
           prop1: '123',
           prop2: 1,
@@ -60,7 +57,7 @@ describe('Directive: ComponentOutletIo', () => {
 
       expect(outputs.output).not.toHaveBeenCalled();
 
-      fixture.getComponent(DynamicComponent)!.output.emit('data');
+      fixture.getComponent(Dynamic1Component)!.output.emit('data');
 
       expect(outputs.output).toHaveBeenCalledWith('data');
     });

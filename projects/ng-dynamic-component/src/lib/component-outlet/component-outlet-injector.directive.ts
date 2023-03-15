@@ -13,6 +13,7 @@ import {
   // eslint-disable-next-line @angular-eslint/directive-selector
   selector: '[ngComponentOutlet]',
   exportAs: 'ndcComponentOutletInjector',
+  standalone: true,
   providers: [
     {
       provide: DynamicComponentInjectorToken,

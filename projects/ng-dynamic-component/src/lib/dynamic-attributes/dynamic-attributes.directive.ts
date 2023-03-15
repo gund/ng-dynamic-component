@@ -33,6 +33,7 @@ interface AttributeActions {
 @Directive({
   selector: '[ndcDynamicAttributes],[ngComponentOutletNdcDynamicAttributes]',
   exportAs: 'ndcDynamicAttributes',
+  standalone: true,
 })
 export class DynamicAttributesDirective implements DoCheck {
   @Input()

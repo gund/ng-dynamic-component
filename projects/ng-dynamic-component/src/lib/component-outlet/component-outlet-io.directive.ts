@@ -10,6 +10,7 @@ import { InputsType, IoService, OutputsType } from '../io';
     // eslint-disable-next-line @angular-eslint/directive-selector
     '[ngComponentOutletNdcDynamicInputs],[ngComponentOutletNdcDynamicOutputs]',
   exportAs: 'ndcDynamicIo',
+  standalone: true,
   providers: [IoService],
 })
 export class ComponentOutletIoDirective implements DoCheck {
