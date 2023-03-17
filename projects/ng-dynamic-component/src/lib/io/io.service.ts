@@ -12,6 +12,8 @@ import {
   Optional,
   StaticProvider,
   Type,
+  reflectComponentType,
+  ComponentMirror
 } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -28,11 +30,11 @@ import {
 import { EventHandler, InputsType, OutputsType, OutputWithArgs } from './types';
 
 interface IOMapInfo {
-  propName: string;
-  templateName: string;
+  readonly propName: string;
+  readonly templateName: string;
 }
 
-type IOMappingList = IOMapInfo[];
+type IOMappingList = readonly IOMapInfo[];
 
 type KeyValueChangesAny = KeyValueChanges<string, unknown>;
 
@@ -56,10 +58,7 @@ export class IoService implements OnDestroy {
   private lastComponentInst: unknown = null;
   private lastChangedInputs = new Set<string>();
   private inputsDiffer = this.differs.find({}).create();
-  // TODO: Replace ComponentFactory once new API is created
-  // @see https://github.com/angular/angular/issues/44926
-  // eslint-disable-next-line deprecation/deprecation
-  private compFactory: ComponentFactory<unknown> | null = null;
+  private compMeta: ComponentMirror<unknown> | null = null;
   private outputsShouldDisconnect$ = new Subject<void>();
   private outputsEventContext: unknown;
 
@@ -161,7 +160,7 @@ export class IoService implements OnDestroy {
 
   private updateInputs(isFirstChange = false) {
     if (isFirstChange) {
-      this.updateCompFactory();
+      this.updateCompMeta();
     }
 
     const compRef = this.compRef;
@@ -227,31 +226,12 @@ export class IoService implements OnDestroy {
     differ.forEachRemovedItem(addRecordKeyToSet);
   }
 
-  // TODO: Replace ComponentFactory once new API is created
-  // @see https://github.com/angular/angular/issues/44926
-  // eslint-disable-next-line deprecation/deprecation
-  private resolveCompFactory(): ComponentFactory<unknown> | null {
-    if (!this.compRef) {
-      return null;
-    }
-
-    try {
-      try {
-        return this.cfr.resolveComponentFactory(this.compRef.componentType);
-      } catch (e) {
-        // Fallback if componentType does not exist (happens on NgComponentOutlet)
-        return this.cfr.resolveComponentFactory(
-          (this.compRef.instance as any).constructor as Type<unknown>,
-        );
-      }
-    } catch (e) {
-      // Factory not available - bailout
-      return null;
-    }
+  private resolveCompMeta(): ComponentMirror<unknown> | null {
+    return this.compRef && reflectComponentType(this.compRef.componentType);
   }
 
-  private updateCompFactory() {
-    this.compFactory = this.resolveCompFactory();
+  private updateCompMeta() {
+    this.compMeta = this.resolveCompMeta();
   }
 
   private resolveOutputs(outputs: OutputsType): OutputsType {
@@ -259,11 +239,11 @@ export class IoService implements OnDestroy {
 
     outputs = this.processOutputs(outputs);
 
-    if (!this.compFactory) {
+    if (!this.compMeta) {
       return outputs;
     }
 
-    return this.remapIO(outputs, this.compFactory.outputs);
+    return this.remapIO(outputs, this.compMeta.outputs);
   }
 
   private updateOutputsEventContext() {
