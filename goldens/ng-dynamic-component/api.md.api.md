@@ -42,7 +42,7 @@ export class ComponentOutletInjectorDirective implements DynamicComponentInjecto
     // (undocumented)
     get componentRef(): ComponentRef<unknown>;
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<ComponentOutletInjectorDirective, "[ngComponentOutlet]", ["ndcComponentOutletInjector"], {}, {}, never, never, true>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<ComponentOutletInjectorDirective, "[ngComponentOutlet]", ["ndcComponentOutletInjector"], {}, {}, never, never, true, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<ComponentOutletInjectorDirective, [{ host: true; }]>;
 }
@@ -70,7 +70,7 @@ export class ComponentOutletIoDirective implements DoCheck {
     // (undocumented)
     ngDoCheck(): void;
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<ComponentOutletIoDirective, "[ngComponentOutletNdcDynamicInputs],[ngComponentOutletNdcDynamicOutputs]", ["ndcDynamicIo"], { "ngComponentOutletNdcDynamicInputs": "ngComponentOutletNdcDynamicInputs"; "ngComponentOutletNdcDynamicOutputs": "ngComponentOutletNdcDynamicOutputs"; }, {}, never, never, true>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<ComponentOutletIoDirective, "[ngComponentOutletNdcDynamicInputs],[ngComponentOutletNdcDynamicOutputs]", ["ndcDynamicIo"], { "ngComponentOutletNdcDynamicInputs": { "alias": "ngComponentOutletNdcDynamicInputs"; "required": false; }; "ngComponentOutletNdcDynamicOutputs": { "alias": "ngComponentOutletNdcDynamicOutputs"; "required": false; }; }, {}, never, never, true, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<ComponentOutletIoDirective, never>;
 }
@@ -112,7 +112,7 @@ export class DynamicAttributesDirective implements DoCheck {
     // (undocumented)
     setAttribute(name: string, value: string, namespace?: string): void;
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<DynamicAttributesDirective, "[ndcDynamicAttributes],[ngComponentOutletNdcDynamicAttributes]", ["ndcDynamicAttributes"], { "ndcDynamicAttributes": "ndcDynamicAttributes"; "ngComponentOutletNdcDynamicAttributes": "ngComponentOutletNdcDynamicAttributes"; }, {}, never, never, true>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<DynamicAttributesDirective, "[ndcDynamicAttributes],[ngComponentOutletNdcDynamicAttributes]", ["ndcDynamicAttributes"], { "ndcDynamicAttributes": { "alias": "ndcDynamicAttributes"; "required": false; }; "ngComponentOutletNdcDynamicAttributes": { "alias": "ngComponentOutletNdcDynamicAttributes"; "required": false; }; }, {}, never, never, true, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<DynamicAttributesDirective, [null, null, { optional: true; }]>;
 }
@@ -154,7 +154,7 @@ export class DynamicComponent<C = unknown> implements OnChanges, DynamicComponen
     // (undocumented)
     ngOnChanges(changes: SimpleChanges): void;
     // (undocumented)
-    static ɵcmp: i0.ɵɵComponentDeclaration<DynamicComponent<any>, "ndc-dynamic", never, { "ndcDynamicComponent": "ndcDynamicComponent"; "ndcDynamicInjector": "ndcDynamicInjector"; "ndcDynamicProviders": "ndcDynamicProviders"; "ndcDynamicContent": "ndcDynamicContent"; "ndcDynamicNgModuleRef": "ndcDynamicNgModuleRef"; "ndcDynamicEnvironmentInjector": "ndcDynamicEnvironmentInjector"; }, { "ndcDynamicCreated": "ndcDynamicCreated"; }, never, never, true>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<DynamicComponent<any>, "ndc-dynamic", never, { "ndcDynamicComponent": { "alias": "ndcDynamicComponent"; "required": false; }; "ndcDynamicInjector": { "alias": "ndcDynamicInjector"; "required": false; }; "ndcDynamicProviders": { "alias": "ndcDynamicProviders"; "required": false; }; "ndcDynamicContent": { "alias": "ndcDynamicContent"; "required": false; }; "ndcDynamicNgModuleRef": { "alias": "ndcDynamicNgModuleRef"; "required": false; }; "ndcDynamicEnvironmentInjector": { "alias": "ndcDynamicEnvironmentInjector"; "required": false; }; }, { "ndcDynamicCreated": "ndcDynamicCreated"; }, never, never, true, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<DynamicComponent<any>, never>;
 }
@@ -195,7 +195,7 @@ export class DynamicDirectivesDirective implements OnDestroy, DoCheck {
     // (undocumented)
     ngOnDestroy(): void;
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<DynamicDirectivesDirective, "[ndcDynamicDirectives],[ngComponentOutletNdcDynamicDirectives]", never, { "ndcDynamicDirectives": "ndcDynamicDirectives"; "ngComponentOutletNdcDynamicDirectives": "ngComponentOutletNdcDynamicDirectives"; }, { "ndcDynamicDirectivesCreated": "ndcDynamicDirectivesCreated"; }, never, never, true>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<DynamicDirectivesDirective, "[ndcDynamicDirectives],[ngComponentOutletNdcDynamicDirectives]", never, { "ndcDynamicDirectives": { "alias": "ndcDynamicDirectives"; "required": false; }; "ngComponentOutletNdcDynamicDirectives": { "alias": "ngComponentOutletNdcDynamicDirectives"; "required": false; }; }, { "ndcDynamicDirectivesCreated": "ndcDynamicDirectivesCreated"; }, never, never, true, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<DynamicDirectivesDirective, [null, null, null, null, { optional: true; }]>;
 }
@@ -222,7 +222,7 @@ export class DynamicIoDirective implements DoCheck {
     // (undocumented)
     ngDoCheck(): void;
     // (undocumented)
-    static ɵdir: i0.ɵɵDirectiveDeclaration<DynamicIoDirective, "[ndcDynamicInputs],[ndcDynamicOutputs]", ["ndcDynamicIo"], { "ndcDynamicInputs": "ndcDynamicInputs"; "ndcDynamicOutputs": "ndcDynamicOutputs"; }, {}, never, never, true>;
+    static ɵdir: i0.ɵɵDirectiveDeclaration<DynamicIoDirective, "[ndcDynamicInputs],[ndcDynamicOutputs]", ["ndcDynamicIo"], { "ndcDynamicInputs": { "alias": "ndcDynamicInputs"; "required": false; }; "ndcDynamicOutputs": { "alias": "ndcDynamicOutputs"; "required": false; }; }, {}, never, never, true, never>;
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<DynamicIoDirective, never>;
 }
