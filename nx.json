@@ -1,15 +1,13 @@
 {
   "targetDefaults": {
-    "test": {
-      "inputs": ["default", "^default", "{workspaceRoot}/jest.preset.js"]
-    }
-  },
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "nx/tasks-runners/default",
-      "options": {
-        "cacheableOperations": ["build", "build-lib", "test", "lint"]
-      }
+    "build": {
+      "cache": true
+    },
+    "build-lib": {
+      "cache": true
+    },
+    "lint": {
+      "cache": true
     }
   },
   "cli": {
@@ -17,18 +15,25 @@
     "analytics": false
   },
   "generators": {
-    "@nrwl/angular:application": {
-      "style": "css",
+    "@nx/angular:application": {
       "linter": "eslint",
-      "unitTestRunner": "jest",
-      "e2eTestRunner": "cypress"
+      "style": "scss",
+      "unitTestRunner": "jest"
     },
-    "@nrwl/angular:library": {
+    "@nx/angular:library": {
       "linter": "eslint",
       "unitTestRunner": "jest"
     },
-    "@nrwl/angular:component": {
+    "@nx/angular:component": {
       "style": "css"
     }
-  }
+  },
+  "plugins": [
+    {
+      "plugin": "@nx/jest/plugin",
+      "options": {
+        "targetName": "test"
+      }
+    }
+  ]
 }

@@ -12,13 +12,16 @@ jobs:
     name: Check
     environment: 'public-api'
     steps:
-      - uses: actions/setup-node@v3
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           token: ${{ secrets.GH_TOKEN }}
           repository: ${{ github.event.pull_request.head.repo.full_name || github.repo.full_name }}
           ref: ${{ github.event.pull_request.head.ref || github.ref }}
-      - name: Install Deps
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+          cache-dependency-path: ${{github.workspace}}/package-lock.json
         run: npm ci --ignore-scripts
       - name: Build
         id: build

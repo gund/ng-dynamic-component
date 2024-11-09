@@ -56,7 +56,6 @@ export interface DirectiveRef<T> {
   hostView: ViewRef;
   location: ElementRef;
   changeDetectorRef: ChangeDetectorRef;
-  // eslint-disable-next-line @typescript-eslint/ban-types
   onDestroy: (callback: Function) => void;
 }
 
