@@ -98,6 +98,12 @@ will not work and you will have to import them separately (see their respective 
 If you still need to use both `<ndc-dynamic>` and dynamic inputs/outputs it is recommended
 to keep using `DynamicModule` API.
 
+### Singal based inputs/outputs (experimental)
+
+**Since v10.8.0**
+
+If you want to dynamically render signal based components - see [`signal-component-io`](projects/ng-dynamic-component/signal-component-io/README.md) package.
+
 ### NgComponentOutlet
 
 You can also use [`NgComponentOutlet`](https://angular.io/api/common/NgComponentOutlet)

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/api-extractor/v7/api-extractor.schema.json",
+  "extends": "../api-extractor.json",
+  "projectFolder": "../../..",
+  "mainEntryPointFilePath": "<projectFolder>/dist/ng-dynamic-component/signal-component-io/public-api.d.ts",
+  "apiReport": {
+    "enabled": true,
+    "reportFileName": "api-signal-component-io.md"
+  },
+  "dtsRollup": {
+    "enabled": true,
+    "untrimmedFilePath": "",
+    "alphaTrimmedFilePath": "<projectFolder>/dist/ng-dynamic-component/signal-component-io/public-api-alpha.d.ts",
+    "betaTrimmedFilePath": "<projectFolder>/dist/ng-dynamic-component/signal-component-io/public-api-beta.d.ts",
+    "publicTrimmedFilePath": "<projectFolder>/dist/ng-dynamic-component/signal-component-io/public-api.d.ts",
+    "omitTrimmingComments": true
+  }
+}

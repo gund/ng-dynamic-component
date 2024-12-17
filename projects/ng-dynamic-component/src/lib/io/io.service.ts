@@ -2,6 +2,7 @@ import {
   ChangeDetectorRef,
   ComponentFactory,
   ComponentFactoryResolver,
+  ComponentRef,
   Inject,
   Injectable,
   Injector,
@@ -13,13 +14,14 @@ import {
   StaticProvider,
   Type,
 } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import {
   DynamicComponentInjector,
   DynamicComponentInjectorToken,
 } from '../component-injector';
+import { ComponentIO } from '../component-io';
 import { IoEventArgumentToken } from './event-argument';
 import {
   IoEventContextProviderToken,
@@ -40,6 +42,8 @@ interface OutputsTypeProcessed extends OutputsType {
   [k: string]: EventHandler;
 }
 
+interface AnyComponent extends Record<string, unknown> {}
+
 /**
  * @public
  */
@@ -53,13 +57,13 @@ export class IoServiceOptions {
  */
 @Injectable()
 export class IoService implements OnDestroy {
-  private lastComponentInst: unknown = null;
+  private lastComponentInst: unknown;
   private lastChangedInputs = new Set<string>();
   private inputsDiffer = this.differs.find({}).create();
   // TODO: Replace ComponentFactory once new API is created
   // @see https://github.com/angular/angular/issues/44926
   // eslint-disable-next-line deprecation/deprecation
-  private compFactory: ComponentFactory<unknown> | null = null;
+  private compFactory?: ComponentFactory<AnyComponent>;
   private outputsShouldDisconnect$ = new Subject<void>();
   private outputsEventContext: unknown;
 
@@ -68,38 +72,30 @@ export class IoService implements OnDestroy {
   private outputsChanged: (outputs: OutputsType) => boolean = () => false;
 
   private get compRef() {
-    return this.compInjector.componentRef;
+    return this.compInjector.componentRef as ComponentRef<AnyComponent> | null;
   }
 
-  private get componentInst(): Record<string, unknown> | null {
-    return this.compRef ? this.compRef.instance : (null as any);
-  }
-
-  private get componentInstChanged(): boolean {
-    if (this.lastComponentInst !== this.componentInst) {
-      this.lastComponentInst = this.componentInst;
-      return true;
-    } else {
-      return false;
-    }
+  private get componentInst() {
+    return this.compRef?.instance;
   }
 
   constructor(
-    private injector: Injector,
-    private differs: KeyValueDiffers,
+    private readonly injector: Injector,
+    private readonly differs: KeyValueDiffers,
     // TODO: Replace ComponentFactoryResolver once new API is created
     // @see https://github.com/angular/angular/issues/44926
     // eslint-disable-next-line deprecation/deprecation
-    private cfr: ComponentFactoryResolver,
-    private options: IoServiceOptions,
+    private readonly cfr: ComponentFactoryResolver,
+    private readonly options: IoServiceOptions,
     @Inject(DynamicComponentInjectorToken)
-    private compInjector: DynamicComponentInjector,
+    private readonly compInjector: DynamicComponentInjector,
     @Inject(IoEventArgumentToken)
-    private eventArgument: string,
-    private cdr: ChangeDetectorRef,
+    private readonly eventArgument: string,
+    private readonly cdr: ChangeDetectorRef,
     @Inject(IoEventContextProviderToken)
     @Optional()
-    private eventContextProvider: StaticProvider,
+    private readonly eventContextProvider: StaticProvider,
+    private readonly componentIO: ComponentIO,
   ) {
     if (this.options.trackOutputChanges) {
       const outputsDiffer = this.differs.find({}).create();
@@ -124,7 +120,7 @@ export class IoService implements OnDestroy {
 
     const changes = this.updateIO(inputs, outputs);
 
-    const compChanged = this.componentInstChanged;
+    const compChanged = this.isComponentInstChanged();
 
     const inputsChanges = this.getInputsChanges(compChanged);
     const outputsChanged = this.outputsChanged(this.outputs);
@@ -139,6 +135,15 @@ export class IoService implements OnDestroy {
 
     if (compChanged || outputsChanged || changes.outputsChanged) {
       this.bindOutputs();
+    }
+  }
+
+  private isComponentInstChanged(): boolean {
+    if (this.lastComponentInst !== this.componentInst) {
+      this.lastComponentInst = this.componentInst;
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -175,33 +180,38 @@ export class IoService implements OnDestroy {
       ? (name: string) => this.lastChangedInputs.has(name)
       : () => true;
 
-    Object.keys(inputs)
-      .filter(ifInputChanged)
-      .forEach((name) => compRef.setInput(name, inputs[name]));
+    const componentIO = this.componentIO;
+
+    for (const name of Object.keys(inputs)) {
+      if (ifInputChanged(name)) {
+        componentIO.setInput(compRef, name, inputs[name]);
+      }
+    }
   }
 
   private bindOutputs() {
     this.disconnectOutputs();
 
-    const compInst = this.componentInst;
+    const compRef = this.compRef;
     let outputs = this.outputs;
 
-    if (!outputs || !compInst) {
+    if (!outputs || !compRef) {
       return;
     }
 
     outputs = this.resolveOutputs(outputs);
 
-    Object.keys(outputs)
-      .filter((p) => compInst[p])
-      .forEach((p) =>
-        (compInst[p] as Observable<unknown>)
-          .pipe(takeUntil(this.outputsShouldDisconnect$))
-          .subscribe((event) => {
-            this.cdr.markForCheck();
-            return (outputs[p] as EventHandler)(event);
-          }),
-      );
+    const componentIO = this.componentIO;
+
+    for (const name of Object.keys(outputs)) {
+      componentIO
+        .getOutput(compRef, name)
+        .pipe(takeUntil(this.outputsShouldDisconnect$))
+        .subscribe((event) => {
+          this.cdr.markForCheck();
+          return (outputs[name] as EventHandler)(event);
+        });
+    }
   }
 
   private disconnectOutputs() {
@@ -230,9 +240,9 @@ export class IoService implements OnDestroy {
   // TODO: Replace ComponentFactory once new API is created
   // @see https://github.com/angular/angular/issues/44926
   // eslint-disable-next-line deprecation/deprecation
-  private resolveCompFactory(): ComponentFactory<unknown> | null {
+  private resolveCompFactory(): ComponentFactory<AnyComponent> | undefined {
     if (!this.compRef) {
-      return null;
+      return;
     }
 
     try {
@@ -241,12 +251,12 @@ export class IoService implements OnDestroy {
       } catch (e) {
         // Fallback if componentType does not exist (happens on NgComponentOutlet)
         return this.cfr.resolveComponentFactory(
-          (this.compRef.instance as any).constructor as Type<unknown>,
+          (this.compRef.instance as any).constructor as Type<AnyComponent>,
         );
       }
     } catch (e) {
       // Factory not available - bailout
-      return null;
+      return;
     }
   }
 
