@@ -18,6 +18,7 @@ import { IterableDiffers } from '@angular/core';
 import { KeyValueDiffers } from '@angular/core';
 import { NgComponentOutlet } from '@angular/common';
 import { NgModuleRef } from '@angular/core';
+import { Observable } from 'rxjs';
 import { OnChanges } from '@angular/core';
 import { OnDestroy } from '@angular/core';
 import { Renderer2 } from '@angular/core';
@@ -34,6 +35,21 @@ export type AnyFunction = (...args: unknown[]) => unknown;
 export interface AttributesMap {
     // (undocumented)
     [key: string]: string;
+}
+
+// @public (undocumented)
+export type ComponentInputKey<T> = keyof T & string;
+
+// @public (undocumented)
+export abstract class ComponentIO {
+    // (undocumented)
+    abstract getOutput<T, K extends ComponentInputKey<T>>(componentRef: ComponentRef<T>, name: K): Observable<unknown>;
+    // (undocumented)
+    abstract setInput<T, K extends ComponentInputKey<T>>(componentRef: ComponentRef<T>, name: K, value: T[K]): void;
+    // (undocumented)
+    static ɵfac: i0.ɵɵFactoryDeclaration<ComponentIO, never>;
+    // (undocumented)
+    static ɵprov: i0.ɵɵInjectableDeclaration<ComponentIO>;
 }
 
 // @public (undocumented)
@@ -123,11 +139,11 @@ export class DynamicAttributesModule {
     static ɵfac: i0.ɵɵFactoryDeclaration<DynamicAttributesModule, never>;
     // (undocumented)
     static ɵinj: i0.ɵɵInjectorDeclaration<DynamicAttributesModule>;
-    // Warning: (ae-forgotten-export) The symbol "i1_4" needs to be exported by the entry point public-api.d.ts
+    // Warning: (ae-forgotten-export) The symbol "i1_2" needs to be exported by the entry point public-api.d.ts
     // Warning: (ae-forgotten-export) The symbol "i2_2" needs to be exported by the entry point public-api.d.ts
     //
     // (undocumented)
-    static ɵmod: i0.ɵɵNgModuleDeclaration<DynamicAttributesModule, never, [typeof i1_4.DynamicAttributesDirective], [typeof i1_4.DynamicAttributesDirective, typeof i2_2.ComponentOutletInjectorModule]>;
+    static ɵmod: i0.ɵɵNgModuleDeclaration<DynamicAttributesModule, never, [typeof i1_2.DynamicAttributesDirective], [typeof i1_2.DynamicAttributesDirective, typeof i2_2.ComponentOutletInjectorModule]>;
 }
 
 // @public (undocumented)
@@ -206,10 +222,10 @@ export class DynamicDirectivesModule {
     static ɵfac: i0.ɵɵFactoryDeclaration<DynamicDirectivesModule, never>;
     // (undocumented)
     static ɵinj: i0.ɵɵInjectorDeclaration<DynamicDirectivesModule>;
-    // Warning: (ae-forgotten-export) The symbol "i1_5" needs to be exported by the entry point public-api.d.ts
+    // Warning: (ae-forgotten-export) The symbol "i1_3" needs to be exported by the entry point public-api.d.ts
     //
     // (undocumented)
-    static ɵmod: i0.ɵɵNgModuleDeclaration<DynamicDirectivesModule, never, [typeof i1_5.DynamicDirectivesDirective], [typeof i1_5.DynamicDirectivesDirective, typeof i2_2.ComponentOutletInjectorModule]>;
+    static ɵmod: i0.ɵɵNgModuleDeclaration<DynamicDirectivesModule, never, [typeof i1_3.DynamicDirectivesDirective], [typeof i1_3.DynamicDirectivesDirective, typeof i2_2.ComponentOutletInjectorModule]>;
 }
 
 // @public (undocumented)
@@ -233,10 +249,10 @@ export class DynamicIoModule {
     static ɵfac: i0.ɵɵFactoryDeclaration<DynamicIoModule, never>;
     // (undocumented)
     static ɵinj: i0.ɵɵInjectorDeclaration<DynamicIoModule>;
-    // Warning: (ae-forgotten-export) The symbol "i1_3" needs to be exported by the entry point public-api.d.ts
+    // Warning: (ae-forgotten-export) The symbol "i1_4" needs to be exported by the entry point public-api.d.ts
     //
     // (undocumented)
-    static ɵmod: i0.ɵɵNgModuleDeclaration<DynamicIoModule, never, [typeof i1_3.DynamicIoDirective], [typeof i1_3.DynamicIoDirective, typeof i2_2.ComponentOutletInjectorModule]>;
+    static ɵmod: i0.ɵɵNgModuleDeclaration<DynamicIoModule, never, [typeof i1_4.DynamicIoDirective], [typeof i1_4.DynamicIoDirective, typeof i2_2.ComponentOutletInjectorModule]>;
 }
 
 // @public (undocumented)
@@ -245,11 +261,11 @@ export class DynamicModule {
     static ɵfac: i0.ɵɵFactoryDeclaration<DynamicModule, never>;
     // (undocumented)
     static ɵinj: i0.ɵɵInjectorDeclaration<DynamicModule>;
-    // Warning: (ae-forgotten-export) The symbol "i1_2" needs to be exported by the entry point public-api.d.ts
+    // Warning: (ae-forgotten-export) The symbol "i1_5" needs to be exported by the entry point public-api.d.ts
     // Warning: (ae-forgotten-export) The symbol "i2_3" needs to be exported by the entry point public-api.d.ts
     //
     // (undocumented)
-    static ɵmod: i0.ɵɵNgModuleDeclaration<DynamicModule, never, [typeof i1_2.DynamicIoModule, typeof i2_3.DynamicComponent], [typeof i1_2.DynamicIoModule, typeof i2_3.DynamicComponent]>;
+    static ɵmod: i0.ɵɵNgModuleDeclaration<DynamicModule, never, [typeof i1_5.DynamicIoModule, typeof i2_3.DynamicComponent], [typeof i1_5.DynamicIoModule, typeof i2_3.DynamicComponent]>;
 }
 
 // @public @deprecated (undocumented)
@@ -292,12 +308,12 @@ export interface IoFactoryServiceOptions {
 
 // @public (undocumented)
 export class IoService implements OnDestroy {
-    constructor(injector: Injector, differs: KeyValueDiffers, cfr: ComponentFactoryResolver, options: IoServiceOptions, compInjector: DynamicComponentInjector, eventArgument: string, cdr: ChangeDetectorRef, eventContextProvider: StaticProvider);
+    constructor(injector: Injector, differs: KeyValueDiffers, cfr: ComponentFactoryResolver, options: IoServiceOptions, compInjector: DynamicComponentInjector, eventArgument: string, cdr: ChangeDetectorRef, eventContextProvider: StaticProvider, componentIO: ComponentIO);
     // (undocumented)
     ngOnDestroy(): void;
     update(inputs?: InputsType | null, outputs?: OutputsType | null): void;
     // (undocumented)
-    static ɵfac: i0.ɵɵFactoryDeclaration<IoService, [null, null, null, null, null, null, null, { optional: true; }]>;
+    static ɵfac: i0.ɵɵFactoryDeclaration<IoService, [null, null, null, null, null, null, null, { optional: true; }, null]>;
     // (undocumented)
     static ɵprov: i0.ɵɵInjectableDeclaration<IoService>;
 }

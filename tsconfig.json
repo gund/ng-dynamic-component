@@ -20,7 +20,9 @@
       "ng-dynamic-component": [
         "projects/ng-dynamic-component/src/public-api.ts"
       ],
-      "ng-dynamic-component/*": ["projects/ng-dynamic-component/src/*"]
+      "ng-dynamic-component/signal-component-io": [
+        "projects/ng-dynamic-component/signal-component-io/src/public-api.ts"
+      ]
     }
   },
   "angularCompilerOptions": {
