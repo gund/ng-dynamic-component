@@ -9,17 +9,11 @@ This package enables signal based inputs/outputs support for dynamically rendere
 This package requires Angular version which supports signals.
 Please refer to (Angular docs)[https://angular.dev/] to see which minimal version is required.
 
-## Warning: Experimental
-
-This package is still **experimental** and not ready for producation!  
-APIs may change in the future or be removed completely and never make it to stable release!  
-Only use it to evaluate the features and provide feedback.
-
 ## Usage
 
 **Since v10.8.0**
 
-Import `SignalComponentIoModule` in your application module or config:
+Import `SignalComponentIoModule` in your application root module or config:
 
 ```ts
 import { NgModule } from '@angular/core';

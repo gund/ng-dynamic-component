@@ -14,8 +14,8 @@ import {
   StaticProvider,
   Type,
 } from '@angular/core';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { merge, Subject } from 'rxjs';
+import { takeUntil, tap } from 'rxjs/operators';
 
 import {
   DynamicComponentInjector,
@@ -69,7 +69,6 @@ export class IoService implements OnDestroy {
 
   private inputs: InputsType = {};
   private outputs: OutputsType = {};
-  private outputsChanged: (outputs: OutputsType) => boolean = () => false;
 
   private get compRef() {
     return this.compInjector.componentRef as ComponentRef<AnyComponent> | null;
@@ -103,6 +102,7 @@ export class IoService implements OnDestroy {
     }
   }
 
+  /** @internal */
   ngOnDestroy(): void {
     this.disconnectOutputs();
   }
@@ -112,7 +112,7 @@ export class IoService implements OnDestroy {
    *
    * It will detect both new and mutated changes.
    */
-  update(inputs?: InputsType | null, outputs?: OutputsType | null) {
+  update(inputs?: InputsType | null, outputs?: OutputsType | null): void {
     if (!this.compRef) {
       this.disconnectOutputs();
       return;
@@ -136,6 +136,10 @@ export class IoService implements OnDestroy {
     if (compChanged || outputsChanged || changes.outputsChanged) {
       this.bindOutputs();
     }
+  }
+
+  private outputsChanged(outputs: OutputsType) {
+    return false;
   }
 
   private isComponentInstChanged(): boolean {
@@ -193,25 +197,24 @@ export class IoService implements OnDestroy {
     this.disconnectOutputs();
 
     const compRef = this.compRef;
-    let outputs = this.outputs;
+    const outputs = this.outputs;
 
     if (!outputs || !compRef) {
       return;
     }
 
-    outputs = this.resolveOutputs(outputs);
-
+    const resolvedOutputs = this.resolveOutputs(outputs);
     const componentIO = this.componentIO;
 
-    for (const name of Object.keys(outputs)) {
-      componentIO
-        .getOutput(compRef, name)
-        .pipe(takeUntil(this.outputsShouldDisconnect$))
-        .subscribe((event) => {
-          this.cdr.markForCheck();
-          return (outputs[name] as EventHandler)(event);
-        });
-    }
+    merge(
+      ...Object.keys(resolvedOutputs).map((name) =>
+        componentIO
+          .getOutput(compRef, name)
+          .pipe(tap((event) => resolvedOutputs[name](event))),
+      ),
+    )
+      .pipe(takeUntil(this.outputsShouldDisconnect$))
+      .subscribe(() => this.cdr.markForCheck());
   }
 
   private disconnectOutputs() {
@@ -240,7 +243,7 @@ export class IoService implements OnDestroy {
   // TODO: Replace ComponentFactory once new API is created
   // @see https://github.com/angular/angular/issues/44926
   // eslint-disable-next-line deprecation/deprecation
-  private resolveCompFactory(): ComponentFactory<AnyComponent> | undefined {
+  private resolveCompFactory() {
     if (!this.compRef) {
       return;
     }
@@ -264,16 +267,16 @@ export class IoService implements OnDestroy {
     this.compFactory = this.resolveCompFactory();
   }
 
-  private resolveOutputs(outputs: OutputsType): OutputsType {
+  private resolveOutputs(outputs: OutputsType) {
     this.updateOutputsEventContext();
 
-    outputs = this.processOutputs(outputs);
+    const processedOutputs = this.processOutputs(outputs);
 
     if (!this.compFactory) {
-      return outputs;
+      return processedOutputs;
     }
 
-    return this.remapIO(outputs, this.compFactory.outputs);
+    return this.remapIO(processedOutputs, this.compFactory.outputs);
   }
 
   private updateOutputsEventContext() {
@@ -292,7 +295,7 @@ export class IoService implements OnDestroy {
     }
   }
 
-  private processOutputs(outputs: OutputsType): OutputsTypeProcessed {
+  private processOutputs(outputs: OutputsType) {
     const processedOutputs: OutputsTypeProcessed = {};
 
     Object.keys(outputs).forEach((key) => {
@@ -339,7 +342,7 @@ export class IoService implements OnDestroy {
   private remapIO<T extends Record<string, unknown>>(
     io: T,
     mapping: IOMappingList,
-  ): T {
+  ) {
     const newIO: Record<string, unknown> = {};
 
     Object.keys(io).forEach((key) => {
@@ -350,10 +353,7 @@ export class IoService implements OnDestroy {
     return newIO as T;
   }
 
-  private findPropByTplInMapping(
-    tplName: string,
-    mapping: IOMappingList,
-  ): string | null {
+  private findPropByTplInMapping(tplName: string, mapping: IOMappingList) {
     for (const map of mapping) {
       if (map.templateName === tplName) {
         return map.propName;
