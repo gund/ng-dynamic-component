@@ -6,7 +6,7 @@
 
 import * as i0 from '@angular/core';
 
-// @public (undocumented)
+// @public
 export class SignalComponentIoModule {
     // (undocumented)
     static ɵfac: i0.ɵɵFactoryDeclaration<SignalComponentIoModule, never>;

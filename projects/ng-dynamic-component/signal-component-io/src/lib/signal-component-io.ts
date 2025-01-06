@@ -4,10 +4,7 @@ import { outputToObservable } from '@angular/core/rxjs-interop';
 import { ComponentIO, ComponentInputKey } from 'ng-dynamic-component';
 import { Observable, isObservable } from 'rxjs';
 
-/**
- * @internal
- * @experimental
- */
+/** @internal */
 @Injectable()
 export class SignalComponentIO implements ComponentIO {
   setInput<T, K extends ComponentInputKey<T>>(
