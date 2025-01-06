@@ -309,7 +309,7 @@ export interface IoFactoryServiceOptions {
 // @public (undocumented)
 export class IoService implements OnDestroy {
     constructor(injector: Injector, differs: KeyValueDiffers, cfr: ComponentFactoryResolver, options: IoServiceOptions, compInjector: DynamicComponentInjector, eventArgument: string, cdr: ChangeDetectorRef, eventContextProvider: StaticProvider, componentIO: ComponentIO);
-    // (undocumented)
+    // @internal (undocumented)
     ngOnDestroy(): void;
     update(inputs?: InputsType | null, outputs?: OutputsType | null): void;
     // (undocumented)
