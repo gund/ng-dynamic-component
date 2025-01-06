@@ -98,7 +98,7 @@ will not work and you will have to import them separately (see their respective 
 If you still need to use both `<ndc-dynamic>` and dynamic inputs/outputs it is recommended
 to keep using `DynamicModule` API.
 
-### Singal based inputs/outputs (experimental)
+### Singal based inputs/outputs
 
 **Since v10.8.0**
 
