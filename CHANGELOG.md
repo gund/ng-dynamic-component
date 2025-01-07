@@ -1,5 +1,12 @@
 # ng-dynamic-component - Changelog
 
+# [10.8.0](https://github.com/gund/ng-dynamic-component/compare/v10.7.0...v10.8.0) (2025-01-07)
+
+
+### Features
+
+* **io:** add support for signal based dynamic components IO ([#520](https://github.com/gund/ng-dynamic-component/issues/520)) ([c3a1444](https://github.com/gund/ng-dynamic-component/commit/c3a14449b70a324610c18b42f28725a53e7ea879))
+
 # [10.8.0-next.1](https://github.com/gund/ng-dynamic-component/compare/v10.7.0...v10.8.0-next.1) (2024-12-17)
 
 
