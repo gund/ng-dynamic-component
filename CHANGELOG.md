@@ -1,5 +1,12 @@
 # ng-dynamic-component - Changelog
 
+## [10.8.1](https://github.com/gund/ng-dynamic-component/compare/v10.8.0...v10.8.1) (2025-01-09)
+
+
+### Bug Fixes
+
+* **api:** add missing ngOnDestroy method back to IoService ([c7026e2](https://github.com/gund/ng-dynamic-component/commit/c7026e2d2370e5b701fe00a85f05e77ee627c34a))
+
 # [10.8.0](https://github.com/gund/ng-dynamic-component/compare/v10.7.0...v10.8.0) (2025-01-07)
 
 
