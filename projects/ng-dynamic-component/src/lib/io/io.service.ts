@@ -102,7 +102,6 @@ export class IoService implements OnDestroy {
     }
   }
 
-  /** @internal */
   ngOnDestroy(): void {
     this.disconnectOutputs();
   }
