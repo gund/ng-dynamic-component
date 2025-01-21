@@ -1,5 +1,12 @@
 # ng-dynamic-component - Changelog
 
+## [10.8.2](https://github.com/gund/ng-dynamic-component/compare/v10.8.1...v10.8.2) (2025-01-21)
+
+
+### Bug Fixes
+
+* **io:** model signals output compatibility ([9ed8d69](https://github.com/gund/ng-dynamic-component/commit/9ed8d69cfa62db1a051e300f2bfbfc30f2a89590)), closes [#524](https://github.com/gund/ng-dynamic-component/issues/524)
+
 ## [10.8.1](https://github.com/gund/ng-dynamic-component/compare/v10.8.0...v10.8.1) (2025-01-09)
 
 
