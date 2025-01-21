@@ -33,10 +33,6 @@ export class SignalComponentIO implements ComponentIO {
   }
 
   private isOutputSignal(value: unknown): boolean {
-    return (
-      typeof value === 'object' &&
-      value !== null &&
-      typeof (value as any)['subscribe'] === 'function'
-    );
+    return value != null && typeof (value as any)['subscribe'] === 'function';
   }
 }
