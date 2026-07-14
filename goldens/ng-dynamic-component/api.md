@@ -5,7 +5,6 @@
 ```ts
 
 import { ChangeDetectorRef } from '@angular/core';
-import { ComponentFactoryResolver } from '@angular/core';
 import { ComponentRef } from '@angular/core';
 import { DoCheck } from '@angular/core';
 import { ElementRef } from '@angular/core';
@@ -308,12 +307,12 @@ export interface IoFactoryServiceOptions {
 
 // @public (undocumented)
 export class IoService implements OnDestroy {
-    constructor(injector: Injector, differs: KeyValueDiffers, cfr: ComponentFactoryResolver, options: IoServiceOptions, compInjector: DynamicComponentInjector, eventArgument: string, cdr: ChangeDetectorRef, eventContextProvider: StaticProvider, componentIO: ComponentIO);
+    constructor(injector: Injector, differs: KeyValueDiffers, options: IoServiceOptions, compInjector: DynamicComponentInjector, eventArgument: string, cdr: ChangeDetectorRef, eventContextProvider: StaticProvider, componentIO: ComponentIO);
     // (undocumented)
     ngOnDestroy(): void;
     update(inputs?: InputsType | null, outputs?: OutputsType | null): void;
     // (undocumented)
-    static ɵfac: i0.ɵɵFactoryDeclaration<IoService, [null, null, null, null, null, null, null, { optional: true; }, null]>;
+    static ɵfac: i0.ɵɵFactoryDeclaration<IoService, [null, null, null, null, null, null, { optional: true; }, null]>;
     // (undocumented)
     static ɵprov: i0.ɵɵInjectableDeclaration<IoService>;
 }

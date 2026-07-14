@@ -1,7 +1,5 @@
 import {
   ChangeDetectorRef,
-  ComponentFactory,
-  ComponentFactoryResolver,
   ComponentRef,
   Inject,
   Injectable,
@@ -12,7 +10,7 @@ import {
   OnDestroy,
   Optional,
   StaticProvider,
-  Type,
+  reflectComponentType,
 } from '@angular/core';
 import { merge, Subject } from 'rxjs';
 import { takeUntil, tap } from 'rxjs/operators';
@@ -60,10 +58,6 @@ export class IoService implements OnDestroy {
   private lastComponentInst: unknown;
   private lastChangedInputs = new Set<string>();
   private inputsDiffer = this.differs.find({}).create();
-  // TODO: Replace ComponentFactory once new API is created
-  // @see https://github.com/angular/angular/issues/44926
-  // eslint-disable-next-line deprecation/deprecation
-  private compFactory?: ComponentFactory<AnyComponent>;
   private outputsShouldDisconnect$ = new Subject<void>();
   private outputsEventContext: unknown;
 
@@ -81,10 +75,6 @@ export class IoService implements OnDestroy {
   constructor(
     private readonly injector: Injector,
     private readonly differs: KeyValueDiffers,
-    // TODO: Replace ComponentFactoryResolver once new API is created
-    // @see https://github.com/angular/angular/issues/44926
-    // eslint-disable-next-line deprecation/deprecation
-    private readonly cfr: ComponentFactoryResolver,
     private readonly options: IoServiceOptions,
     @Inject(DynamicComponentInjectorToken)
     private readonly compInjector: DynamicComponentInjector,
@@ -129,7 +119,7 @@ export class IoService implements OnDestroy {
     }
 
     if (compChanged || inputsChanges) {
-      this.updateInputs(compChanged || !this.lastChangedInputs.size);
+      this.updateInputs();
     }
 
     if (compChanged || outputsChanged || changes.outputsChanged) {
@@ -167,11 +157,7 @@ export class IoService implements OnDestroy {
     return { inputsChanged, outputsChanged };
   }
 
-  private updateInputs(isFirstChange = false) {
-    if (isFirstChange) {
-      this.updateCompFactory();
-    }
-
+  private updateInputs() {
     const compRef = this.compRef;
     const inputs = this.inputs;
 
@@ -239,48 +225,51 @@ export class IoService implements OnDestroy {
     differ.forEachRemovedItem(addRecordKeyToSet);
   }
 
-  // TODO: Replace ComponentFactory once new API is created
-  // @see https://github.com/angular/angular/issues/44926
-  // eslint-disable-next-line deprecation/deprecation
-  private resolveCompFactory() {
-    if (!this.compRef) {
-      return;
+  private resolveOutputMapping(): IOMappingList | null {
+    const compRef = this.compRef;
+    if (!compRef) {
+      return null;
     }
 
-    try {
-      try {
-        return this.cfr.resolveComponentFactory(this.compRef.componentType);
-      } catch (e) {
-        // Fallback if componentType does not exist (happens on NgComponentOutlet)
-        return this.cfr.resolveComponentFactory(
-          (this.compRef.instance as any).constructor as Type<AnyComponent>,
-        );
-      }
-    } catch (e) {
-      // Factory not available - bailout
-      return;
-    }
+    return this.resolveViaMetadata(compRef);
   }
 
-  private updateCompFactory() {
-    this.compFactory = this.resolveCompFactory();
+  private resolveViaMetadata(
+    compRef: ComponentRef<AnyComponent>,
+  ): IOMappingList | null {
+    const componentType = compRef.componentType;
+    if (!componentType) {
+      return null;
+    }
+
+    const reflected = reflectComponentType(componentType);
+    const outputs = reflected?.outputs;
+
+    if (!outputs || outputs.length === 0) {
+      return null;
+    }
+
+    return outputs.map((entry) => ({
+      propName: entry.propName,
+      templateName: entry.templateName,
+    }));
   }
 
   private resolveOutputs(outputs: OutputsType) {
     this.updateOutputsEventContext();
 
     const processedOutputs = this.processOutputs(outputs);
+    const outputMapping = this.resolveOutputMapping();
 
-    if (!this.compFactory) {
+    if (!outputMapping) {
       return processedOutputs;
     }
 
-    return this.remapIO(processedOutputs, this.compFactory.outputs);
+    return this.remapIO(processedOutputs, outputMapping);
   }
 
   private updateOutputsEventContext() {
     if (this.eventContextProvider) {
-      // Resolve custom context from local provider
       const eventContextInjector = Injector.create({
         name: 'EventContext',
         parent: this.injector,
@@ -289,7 +278,6 @@ export class IoService implements OnDestroy {
 
       this.outputsEventContext = eventContextInjector.get(IoEventContextToken);
     } else {
-      // Try to get global context
       this.outputsEventContext = this.injector.get(IoEventContextToken, null);
     }
   }
@@ -323,7 +311,6 @@ export class IoService implements OnDestroy {
     const eventIdx = args.indexOf(eventArgument);
     const handler = output.handler;
 
-    // When there is no event argument - use just arguments
     if (eventIdx === -1) {
       return function (this: unknown) {
         return handler.apply(this, args);
