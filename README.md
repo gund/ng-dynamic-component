@@ -18,22 +18,25 @@ So if you are using this library please give your vote/feedback.
 <details>
   <summary>Compatibility with Angular</summary>
 
-| Angular  | ng-dynamic-component | NPM package                    |
-| -------- | -------------------- | ------------------------------ |
-| >=14.1.3 | 10.3.1               | `ng-dynamic-component@^10.3.1` |
-| >=14.x.x | 10.2.x               | `ng-dynamic-component@^10.2.0` |
-| 13.x.x   | 10.1.x               | `ng-dynamic-component@~10.1.0` |
-| 12.x.x   | 9.x.x                | `ng-dynamic-component@^9.0.0`  |
-| 11.x.x   | 8.x.x                | `ng-dynamic-component@^8.0.0`  |
-| 10.x.x   | 7.x.x                | `ng-dynamic-component@^7.0.0`  |
-| 9.x.x    | 6.x.x                | `ng-dynamic-component@^6.0.0`  |
-| 8.x.x    | 5.x.x                | `ng-dynamic-component@^5.0.0`  |
-| 7.x.x    | 4.x.x                | `ng-dynamic-component@^4.0.0`  |
-| 6.x.x    | 3.x.x                | `ng-dynamic-component@^3.0.0`  |
-| 5.x.x    | 2.x.x                | `ng-dynamic-component@^2.0.0`  |
-| 4.x.x    | 1.x.x                | `ng-dynamic-component@^1.0.0`  |
-| 2.x.x    | 0.x.x                | `ng-dynamic-component@^0.0.0`  |
+| Angular     | ng-dynamic-component| NPM package                    |
+| ------------| --------------------| ------------------------------ |
+| >=14.1.3    | 11.x.x      | `ng-dynamic-component@^11.0.0` |
+| >=14.1.3 <22| 10.3.1      | `ng-dynamic-component@^10.3.1` |
+| >=14.0.0 <22| 10.2.x      | `ng-dynamic-component@^10.2.0` |
+| 13.x.x      | 10.1.x      | `ng-dynamic-component@~10.1.0` |
+| 12.x.x      | 9.x.x       | `ng-dynamic-component@^9.0.0`  |
+| 11.x.x      | 8.x.x       | `ng-dynamic-component@^8.0.0`  |
+| 10.x.x      | 7.x.x       | `ng-dynamic-component@^7.0.0`  |
+| 9.x.x       | 6.x.x       | `ng-dynamic-component@^6.0.0`  |
+| 8.x.x       | 5.x.x       | `ng-dynamic-component@^5.0.0`  |
+| 7.x.x       | 4.x.x       | `ng-dynamic-component@^4.0.0`  |
+| 6.x.x       | 3.x.x       | `ng-dynamic-component@^3.0.0`  |
+| 5.x.x       | 2.x.x       | `ng-dynamic-component@^2.0.0`  |
+| 4.x.x       | 1.x.x       | `ng-dynamic-component@^1.0.0`  |
+| 2.x.x       | 0.x.x       | `ng-dynamic-component@^0.0.0`  |
 
+> **Note:** Angular 22 and later require ng-dynamic-component v11 or later because Angular
+> removed `ComponentFactoryResolver` and `ComponentFactory`.
 </details>
 
 ## Installation
