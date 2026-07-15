@@ -12,13 +12,20 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+permissions:
+  id-token: write  # Required for OIDC trusted publishing
+  contents: read
+
 jobs:
   release:
     runs-on: ubuntu-latest
     environment: release
     steps:
-      - uses: actions/setup-node@v3
       - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
       - name: Install Deps
         run: npm ci --ignore-scripts
       - name: Build
@@ -26,5 +33,4 @@ jobs:
       - name: Release to NPM
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm run semantic-release
