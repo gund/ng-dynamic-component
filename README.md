@@ -4,7 +4,6 @@
 
 [![Release Workflow](https://github.com/gund/ng-dynamic-component/actions/workflows/release.yml/badge.svg)](https://github.com/gund/ng-dynamic-component/actions/workflows/release.yml)
 [![Test Workflow](https://github.com/gund/ng-dynamic-component/actions/workflows/test.yml/badge.svg)](https://github.com/gund/ng-dynamic-component/actions/workflows/test.yml)
-[![Appveyor](https://ci.appveyor.com/api/projects/status/qwfaor0nnt9l24nj/branch/master?svg=true)](https://ci.appveyor.com/project/gund/ng-dynamic-component/branch/master)
 [![Coverage](https://codecov.io/gh/gund/ng-dynamic-component/branch/master/graph/badge.svg?token=BjOghV9KX8)](https://codecov.io/gh/gund/ng-dynamic-component)
 [![Maintainability](https://api.codeclimate.com/v1/badges/df4884f0ef7b49c285d0/maintainability)](https://codeclimate.com/github/gund/ng-dynamic-component/maintainability)
 [![Npm](https://img.shields.io/npm/v/ng-dynamic-component.svg?maxAge=2592000)](https://badge.fury.io/js/ng-dynamic-component)
