@@ -6,5 +6,5 @@ PORT="${OC_PORT:-1234}"
 HOSTNAME="${OC_HOSTNAME:-0.0.0.0}"
 
 echo "Starting opencode version ${VERSION} on ${HOSTNAME}:${PORT}..."
-pnpx opencode-ai@"$VERSION" serve --port "$PORT" --hostname "$HOSTNAME" "$@"
+npx -y opencode-ai@"$VERSION" serve --port "$PORT" --hostname "$HOSTNAME" "$@"
 
