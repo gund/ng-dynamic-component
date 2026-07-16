@@ -48,24 +48,31 @@
     "source=${env:HOME}/.config/opencode,target=/home/vscode/.config/opencode,type=bind",
     "source=${env:HOME}/.local/share/opencode,target=/home/vscode/.local/share/opencode,type=bind",
     "source=${env:HOME}/.cache/opencode,target=/home/vscode/.cache/opencode,type=bind",
-    "source=${env:HOME}/.config/gh,target=/home/vscode/.config/gh,type=bind",
+    "source=${env:HOME}/.config/gh,target=/home/vscode/.config/gh,type=bind"
   ],
 
   // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-  "remoteUser": "vscode"
+  "remoteUser": "vscode",
 
   "runArgs": [
     "--name",
     "ndc-dev",
     "--network",
     "traefik_proxy",
-    "--label", "pihole.custom-record=[[\"oc-ndc.spark.lan\", \"192.168.178.11\"]]",
-    "--label", "traefik.enable=true",
-    "--label", "traefik.http.routers.oc_ndc.rule=Host(`oc-ndc.spark.lan`)",
-    "--label", "traefik.http.routers.oc_ndc.entrypoints=websecure",
-    "--label", "traefik.http.routers.oc_ndc.tls=true",
-    "--label", "traefik.http.routers.oc_ndc.middlewares=local-subnet-only@file",
-    "--label", "traefik.http.services.oc_ndc.loadbalancer.server.port=1234"
+    "--label",
+    "pihole.custom-record=[[\"oc-ndc.spark.lan\", \"192.168.178.11\"]]",
+    "--label",
+    "traefik.enable=true",
+    "--label",
+    "traefik.http.routers.oc_ndc.rule=Host(`oc-ndc.spark.lan`)",
+    "--label",
+    "traefik.http.routers.oc_ndc.entrypoints=websecure",
+    "--label",
+    "traefik.http.routers.oc_ndc.tls=true",
+    "--label",
+    "traefik.http.routers.oc_ndc.middlewares=local-subnet-only@file",
+    "--label",
+    "traefik.http.services.oc_ndc.loadbalancer.server.port=1234"
   ],
 
   "containerEnv": {
