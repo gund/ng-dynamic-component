@@ -26,7 +26,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '24'
-          registry-url: 'https://registry.npmjs.org'
       - name: Install Deps
         run: npm ci --ignore-scripts
       - name: Build
