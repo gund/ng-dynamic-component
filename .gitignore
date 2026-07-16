@@ -49,3 +49,7 @@ testem.log
 Thumbs.db
 
 .angular
+
+# OMo and OpenCode
+.omo
+docs/.oc

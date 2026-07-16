@@ -1,0 +1,55 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "plugin": [
+    "oh-my-openagent@latest"
+  ],
+  "instructions": ["AGENTS*.md"],
+  "agent": {},
+  "mcp": {
+    "context7": {
+      "enabled": true,
+      "type": "remote",
+      "url": "https://context7.spark.lan/mcp",
+    },
+    "chrome-devtools": {
+      "enabled": true,
+      "type": "local",
+      "command": [
+        "pnpm",
+        "dlx",
+        "@nas/multi-devtools@latest",
+        "--no-performance-crux",
+        "--no-usage-statistics",
+        "--headless",
+        "--chrome-arg=--no-sandbox",
+        "--chrome-arg=--disable-setuid-sandbox",
+        "--executablePath={env:CHROME_PATH}"
+      ],
+    },
+    "playwright": {
+      "enabled": true,
+      "type": "local",
+      "environment": {
+        "PLAYWRIGHT_MCP_SANDBOX": "false"
+      },
+      "command": [
+        "pnpm",
+        "dlx",
+        "@nas/multi-playwright@latest",
+        "--headless",
+        "--isolated",
+        "--no-sandbox",
+        "--viewport-size",
+        "1920x1080",
+        "--executable-path",
+        "{env:CHROME_PATH}"
+      ],
+    },
+  },
+  "permission": {
+    "external_directory": {
+      "*": "allow",
+      "/tmp/**": "allow"
+    }
+  }
+}
