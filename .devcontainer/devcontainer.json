@@ -1,54 +1,75 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/typescript-node
 {
-  "name": "Development",
+  "name": "NDC Dev",
 
-  "image": "mcr.microsoft.com/devcontainers/typescript-node:18",
+  "image": "mcr.microsoft.com/devcontainers/base:jammy",
 
   // Features to add to the dev container. More info: https://containers.dev/features.
   "features": {
-    "ghcr.io/devcontainers/features/common-utils:1": {},
-    "ghcr.io/devcontainers/features/docker-from-docker:1": {},
-    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": true,
+      "configureZshAsDefaultShell": true,
+      "installOhMyZsh": true,
+      "upgradePackages": true,
+      "userUid": "1000",
+      "userGid": "1000"
+    },
+    "ghcr.io/devcontainers-extra/features/apt-get-packages:1": {
+      "packages": "jq, tmux"
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest",
+      "dockerDashComposeVersion": "latest"
+    },
+    "ghcr.io/devcontainers-extra/features/zsh-plugins:0": {
+      "plugins": "git npm"
+    },
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "24"
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {},
     "ghcr.io/devcontainers-extra/features/angular-cli:2": {
-      "VERSION": "14"
-    },
-    "./zsh-plugins": {
-      "plugins": "npm zsh-autosuggestions",
-      "omzPlugins": "https://github.com/zsh-users/zsh-autosuggestions"
-    },
-    "./persist-history": {
-      "shellName": "zsh"
-    },
-    "./persist-vscode-extentions": {}
+      "VERSION": "22"
+    }
   },
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   // "forwardPorts": [],
 
   // Use 'postCreateCommand' to run commands after the container is created.
-  "postCreateCommand": "sudo chown -R node .git/* && npm i",
+  "postCreateCommand": "./.devcontainer/postCreateCommand.sh",
 
-  // Configure tool-specific properties.
-  "customizations": {
-    "vscode": {
-      "settings": {
-        "terminal.integrated.defaultProfile.linux": "zsh"
-      },
-      "extensions": [
-        "angular.ng-template",
-        "expertly-simple.ng-evergreen",
-        "ghaschel.vscode-angular-html",
-        "nrwl.angular-console",
-        "dbaeumer.vscode-eslint",
-        "christian-kohler.npm-intellisense",
-        "eamodio.gitlens",
-        "gitHub.vscode-pull-request-github",
-        "esbenp.prettier-vscode"
-      ]
-    }
-  },
+  "mounts": [
+    "source=/usr/local/share/ca-certificates,target=/usr/local/share/ca-certificates,readonly,type=bind",
+    "source=${env:SSH_AUTH_SOCK},target=/ssh-agent.sock,type=bind",
+    "source=${env:HOME}/.zsh_history,target=/home/vscode/.zsh_history,type=bind",
+    "source=${env:HOME}/.npmrc,target=/home/vscode/.npmrc,type=bind",
+    "source=${env:HOME}/.config/opencode,target=/home/vscode/.config/opencode,type=bind",
+    "source=${env:HOME}/.local/share/opencode,target=/home/vscode/.local/share/opencode,type=bind",
+    "source=${env:HOME}/.cache/opencode,target=/home/vscode/.cache/opencode,type=bind",
+    "source=${env:HOME}/.config/gh,target=/home/vscode/.config/gh,type=bind",
+  ],
 
   // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-  "remoteUser": "node"
+  "remoteUser": "vscode"
+
+  "runArgs": [
+    "--name",
+    "ndc-dev",
+    "--network",
+    "traefik_proxy",
+    "--label", "pihole.custom-record=[[\"oc-ndc.spark.lan\", \"192.168.178.11\"]]",
+    "--label", "traefik.enable=true",
+    "--label", "traefik.http.routers.oc_ndc.rule=Host(`oc-ndc.spark.lan`)",
+    "--label", "traefik.http.routers.oc_ndc.entrypoints=websecure",
+    "--label", "traefik.http.routers.oc_ndc.tls=true",
+    "--label", "traefik.http.routers.oc_ndc.middlewares=local-subnet-only@file",
+    "--label", "traefik.http.services.oc_ndc.loadbalancer.server.port=1234"
+  ],
+
+  "containerEnv": {
+    "TZ": "${localEnv:TZ:Europe/Berlin}",
+    "SSH_AUTH_SOCK": "/ssh-agent.sock"
+  }
 }
