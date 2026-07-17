@@ -53,7 +53,7 @@
     "@semantic-release/exec": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^8.0.4",
-    "@semantic-release/npm": "^9.0.1",
+    "@semantic-release/npm": "^10.0.0",
     "@semantic-release/release-notes-generator": "^10.0.3",
     "@types/jest": "^28.1.1",
     "@types/node": "^16.11.11",
