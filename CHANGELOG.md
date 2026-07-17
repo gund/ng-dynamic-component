@@ -1,5 +1,25 @@
 # ng-dynamic-component - Changelog
 
+# [11.0.0](https://github.com/gund/ng-dynamic-component/compare/v10.8.2...v11.0.0) (2026-07-17)
+
+
+### Bug Fixes
+
+* **build:** rename api-extractor golden files to .api.md extension ([#546](https://github.com/gund/ng-dynamic-component/issues/546)) ([88e545e](https://github.com/gund/ng-dynamic-component/commit/88e545e07f828692306fc402764569d98e19417a))
+* **ci:** add npm overrides to force @semantic-release/npm@10 ([#541](https://github.com/gund/ng-dynamic-component/issues/541)) ([56cd1d1](https://github.com/gund/ng-dynamic-component/commit/56cd1d145a39c226ce4abb46a335ef08da27f399))
+* **ci:** add registry-url to setup-node for OIDC trusted publishing ([#540](https://github.com/gund/ng-dynamic-component/issues/540)) ([c84a87f](https://github.com/gund/ng-dynamic-component/commit/c84a87fb94c5e9b34070bbb5b7ab257615102b71))
+* **ci:** regenerate package-lock.json with complete esbuild binaries ([#545](https://github.com/gund/ng-dynamic-component/issues/545)) ([449fb86](https://github.com/gund/ng-dynamic-component/commit/449fb864964840624aa60420cc4b079e729234ac))
+* **ci:** upgrade @semantic-release/npm to v13 for OIDC trusted publishing support ([#544](https://github.com/gund/ng-dynamic-component/issues/544)) ([f0cd6d7](https://github.com/gund/ng-dynamic-component/commit/f0cd6d7923c9ea56ff51fb0a19612801c9cafbf9))
+* **ci:** upgrade actions/setup-node to v4 for OIDC trusted publishing ([#543](https://github.com/gund/ng-dynamic-component/issues/543)) ([bfa1cbc](https://github.com/gund/ng-dynamic-component/commit/bfa1cbc77221f722b1f9d0e2565503aea1d24f06))
+
+
+* fix(io)!: remove ComponentFactoryResolver for Angular 22 compatibility ([2727318](https://github.com/gund/ng-dynamic-component/commit/27273184a137a2ca0e25422c5a5d889da5de93a8)), closes [#528](https://github.com/gund/ng-dynamic-component/issues/528)
+
+
+### BREAKING CHANGES
+
+* IoService constructor no longer accepts ComponentFactoryResolver. This removes a public constructor dependency reflected in the public API golden.
+
 ## [10.8.2](https://github.com/gund/ng-dynamic-component/compare/v10.8.1...v10.8.2) (2025-01-21)
 
 
